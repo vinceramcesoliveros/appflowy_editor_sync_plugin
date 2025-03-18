@@ -1,6 +1,6 @@
-# applowy_sync_package_example
+# appflowy_editor_sync_plugin_example
 
-Demonstrates how to use the applowy_sync_package plugin.
+Demonstrates how to use the appflowy_editor_sync_plugin plugin.
 
 ## Getting Started
 

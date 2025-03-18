@@ -9,7 +9,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
-  applowy_sync_package:
+  appflowy_editor_sync_plugin:
     dependency: "direct main"
     description:
       path: ".."
@@ -252,6 +252,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: c87ff004c8aa6af2d531668b46a4ea379f7191dc6dfa066acd53d506da6e044b
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   fuchsia_remote_debug_protocol:
     dependency: transitive
     description: flutter
@@ -302,6 +310,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.19.0"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      sha256: "1ce844379ca14835a50d2f019a3099f419082cfdd231cd86a142af94dd5c6bb1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.9.0"
   keyboard_height_plugin:
     dependency: transitive
     description:
@@ -757,4 +773,4 @@ packages:
     version: "6.5.0"
 sdks:
   dart: ">=3.7.0 <4.0.0"
-  flutter: ">=3.27.0"
+  flutter: ">=3.29.2"

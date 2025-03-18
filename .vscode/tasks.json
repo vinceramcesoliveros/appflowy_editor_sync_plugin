@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "echo",
+            "label": "build rust bridge",
             "type": "shell",
-            "command": "echo Hello"
+            "command": "flutter_rust_bridge_codegen generate"
         }
     ]
 }

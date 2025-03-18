@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.applowy_sync_package_example"
+    namespace = "com.example.appflowy_editor_sync_plugin_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.applowy_sync_package_example"
+        applicationId = "com.example.appflowy_editor_sync_plugin_example"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

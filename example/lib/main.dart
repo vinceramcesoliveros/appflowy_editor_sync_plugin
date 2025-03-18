@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:applowy_sync_package/applowy_sync_package.dart';
+import 'package:appflowy_editor_sync_plugin/appflowy_editor_sync_plugin.dart';
 
 Future<void> main() async {
   await RustLib.init();
@@ -14,11 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('flutter_rust_bridge quickstart')),
-        body: Center(
-          child: Text(
-            'Action: Call Rust `greet("Tom")`\nResult: `${greet(name: "Tom")}`',
-          ),
-        ),
+        body: Center(),
       ),
     );
   }

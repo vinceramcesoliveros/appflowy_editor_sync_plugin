@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="applowy_sync_package_example"
+        android:label="appflowy_editor_sync_plugin_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
