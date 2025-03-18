@@ -1,2 +1,2 @@
-pub mod api;
+pub mod doc;
 mod frb_generated;
