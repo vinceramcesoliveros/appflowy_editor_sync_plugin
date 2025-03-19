@@ -1,0 +1,204 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+// editor_state_sync_wrapper.dart
+import 'dart:typed_data';
+
+import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:appflowy_editor_sync_plugin/convertors/transaction_adapter_helpers.dart';
+import 'package:appflowy_editor_sync_plugin/core/update_clock.dart';
+import 'package:appflowy_editor_sync_plugin/document_initializer.dart';
+import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_service_wrapper.dart';
+import 'package:appflowy_editor_sync_plugin/document_sync_db.dart';
+import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
+import 'package:dartx/dartx.dart';
+import 'package:easy_debounce/easy_debounce.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+class EditorStateSyncWrapper {
+  EditorStateSyncWrapper(this.ref, this.taskId);
+  final Ref ref;
+  final String taskId;
+
+  late final DocumentServiceWrapper docService;
+  late final DocumentSyncDB syncDB;
+  late final DocumentInitializer initializer;
+  late final EditorStateWrapper editorStateWrapper;
+  final mapEquality = const DeepCollectionEquality();
+  late final operationsStorage = TemporalStorage<Operation>();
+  bool isSyncing = false;
+
+  (List<LocalUpdate>, List<DbUpdate>)? pendingSyncUpdates;
+  UpdateClock updateClock = UpdateClock();
+
+  Future<EditorState> initAndHandleChanges() async {
+    docService = await DocumentServiceWrapper.newInstance(docId: taskId);
+    initializer = DocumentInitializer(
+      documentService: docService,
+      taskId: taskId,
+    );
+    syncDB = DocumentSyncDB(ref.read(appDatabaseProvider), taskId, docService);
+
+    editorStateWrapper = await _init();
+
+    // Logic to synchronize document with database
+    _listenOnDBUpdates();
+    _listenOnEditorUpdates();
+
+    return editorStateWrapper.editorState;
+  }
+
+  void dispose() {
+    syncDB.dispose();
+  }
+
+  Future<EditorStateWrapper> _init() async {
+    final documentUpdates = await syncDB.getUpdates();
+    if (documentUpdates.isEmpty) {
+      final (editorStateWrapper, updates) =
+          await initializer.initEmptyDocument();
+
+      final newClock = updateClock.incrementClock();
+      syncDB.addUpdates(
+        updates.map((e) => LocalUpdate(update: e, id: newClock)).toList(),
+      );
+      await syncDB.saveRootNodeId(editorStateWrapper.rootNodeId);
+      return editorStateWrapper;
+    } else {
+      final editorStateWrapper = await initializer.initDocumentWithUpdates(
+        documentUpdates,
+        (await syncDB.getRootNodeId())!,
+      );
+      return editorStateWrapper;
+    }
+  }
+
+  void _listenOnDBUpdates() {
+    syncDB.getUpdatesStream().listen((data) async {
+      if (isSyncing) {
+        pendingSyncUpdates = data;
+        return;
+      }
+
+      await _startSyncOperation(data);
+    });
+  }
+
+  Future<void> _startSyncOperation(
+    (List<LocalUpdate>, List<DbUpdate>) updates,
+  ) async {
+    isSyncing = true;
+
+    try {
+      await _processSyncOperation(updates);
+    } finally {
+      isSyncing = false;
+
+      // Check if new updates arrived during processing
+      final pending = pendingSyncUpdates;
+      if (pending != null) {
+        pendingSyncUpdates = null;
+        await _startSyncOperation(pending);
+      }
+    }
+  }
+
+  Future<void> _processSyncOperation(
+    (List<LocalUpdate>, List<DbUpdate>) updates,
+  ) async {
+    //Check if I have latest update // Or if it is not in
+    if (!updates.$1.syncCanBeDone(updateClock)) {
+      return;
+    }
+
+    try {
+      await docService.applyUpdates(
+        update:
+            updates.$1.map((e) => (e.id, e.update)).toList() +
+            updates.$2.map((e) => (e.id, e.update)).toList(),
+      );
+    } catch (e) {
+      print(e);
+    }
+    //Check if I have latest update // Or if it is not in
+    if (!updates.$1.syncCanBeDone(updateClock)) {
+      return;
+    }
+
+    final result = await docService.getDocumentJson();
+
+    //Check if I have latest update
+    if (!updates.$1.syncCanBeDone(updateClock)) {
+      return;
+    }
+
+    // Create a new state from the current document and apply operations
+    // that were not yet recorded in that CRDT Document
+    final latestOperations = operationsStorage.getAllUpdates();
+    final newEditorStateWrapper = EditorStateWrapper.factoryFromDocumentState(
+      result,
+      editorStateWrapper.rootNodeId,
+    )..applyRemoteChanges(latestOperations);
+
+    final diffOperations = editorStateWrapper.diffEditorStateWrappers(
+      newEditorStateWrapper,
+    );
+    if (diffOperations.isEmpty) {
+      return;
+    }
+
+    if (diffOperations.isNotEmpty) {
+      // Apply the operations to the editor state
+      editorStateWrapper.applyRemoteChanges(diffOperations);
+    }
+  }
+
+  void _listenOnEditorUpdates() {
+    editorStateWrapper.listenEditorChanges().listen((data) async {
+      final (transactionTime, transaction) = data;
+
+      if (TransactionTime.before != transactionTime) {
+        return;
+      }
+
+      final actions = TransactionAdapterHelpers.operationsToBlockActions(
+        transaction.operations,
+        editorStateWrapper,
+        taskId,
+      );
+
+      final newClock = updateClock.incrementClock();
+
+      final update = await docService.applyAction(actions: actions);
+      await update.match(
+        () async {
+          // //Recreate document with all available updates
+          // final latestUpdates = syncDB.getLastUpdates();
+          // if (latestUpdates != null) {
+          //   final mergedUpdates = latestUpdates.$2
+          //     ..addAll(latestUpdates.$1.map((e) => (uuid.v4(), e)).toList());
+          //   await docService.applyUpdates(
+          //     update: mergedUpdates,
+          //   );
+          // }
+
+          // final update = await docService.applyAction(actions: actions);
+
+          // update.match(() => null, (update) {
+          //   syncDB.addUpdates([update]);
+          // });
+        },
+        (update) {
+          syncDB.addUpdates([LocalUpdate(update: update, id: newClock)]);
+        },
+      );
+    });
+  }
+}
+//I will save with each local update its Datetime and then I will check inside the sync,
+// that the latest id of local updates is the same as the latest datetime of local updates
+// Or maybe by using some kind of int version number
+
+
+// What I need to guraentee:
+// If the sync is executed, I have all local updates + db updates available, including updates
+// for the latest state of the document.
+
