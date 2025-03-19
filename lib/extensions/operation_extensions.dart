@@ -8,15 +8,12 @@ import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 extension BlockActionAdapter on Operation {
-  List<BlockActionDoc> toBlockAction(
-    EditorStateWrapper editorStateWrapper,
-    String documentId,
-  ) {
+  List<BlockActionDoc> toBlockAction(EditorStateWrapper editorStateWrapper) {
     final op = this;
     if (op is InsertOperation) {
-      return op.toBlockAction(editorStateWrapper, documentId);
+      return op.toBlockAction(editorStateWrapper);
     } else if (op is UpdateOperation) {
-      return op.toBlockAction(editorStateWrapper, documentId);
+      return op.toBlockAction(editorStateWrapper);
     } else if (op is DeleteOperation) {
       return op.toBlockAction(editorStateWrapper);
     }
@@ -26,8 +23,7 @@ extension BlockActionAdapter on Operation {
 
 extension on InsertOperation {
   List<BlockActionDoc> toBlockAction(
-    EditorStateWrapper editorStateWrapper,
-    String documentId, {
+    EditorStateWrapper editorStateWrapper, {
     Node? previousNode,
   }) {
     var currentPath = path;
@@ -83,11 +79,9 @@ extension on InsertOperation {
         Node? prevChild;
         for (final child in node.children) {
           actions.addAll(
-            InsertOperation(child.path, [child]).toBlockAction(
-              editorStateWrapper,
-              documentId,
-              previousNode: prevChild,
-            ),
+            InsertOperation(child.path, [
+              child,
+            ]).toBlockAction(editorStateWrapper, previousNode: prevChild),
           );
           prevChild = child;
         }
@@ -101,10 +95,7 @@ extension on InsertOperation {
 }
 
 extension on UpdateOperation {
-  List<BlockActionDoc> toBlockAction(
-    EditorStateWrapper editorStateWrapper,
-    String documentId,
-  ) {
+  List<BlockActionDoc> toBlockAction(EditorStateWrapper editorStateWrapper) {
     final actions = <BlockActionDoc>[];
 
     // if the attributes are both empty, we don't need to update

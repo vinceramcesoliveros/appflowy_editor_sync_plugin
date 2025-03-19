@@ -5,10 +5,9 @@ import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_se
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
 
 class DocumentInitializer {
-  DocumentInitializer({required this.documentService, required this.taskId});
+  DocumentInitializer({required this.documentService});
 
   final DocumentServiceWrapper documentService;
-  final String taskId;
 
   Future<(EditorStateWrapper, List<Uint8List>)> initEmptyDocument() async {
     final editorStateWrapper = EditorStateWrapper.factoryBlank();
@@ -20,7 +19,6 @@ class DocumentInitializer {
       actions: TransactionAdapterHelpers.operationsToBlockActions(
         initialOperations,
         editorStateWrapper,
-        taskId,
       ),
     );
 

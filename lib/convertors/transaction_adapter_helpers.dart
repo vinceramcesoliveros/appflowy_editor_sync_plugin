@@ -110,11 +110,10 @@ class TransactionAdapterHelpers {
   static List<BlockActionDoc> operationWrappersToBlockActions(
     List<OperationWrapper> wrapped,
     EditorStateWrapper editorStateWrapper,
-    String docId,
   ) {
     return wrapped
         .map((e) {
-          return operationWrapperToBlockActions(e, editorStateWrapper, docId);
+          return operationWrapperToBlockActions(e, editorStateWrapper);
         })
         .flatten
         .toList();
@@ -124,7 +123,6 @@ class TransactionAdapterHelpers {
   static List<BlockActionDoc> operationWrapperToBlockActions(
     OperationWrapper e,
     EditorStateWrapper editorStateWrapper,
-    String docId,
   ) {
     if (e.type == OperationWrapperType.Move) {
       final op = e.firstOperation as DeleteOperation;
@@ -157,11 +155,11 @@ class TransactionAdapterHelpers {
         ),
       ];
     } else if (e.type == OperationWrapperType.Insert) {
-      return e.firstOperation.toBlockAction(editorStateWrapper, docId);
+      return e.firstOperation.toBlockAction(editorStateWrapper);
     } else if (e.type == OperationWrapperType.Update) {
-      return e.firstOperation.toBlockAction(editorStateWrapper, docId);
+      return e.firstOperation.toBlockAction(editorStateWrapper);
     } else if (e.type == OperationWrapperType.Delete) {
-      return e.firstOperation.toBlockAction(editorStateWrapper, docId);
+      return e.firstOperation.toBlockAction(editorStateWrapper);
     }
     throw UnimplementedError();
   }
@@ -169,9 +167,8 @@ class TransactionAdapterHelpers {
   static List<BlockActionDoc> operationsToBlockActions(
     List<Operation> operations,
     EditorStateWrapper editorStateWrapper,
-    String docId,
   ) {
     final wrapped = convertToOperationWrappers(operations, editorStateWrapper);
-    return operationWrappersToBlockActions(wrapped, editorStateWrapper, docId);
+    return operationWrappersToBlockActions(wrapped, editorStateWrapper);
   }
 }
