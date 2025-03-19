@@ -6,7 +6,7 @@ import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 class SyncDBAttributes {
   /// Stream that emits database updates when they occur
   /// Used for real-time monitoring of changes to sync state
-  final Stream<List<DbUpdate>> getDBUpdatesStream;
+  final Stream<List<DbUpdate>> getUpdatesStream;
 
   /// Function to retrieve the current root node ID from storage
   /// Returns null if no root node has been established yet
@@ -25,7 +25,7 @@ class SyncDBAttributes {
   final Future<List<(String, Uint8List)>> Function() getUpdates;
 
   SyncDBAttributes({
-    required this.getDBUpdatesStream,
+    required this.getUpdatesStream,
     required this.getRootNodeId,
     required this.saveRootNodeId,
     required this.saveUpdate,

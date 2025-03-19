@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:appflowy_editor_sync_plugin/core/update_clock.dart';
-
 class LocalUpdate {
   final Uint8List update;
   final String id;

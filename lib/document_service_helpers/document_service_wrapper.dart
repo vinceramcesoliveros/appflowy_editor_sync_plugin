@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/diff_deltas.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
-import 'package:dart_quill_delta/dart_quill_delta.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mutex/mutex.dart'; // Import the mutex library
-
-import 'dart:convert';
 
 // Wrapper class to handle mutex synchronization on the Dart side using the mutex library
 class DocumentServiceWrapper {
@@ -98,13 +94,11 @@ class DocumentServiceWrapper {
 
   //Write override for mergeUpdates
   Future<Uint8List> mergeUpdates(List<Uint8List> updates) async {
+    //There is no need to acquire the mutex lock here. Because it doesn't use the editor at all.
     try {
-      await _mutex.acquire();
       return await _rustService.mergeUpdates(updates: updates);
     } catch (e) {
       throw Exception('Failed to merge updates: $e');
-    } finally {
-      _mutex.release();
-    }
+    } finally {}
   }
 }

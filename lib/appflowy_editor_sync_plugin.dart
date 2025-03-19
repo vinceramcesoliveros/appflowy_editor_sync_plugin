@@ -1,3 +1,4 @@
 library;
 
-export 'src/rust/frb_generated.dart' show RustLib;
+export 'editor_state_sync_wrapper.dart';
+export 'merge_updates.dart';

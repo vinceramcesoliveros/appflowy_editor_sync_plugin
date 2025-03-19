@@ -55,19 +55,19 @@ pub struct DocumentState {
 // Custom error for concurrent access issues
 #[frb]
 #[derive(Debug)]
-pub struct ConcurrentAccessError {
+pub struct CustomRustError {
     pub message: String,
 }
 
-impl ConcurrentAccessError {
+impl CustomRustError {
     pub fn new(message: &str) -> Self {
-        ConcurrentAccessError {
+        CustomRustError {
             message: message.to_string(),
         }
     }
 }
 
-impl std::fmt::Display for ConcurrentAccessError {
+impl std::fmt::Display for CustomRustError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.message)
     }

@@ -1,17 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // document_sync_db.dart
-import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
-import 'package:drift/drift.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:uuid/uuid.dart';
 
 import 'package:appflowy_editor_sync_plugin/core/delay_remove_batcher.dart';
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_service_wrapper.dart';
-import 'package:appflowy_editor_sync_plugin/editor_state_sync_wrapper.dart';
+import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
+import 'package:drift/drift.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:uuid/uuid.dart';
 
 class DocumentSyncDB {
   DocumentSyncDB({required this.docService, required this.syncDBAttributes}) {
@@ -58,12 +55,12 @@ class DocumentSyncDB {
     _updatesSubject = BehaviorSubject<(List<LocalUpdate>, List<DbUpdate>)>();
 
     // Connect the stream to the subject
-    getUpdatesStream().listen(_updatesSubject.add);
+    getAllUpdatesStream().listen(_updatesSubject.add);
   }
 
   //Get updates stream - that will combine updates from the DB with updates from the batcher
-  Stream<(List<LocalUpdate>, List<DbUpdate>)> getUpdatesStream() {
-    final dbUpdatesStream = syncDBAttributes.getDBUpdatesStream;
+  Stream<(List<LocalUpdate>, List<DbUpdate>)> getAllUpdatesStream() {
+    final dbUpdatesStream = syncDBAttributes.getUpdatesStream;
 
     final batcherUpdatesStream = updatesBatcher.getAllItems();
 

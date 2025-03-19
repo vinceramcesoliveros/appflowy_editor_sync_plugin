@@ -78,7 +78,7 @@ fn wire__crate__doc__document__DocumentService_apply_action_impl(
             );
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, crate::doc::document_types::ConcurrentAccessError>(
+                transform_result_sse::<_, crate::doc::document_types::CustomRustError>(
                     (move || {
                         let mut api_that_guard = None;
                         let decode_indices_ =
@@ -187,7 +187,7 @@ fn wire__crate__doc__document__DocumentService_get_document_json_impl(
             >>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, crate::doc::document_types::ConcurrentAccessError>(
+                transform_result_sse::<_, crate::doc::document_types::CustomRustError>(
                     (move || {
                         let mut api_that_guard = None;
                         let decode_indices_ =
@@ -240,7 +240,7 @@ fn wire__crate__doc__document__DocumentService_init_empty_doc_impl(
             >>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, crate::doc::document_types::ConcurrentAccessError>(
+                transform_result_sse::<_, crate::doc::document_types::CustomRustError>(
                     (move || {
                         let mut api_that_guard = None;
                         let decode_indices_ =
@@ -294,7 +294,7 @@ fn wire__crate__doc__document__DocumentService_merge_updates_impl(
             let api_updates = <Vec<Vec<u8>>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, crate::doc::document_types::ConcurrentAccessError>(
+                transform_result_sse::<_, crate::doc::document_types::CustomRustError>(
                     (move || {
                         let mut api_that_guard = None;
                         let decode_indices_ =
@@ -383,7 +383,7 @@ fn wire__crate__doc__document_types__concurrent_access_error_new_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::doc::document_types::ConcurrentAccessError::new(&api_message),
+                        crate::doc::document_types::CustomRustError::new(&api_message),
                     )?;
                     Ok(output_ok)
                 })())
@@ -563,11 +563,11 @@ impl SseDecode for crate::doc::document_types::BlockDoc {
     }
 }
 
-impl SseDecode for crate::doc::document_types::ConcurrentAccessError {
+impl SseDecode for crate::doc::document_types::CustomRustError {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_message = <String>::sse_decode(deserializer);
-        return crate::doc::document_types::ConcurrentAccessError {
+        return crate::doc::document_types::CustomRustError {
             message: var_message,
         };
     }
@@ -970,19 +970,19 @@ impl flutter_rust_bridge::IntoIntoDart<crate::doc::document_types::BlockDoc>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::doc::document_types::ConcurrentAccessError {
+impl flutter_rust_bridge::IntoDart for crate::doc::document_types::CustomRustError {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [self.message.into_into_dart().into_dart()].into_dart()
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::doc::document_types::ConcurrentAccessError
+    for crate::doc::document_types::CustomRustError
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<crate::doc::document_types::ConcurrentAccessError>
-    for crate::doc::document_types::ConcurrentAccessError
+impl flutter_rust_bridge::IntoIntoDart<crate::doc::document_types::CustomRustError>
+    for crate::doc::document_types::CustomRustError
 {
-    fn into_into_dart(self) -> crate::doc::document_types::ConcurrentAccessError {
+    fn into_into_dart(self) -> crate::doc::document_types::CustomRustError {
         self
     }
 }
@@ -1130,7 +1130,7 @@ impl SseEncode for crate::doc::document_types::BlockDoc {
     }
 }
 
-impl SseEncode for crate::doc::document_types::ConcurrentAccessError {
+impl SseEncode for crate::doc::document_types::CustomRustError {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.message, serializer);

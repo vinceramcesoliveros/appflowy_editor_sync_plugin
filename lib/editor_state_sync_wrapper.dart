@@ -1,21 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // editor_state_sync_wrapper.dart
-import 'dart:typed_data';
-
 import 'package:appflowy_editor/appflowy_editor.dart';
-import 'package:appflowy_editor_sync_plugin/extensions/list_of_updates_extensions.dart';
-import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
-import 'package:dartx/dartx.dart';
-import 'package:easy_debounce/easy_debounce.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'package:appflowy_editor_sync_plugin/convertors/transaction_adapter_helpers.dart';
 import 'package:appflowy_editor_sync_plugin/core/update_clock.dart';
 import 'package:appflowy_editor_sync_plugin/document_initializer.dart';
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_service_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/document_sync_db.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
+import 'package:appflowy_editor_sync_plugin/extensions/list_of_updates_extensions.dart';
+import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 class EditorStateSyncWrapper {
   EditorStateSyncWrapper({required this.syncDBAttributes});
@@ -76,7 +71,7 @@ class EditorStateSyncWrapper {
   }
 
   void _listenOnDBUpdates() {
-    syncDB.getUpdatesStream().listen((data) async {
+    syncDB.getAllUpdatesStream().listen((data) async {
       if (isSyncing) {
         pendingSyncUpdates = data;
         return;

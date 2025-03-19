@@ -2,10 +2,10 @@
 import 'dart:typed_data';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
-import 'package:appflowy_editor_sync_plugin/convertors/operation_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/operation_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
+import 'package:appflowy_editor_sync_plugin/types/operation_wrapper.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

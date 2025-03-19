@@ -25,7 +25,7 @@ use crate::doc::document_types::{
     BlockActionDoc,
     BlockActionTypeDoc,
     BlockDoc,
-    ConcurrentAccessError,
+    CustomRustError,
     DocumentState,
     FailedToDecodeUpdates,
 };
@@ -92,7 +92,7 @@ impl DocumentServiceImpl {
 
     #[no_mangle]
     #[inline(never)]
-    pub fn init_empty_doc_inner(&mut self) -> Result<Vec<u8>, ConcurrentAccessError> {
+    pub fn init_empty_doc_inner(&mut self) -> Result<Vec<u8>, CustomRustError> {
         let doc_id = self.doc_id.clone();
         println_info!("init_empty_doc: Starting for doc_id: {}", doc_id);
 
@@ -134,7 +134,7 @@ impl DocumentServiceImpl {
         &mut self,
         actions: Vec<BlockActionDoc>,
         diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
-    ) -> Result<Vec<u8>, ConcurrentAccessError> {
+    ) -> Result<Vec<u8>, CustomRustError> {
         println_info!(
             "apply_action: Starting with {} actions for doc_id: {}",
             actions.len(),
@@ -191,7 +191,7 @@ impl DocumentServiceImpl {
                         } else {
                             println_error!("Invalid Move action: missing required fields");
                             return Err(
-                                ConcurrentAccessError::new(
+                                CustomRustError::new(
                                     "Invalid Move action: missing required fields"
                                 )
                             );
@@ -283,7 +283,7 @@ impl DocumentServiceImpl {
         block: BlockActionDoc,
         children_map: MapRef,
         diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
-    ) -> Result<MapRef, ConcurrentAccessError> {
+    ) -> Result<MapRef, CustomRustError> {
         println_info!("insert_node: Starting for block_id: {}", block.block.id);
         let parent_id = block.block.parent_id.unwrap_or_else(|| DEFAULT_PARENT.to_owned()).clone();
         let block_id = block.block.id.clone();
@@ -437,7 +437,7 @@ impl DocumentServiceImpl {
         children_map: MapRef,
         block_id: &str,
         parent_id: &str
-    ) -> Result<(), ConcurrentAccessError> {
+    ) -> Result<(), CustomRustError> {
         //If another block has this block as prev_id, then I want to give that block my prev_id
         let blocks_map_copy = blocks_map.clone();
         Self::remove_block_from_prev_id_chain(txn, blocks_map_copy, block_id);
@@ -486,7 +486,7 @@ impl DocumentServiceImpl {
             None => {
                 println_error!("Failed to remove block_id {} from blocks_map: item not found", block_id);
                 return Err(
-                    ConcurrentAccessError::new(
+                    CustomRustError::new(
                         "Failed to remove block from blocks map: item not found"
                     )
                 );
@@ -498,7 +498,7 @@ impl DocumentServiceImpl {
             None => {
                 println_error!("Failed to remove block_id {} from children_map: item not found", block_id);
                 return Err(
-                    ConcurrentAccessError::new(
+                    CustomRustError::new(
                         "Failed to remove block from children map: item not found"
                     )
                 );
@@ -521,7 +521,7 @@ impl DocumentServiceImpl {
         old_parent_id: &str,
         node_id: &str,
         prev_id: Option<String>
-    ) -> Result<(), ConcurrentAccessError> {
+    ) -> Result<(), CustomRustError> {
         let parent_id_owned = parent_id.to_string(); // No error handling
         let old_parent_id_owned = old_parent_id.to_string(); // No error handling
         let node_id_owned = node_id.to_string(); // No error handling
@@ -545,11 +545,11 @@ impl DocumentServiceImpl {
         );
         let old_index = *old_path.last().ok_or_else(|| {
             println_error!("Empty old_path for node_id: {}", node_id_owned);
-            ConcurrentAccessError::new("Empty old path for move operation")
+            CustomRustError::new("Empty old path for move operation")
         })?;
         let new_index = *new_path.last().ok_or_else(|| {
             println_error!("Empty new_path for node_id: {}", node_id_owned);
-            ConcurrentAccessError::new("Empty new path for move operation")
+            CustomRustError::new("Empty new path for move operation")
         })?;
 
         if parent_id_owned == old_parent_id_owned {
@@ -580,7 +580,7 @@ impl DocumentServiceImpl {
 
     #[no_mangle]
     #[inline(never)]
-    pub fn apply_updates_inner(&mut self, update: Vec<(String, Vec<u8>)>) -> FailedToDecodeUpdates {
+    pub fn apply_updates_inner(&mut self, update: Vec<(String, Vec<u8>)>) -> Result<(), CustomRustError> {
         println_info!(
             "apply_updates: Starting with {} updates for doc_id: {}",
             update.len(),
@@ -604,8 +604,7 @@ impl DocumentServiceImpl {
         doc: Doc,
         doc_id: String,
         update: Vec<(String, Vec<u8>)>
-    ) -> FailedToDecodeUpdates {
-        let mut failed_updates_ids = Vec::new();
+    ) -> Result<(), CustomRustError> {
 
         //Get only map of <Vec<u8>> from the update
         let updates_only = update
@@ -617,9 +616,7 @@ impl DocumentServiceImpl {
         //handle error case
         if merged_updates.is_err() {
             println_error!("Failed to merge updates: {}", merged_updates.err().unwrap());
-            return FailedToDecodeUpdates {
-                failed_updates_ids: vec![],
-            };
+            return Err(CustomRustError::new("Failed to merge updates"));
         }
         let merged_updates_res = merged_updates.unwrap();
         let mut txn = doc.transact_mut();
@@ -632,16 +629,12 @@ impl DocumentServiceImpl {
             }
             Err(e) => {
                 error!("Failed to decode update for doc_id: {}: {}", doc_id, e);
-                return FailedToDecodeUpdates {
-                    failed_updates_ids,
-                };
+                return Err(CustomRustError::new("Failed to decode update"));
             }
         }
 
         println_info!("apply_updates: Finished for doc_id: {}", doc_id);
-        FailedToDecodeUpdates {
-            failed_updates_ids,
-        }
+        Ok(())
     }
 
     #[no_mangle]
@@ -649,7 +642,7 @@ impl DocumentServiceImpl {
     fn delta_to_json<T: ReadTxn>(
         txn: &T,
         delta: Delta<Out>
-    ) -> Result<Value, ConcurrentAccessError> {
+    ) -> Result<Value, CustomRustError> {
         println_info!("delta_to_json: Converting delta");
         match delta {
             Delta::Inserted(text, attrs) => {
@@ -694,9 +687,9 @@ impl DocumentServiceImpl {
     fn deltas_to_json<T: ReadTxn>(
         txn: &T,
         deltas: Vec<Delta<Out>>
-    ) -> Result<Value, ConcurrentAccessError> {
+    ) -> Result<Value, CustomRustError> {
         println_info!("deltas_to_json: Converting {} deltas", deltas.len());
-        let json_deltas: Result<Vec<Value>, ConcurrentAccessError> = deltas
+        let json_deltas: Result<Vec<Value>, CustomRustError> = deltas
             .into_iter()
             .map(|delta| Self::delta_to_json(txn, delta))
             .collect();
@@ -739,13 +732,13 @@ impl DocumentServiceImpl {
         text: yrs::TextRef,
         new_delta: String,
         diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
-    ) -> Result<(), ConcurrentAccessError> {
+    ) -> Result<(), CustomRustError> {
         // Get current text delta
         let current_delta = text.delta(txn);
         let current_delta_value = Self::deltas_to_json(txn, current_delta)?;
         let current_delta_str = serde_json::to_string(&current_delta_value).map_err(|e| {
             println_error!("Failed to serialize current delta: {}", e);
-            ConcurrentAccessError::new("Failed to serialize current delta")
+            CustomRustError::new("Failed to serialize current delta")
         })?;
 
         // Call diff_deltas and await the result
@@ -764,7 +757,7 @@ impl DocumentServiceImpl {
             Err(e) => {
                 println_error!("Failed to parse delta diff JSON: {}", e);
                 return Err(
-                    ConcurrentAccessError::new(&format!("Failed to parse delta diff: {}", e))
+                    CustomRustError::new(&format!("Failed to parse delta diff: {}", e))
                 );
             }
         };
@@ -798,7 +791,7 @@ impl DocumentServiceImpl {
         txn: &mut yrs::TransactionMut,
         text: yrs::TextRef,
         delta: &[HashMap<String, Value>]
-    ) -> Result<(), ConcurrentAccessError> {
+    ) -> Result<(), CustomRustError> {
         println_info!("apply_delta_to_text: Starting with {} operations", delta.len());
 
         let mut current_len = text.len(txn); // Current length in UTF-16 code units
@@ -819,7 +812,7 @@ impl DocumentServiceImpl {
                                 "Invalid insert value: not a string - got {:?}",
                                 d.get(INSERT)
                             );
-                            ConcurrentAccessError::new("Insert value must be a string")
+                            CustomRustError::new("Insert value must be a string")
                         })?;
 
                     // Calculate the length of the inserted text in UTF-16 code units
@@ -862,7 +855,7 @@ impl DocumentServiceImpl {
                                 "Invalid retain value: not a number - got {:?}",
                                 d.get(RETAIN)
                             );
-                            ConcurrentAccessError::new("Retain value must be a number")
+                            CustomRustError::new("Retain value must be a number")
                         })? as u32;
 
                     let remaining_len = current_len.saturating_sub(cursor_pos);
@@ -875,7 +868,7 @@ impl DocumentServiceImpl {
                             current_len
                         );
                         return Err(
-                            ConcurrentAccessError::new(
+                            CustomRustError::new(
                                 "Retain operation exceeds remaining text length"
                             )
                         );
@@ -913,7 +906,7 @@ impl DocumentServiceImpl {
                                 "Invalid delete value: not a number - got {:?}",
                                 d.get(DELETE)
                             );
-                            ConcurrentAccessError::new("Delete value must be a number")
+                            CustomRustError::new("Delete value must be a number")
                         })? as u32;
 
                     if delete > current_len {
@@ -923,7 +916,7 @@ impl DocumentServiceImpl {
                             current_len
                         );
                         return Err(
-                            ConcurrentAccessError::new("Delete operation exceeds text length")
+                            CustomRustError::new("Delete operation exceeds text length")
                         );
                     }
 
@@ -945,10 +938,10 @@ impl DocumentServiceImpl {
                         "apply_delta_to_text: Invalid delta encountered - delta: {:?}",
                         d
                     );
-                    Err(ConcurrentAccessError::new("Invalid delta operation"))
+                    Err(CustomRustError::new("Invalid delta operation"))
                 }
             })
-            .collect::<Result<Vec<_>, ConcurrentAccessError>>()?;
+            .collect::<Result<Vec<_>, CustomRustError>>()?;
 
         // Final validation before applying delta
         if cursor_pos > current_len {
@@ -957,7 +950,7 @@ impl DocumentServiceImpl {
                 cursor_pos,
                 current_len
             );
-            return Err(ConcurrentAccessError::new("Cursor position exceeds text length"));
+            return Err(CustomRustError::new("Cursor position exceeds text length"));
         }
 
         println_info!("apply_delta_to_text: Applying {} deltas", deltas.len());
@@ -1012,7 +1005,7 @@ impl DocumentServiceImpl {
 
     #[no_mangle]
     #[inline(never)]
-    pub fn get_document_state(&self) -> Result<DocumentState, ConcurrentAccessError> {
+    pub fn get_document_state(&self) -> Result<DocumentState, CustomRustError> {
         println_info!("get_document_state: Starting for doc_id: {}", self.doc_id);
 
         // let mut doc_guard = self.doc.lock().map_err(|poisoned| {
@@ -1061,7 +1054,7 @@ impl DocumentServiceImpl {
                                             e
                                         );
                                         return Err(
-                                            ConcurrentAccessError::new(
+                                            CustomRustError::new(
                                                 "Failed to serialize deltas to JSON"
                                             )
                                         );
@@ -1172,7 +1165,7 @@ impl DocumentServiceImpl {
                             "Expected YArray for parent_id: {}, found different type",
                             parent_id.to_string() // No error handling
                         );
-                        return Err(ConcurrentAccessError::new("Unexpected type in children map"));
+                        return Err(CustomRustError::new("Unexpected type in children map"));
                     }
                 }
             }
@@ -1197,7 +1190,7 @@ impl DocumentServiceImpl {
     pub fn merge_updates_inner(
         &self,
         updates: Vec<Vec<u8>>
-    ) -> Result<Vec<u8>, ConcurrentAccessError> {
+    ) -> Result<Vec<u8>, CustomRustError> {
         println_info!("DocumentService::merge_updates: Merging {} updates", updates.len());
         let merged_update = merge_updates_v2(updates);
         println_info!("DocumentService::merge_updates: Merged update: {:?}", merged_update);
@@ -1207,7 +1200,7 @@ impl DocumentServiceImpl {
             Ok(update) => Ok(update),
             Err(e) => {
                 println_error!("DocumentService::merge_updates: Failed to merge updates: {}", e);
-                return Err(ConcurrentAccessError::new("Failed to merge updates"));
+                return Err(CustomRustError::new("Failed to merge updates"));
             }
         };
     }
