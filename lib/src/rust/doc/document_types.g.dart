@@ -6,8 +6,8 @@ part of 'document_types.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_BlockActionDoc _$BlockActionDocFromJson(Map<String, dynamic> json) =>
-    _BlockActionDoc(
+_$BlockActionDocImpl _$$BlockActionDocImplFromJson(Map<String, dynamic> json) =>
+    _$BlockActionDocImpl(
       action: $enumDecode(_$BlockActionTypeDocEnumMap, json['action']),
       block: BlockDoc.fromJson(json['block'] as Map<String, dynamic>),
       path: const Uint32ListConverter().fromJson(json['path'] as List),
@@ -17,16 +17,17 @@ _BlockActionDoc _$BlockActionDocFromJson(Map<String, dynamic> json) =>
       ),
     );
 
-Map<String, dynamic> _$BlockActionDocToJson(_BlockActionDoc instance) =>
-    <String, dynamic>{
-      'action': _$BlockActionTypeDocEnumMap[instance.action]!,
-      'block': instance.block,
-      'path': const Uint32ListConverter().toJson(instance.path),
-      'oldPath': _$JsonConverterToJson<List<dynamic>, Uint32List>(
-        instance.oldPath,
-        const Uint32ListConverter().toJson,
-      ),
-    };
+Map<String, dynamic> _$$BlockActionDocImplToJson(
+  _$BlockActionDocImpl instance,
+) => <String, dynamic>{
+  'action': _$BlockActionTypeDocEnumMap[instance.action]!,
+  'block': instance.block,
+  'path': const Uint32ListConverter().toJson(instance.path),
+  'oldPath': _$JsonConverterToJson<List<dynamic>, Uint32List>(
+    instance.oldPath,
+    const Uint32ListConverter().toJson,
+  ),
+};
 
 const _$BlockActionTypeDocEnumMap = {
   BlockActionTypeDoc.insert: 'insert',
@@ -45,28 +46,30 @@ Json? _$JsonConverterToJson<Json, Value>(
   Json? Function(Value value) toJson,
 ) => value == null ? null : toJson(value);
 
-_BlockDoc _$BlockDocFromJson(Map<String, dynamic> json) => _BlockDoc(
-  id: json['id'] as String,
-  ty: json['ty'] as String,
-  attributes: Map<String, String>.from(json['attributes'] as Map),
-  delta: json['delta'] as String?,
-  parentId: json['parentId'] as String?,
-  prevId: json['prevId'] as String?,
-  oldParentId: json['oldParentId'] as String?,
-);
+_$BlockDocImpl _$$BlockDocImplFromJson(Map<String, dynamic> json) =>
+    _$BlockDocImpl(
+      id: json['id'] as String,
+      ty: json['ty'] as String,
+      attributes: Map<String, String>.from(json['attributes'] as Map),
+      delta: json['delta'] as String?,
+      parentId: json['parentId'] as String?,
+      prevId: json['prevId'] as String?,
+      oldParentId: json['oldParentId'] as String?,
+    );
 
-Map<String, dynamic> _$BlockDocToJson(_BlockDoc instance) => <String, dynamic>{
-  'id': instance.id,
-  'ty': instance.ty,
-  'attributes': instance.attributes,
-  'delta': instance.delta,
-  'parentId': instance.parentId,
-  'prevId': instance.prevId,
-  'oldParentId': instance.oldParentId,
-};
+Map<String, dynamic> _$$BlockDocImplToJson(_$BlockDocImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'ty': instance.ty,
+      'attributes': instance.attributes,
+      'delta': instance.delta,
+      'parentId': instance.parentId,
+      'prevId': instance.prevId,
+      'oldParentId': instance.oldParentId,
+    };
 
-_DocumentState _$DocumentStateFromJson(Map<String, dynamic> json) =>
-    _DocumentState(
+_$DocumentStateImpl _$$DocumentStateImplFromJson(Map<String, dynamic> json) =>
+    _$DocumentStateImpl(
       docId: json['docId'] as String,
       blocks: (json['blocks'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(k, BlockDoc.fromJson(e as Map<String, dynamic>)),
@@ -77,22 +80,22 @@ _DocumentState _$DocumentStateFromJson(Map<String, dynamic> json) =>
       ),
     );
 
-Map<String, dynamic> _$DocumentStateToJson(_DocumentState instance) =>
+Map<String, dynamic> _$$DocumentStateImplToJson(_$DocumentStateImpl instance) =>
     <String, dynamic>{
       'docId': instance.docId,
       'blocks': instance.blocks,
       'childrenMap': instance.childrenMap,
     };
 
-_FailedToDecodeUpdates _$FailedToDecodeUpdatesFromJson(
+_$FailedToDecodeUpdatesImpl _$$FailedToDecodeUpdatesImplFromJson(
   Map<String, dynamic> json,
-) => _FailedToDecodeUpdates(
+) => _$FailedToDecodeUpdatesImpl(
   failedUpdatesIds:
       (json['failedUpdatesIds'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
 );
 
-Map<String, dynamic> _$FailedToDecodeUpdatesToJson(
-  _FailedToDecodeUpdates instance,
+Map<String, dynamic> _$$FailedToDecodeUpdatesImplToJson(
+  _$FailedToDecodeUpdatesImpl instance,
 ) => <String, dynamic>{'failedUpdatesIds': instance.failedUpdatesIds};
