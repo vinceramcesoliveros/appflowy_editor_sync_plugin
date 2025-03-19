@@ -1,76 +1,166 @@
-use core::error;
 use flutter_rust_bridge::{frb, DartFnFuture};
-use std::{collections::HashMap};
-use log::{info, error}; // Ensure log crate is included for logging
+use log::{error, info};
+use yrs::{merge_updates_v2, Doc, ReadTxn, Transact};
 
-use crate::doc::document_types::FailedToDecodeUpdates;
+use super::error::DocError;
+use super::operations::{block_ops::BlockOperations, delta_ops::DeltaOperations, update_ops};
+use super::utils::logging::{log_info, log_error};
+use crate::doc::document_types::{BlockActionDoc, CustomRustError, DocumentState, FailedToDecodeUpdates};
+use crate::doc::utils::util::MapExt;
 
-use super::{document_types::{BlockActionDoc, DocumentState, CustomRustError}, utils::document_impl::{DocumentServiceImpl}};
+/// Constants for document structure
+pub const BLOCKS: &str = "blocks";
+pub const CHILDREN_MAP: &str = "childrenMap";
+pub const ROOT_ID: &str = "document";
+pub const ROOT_TYPE: &str = "page";
+pub const ATTRIBUTES: &str = "attributes";
+pub const TEXT: &str = "text";
+pub const ID: &str = "id";
+pub const TYPE: &str = "type";
+pub const PARENT_ID: &str = "parentId";
+pub const PREV_ID: &str = "prevId";
+pub const DEFAULT_PARENT: &str = "default_parent";
 
-// Public API struct (exposed to FRB)
-#[frb]
+#[frb(ignore)]
 pub struct DocumentService {
-    inner: DocumentServiceImpl,
+    doc: Doc,
+    doc_id: String,
 }
 
 impl DocumentService {
-    #[frb]
     pub fn new(doc_id: String) -> Self {
-        info!("DocumentService::new: Creating new instance with doc_id: {}", doc_id);
-        Self {
-            inner: DocumentServiceImpl::new(doc_id),
+        log_info!("Creating new document service for doc_id: {}", doc_id);
+        Self { doc_id, doc: Doc::new() }
+    }
+
+    #[no_mangle]
+    #[inline(never)]
+    pub fn init_empty_doc_inner(&mut self) -> Result<Vec<u8>, CustomRustError> {
+        log_info!("init_empty_doc: Starting for doc_id: {}", self.doc_id);
+        
+        // Get a reference to the document
+        let doc = &self.doc;
+        let root = doc.get_or_insert_map(ROOT_ID);
+        let mut txn = doc.transact_mut();
+
+        // Initialize the document structure
+        log_info!("init_empty_doc: Initializing blocks for doc_id: {}", self.doc_id);
+        root.get_or_init_map(&mut txn, BLOCKS);
+        log_info!("init_empty_doc: Initializing childrenMap for doc_id: {}", self.doc_id);
+        root.get_or_init_map(&mut txn, CHILDREN_MAP);
+        
+        // Create the empty state update
+        log_info!("init_empty_doc: Encoding state for doc_id: {}", self.doc_id);
+        let empty_state = yrs::StateVector::default();
+        let update = txn.encode_state_as_update_v2(&empty_state);
+        
+        log_info!("init_empty_doc: Finished for doc_id: {}", self.doc_id);
+        Ok(update)
+    }
+
+    #[no_mangle]
+    #[inline(never)]
+    pub fn apply_action_inner(
+        &mut self,
+        actions: Vec<BlockActionDoc>,
+        diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
+    ) -> Result<Vec<u8>, CustomRustError> {
+        log_info!("apply_action: Starting with {} actions for doc_id: {}", 
+                 actions.len(), self.doc_id);
+        
+        // Get document handle and start transaction
+        let doc = &self.doc;
+        let root = doc.get_or_insert_map(ROOT_ID);
+        let mut txn = doc.transact_mut();
+        
+        // Process each action
+        for action in actions {
+            let children_map = root.get_or_init_map(&mut txn, CHILDREN_MAP);
+            let blocks_map = root.get_or_init_map(&mut txn, BLOCKS);
+            
+            // Delegate to specialized operation handlers
+            match action.action {
+                BlockActionTypeDoc::Insert => {
+                    BlockOperations::insert_node(&mut txn, blocks_map, action, children_map, diff_deltas)?;
+                },
+                BlockActionTypeDoc::Update => {
+                    BlockOperations::update_node(&mut txn, blocks_map, action, diff_deltas)?;
+                },
+                BlockActionTypeDoc::Delete => {
+                    let parent_id = action.block.parent_id
+                        .unwrap_or_else(|| DEFAULT_PARENT.to_owned());
+                    BlockOperations::delete_node(&mut txn, blocks_map, children_map, &action.block.id, &parent_id)?;
+                },
+                BlockActionTypeDoc::Move => {
+                    if let (Some(old_path), Some(parent_id), Some(old_parent_id)) = 
+                        (action.old_path.as_ref(), action.block.parent_id.as_ref(), action.block.old_parent_id.as_ref()) {
+                        BlockOperations::move_block(
+                            &mut txn, children_map, blocks_map,
+                            old_path, &action.path, parent_id, old_parent_id,
+                            &action.block.id, action.block.prev_id
+                        )?;
+                    } else {
+                        return Err(DocError::InvalidOperation("Missing required fields for move operation".into()).into());
+                    }
+                }
+            }
         }
+        
+        // Generate update from the transaction
+        log_info!("apply_action: Encoding state for doc_id: {}", self.doc_id);
+        let before_state = txn.before_state();
+        let update = txn.encode_diff_v2(before_state);
+        
+        Ok(update)
     }
 
     #[no_mangle]
     #[inline(never)]
-    #[frb]
-    pub fn apply_action(&mut self, actions: Vec<BlockActionDoc>, diff_deltas: impl Fn(String, String) -> DartFnFuture<String>) -> Result<Vec<u8>, CustomRustError> {
-        info!("DocumentService::apply_action: Applying {} actions", actions.len());
-        println!("Applying actions: {:?}", actions);
-
-        let result = self.inner.apply_action_inner(actions, &diff_deltas)?;
-        info!("DocumentService::apply_action: Successfully applied actions");
+    pub fn apply_updates_inner(&mut self, updates: Vec<(String, Vec<u8>)>) -> Result<FailedToDecodeUpdates, CustomRustError> {
+        log_info!("apply_updates: Starting with {} updates for doc_id: {}", updates.len(), self.doc_id);
+        
+        // Create a new document to apply updates to
+        let new_doc = Doc::new();
+        
+        // Apply updates to the new document
+        let result = update_ops::apply_updates(new_doc.clone(), &self.doc_id, updates)?;
+        
+        // Replace the current document with the new one
+        self.doc = new_doc;
+        
+        log_info!("apply_updates: Successfully applied updates for doc_id: {}", self.doc_id);
         Ok(result)
     }
 
     #[no_mangle]
     #[inline(never)]
-    #[frb]
-    pub fn get_document_json(&self) -> Result<DocumentState, CustomRustError> {
-        info!("DocumentService::get_document_json: Retrieving document state");
-
-        let state = self.inner.get_document_state()?;
-        info!("DocumentService::get_document_json: Successfully retrieved state");
+    pub fn get_document_state(&self) -> Result<DocumentState, CustomRustError> {
+        log_info!("get_document_state: Starting for doc_id: {}", self.doc_id);
+        
+        let doc = &self.doc;
+        let root = doc.get_or_insert_map(ROOT_ID);
+        let txn = doc.transact();
+        
+        // Extract document state through specialized function
+        let state = update_ops::extract_document_state(&txn, root, &self.doc_id)?;
+        
+        log_info!("get_document_state: Finished for doc_id: {}", self.doc_id);
         Ok(state)
     }
 
-    #[no_mangle]
-    #[inline(never)]
     #[frb]
-    pub fn merge_updates(&self, updates: Vec<Vec<u8>>) -> Result<Vec<u8>, CustomRustError> {
-        info!("DocumentService::merge_updates: Merging {} updates", updates.len());
-        let state = self.inner.merge_updates_inner(updates)?;
-        Ok(state)
-    }
-
-    #[no_mangle]
-    #[inline(never)]
-    #[frb]
-    pub fn apply_updates(&mut self, update: Vec<(String, Vec<u8>)>) -> Result<(), CustomRustError> {
-        info!("DocumentService::apply_updates: Applying {} updates", update.len());
-
-        let res =  self.inner.apply_updates_inner(update);
-        info!("DocumentService::apply_updates: Successfully applied updates");
-        res
-    }
-
-    #[no_mangle]
-    #[inline(never)]
-    #[frb]
-    pub fn init_empty_doc(&mut self) -> Result<Vec<u8>, CustomRustError> {
-        let result = self.inner.init_empty_doc_inner()?;
-        info!("DocumentService::init_empty_doc: Successfully initialized empty doc");
-        Ok(result)
+    pub fn merge_updates_inner(&self, updates: Vec<Vec<u8>>) -> Result<Vec<u8>, CustomRustError> {
+        log_info!("merge_updates: Merging {} updates", updates.len());
+        
+        match merge_updates_v2(updates) {
+            Ok(update) => {
+                log_info!("merge_updates: Successfully merged updates");
+                Ok(update)
+            },
+            Err(e) => {
+                log_error!("merge_updates: Failed to merge updates: {}", e);
+                Err(DocError::EncodingError(format!("Failed to merge updates: {}", e)).into())
+            }
+        }
     }
 }
