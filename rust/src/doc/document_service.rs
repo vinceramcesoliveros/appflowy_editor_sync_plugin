@@ -3,8 +3,9 @@ use log::{error, info};
 use yrs::{merge_updates_v2, Doc, ReadTxn, Transact};
 
 use super::error::DocError;
-use super::operations::{block_ops::BlockOperations, delta_ops::DeltaOperations, update_ops};
+use super::operations::{block_ops::BlockOperations, delta_ops::DeltaOperations, update_ops::UpdateOperations};
 
+use crate::doc::constants::{BLOCKS, CHILDREN_MAP, DEFAULT_PARENT, ROOT_ID};
 use crate::doc::document_types::{BlockActionDoc, BlockActionTypeDoc, CustomRustError, DocumentState, FailedToDecodeUpdates};
 use crate::doc::utils::util::MapExt;
 use crate::{log_info, log_error};
@@ -112,7 +113,7 @@ impl DocumentService {
         let new_doc = Doc::new();
         
         // Apply updates to the new document
-        let result = update_ops::apply_updates(new_doc.clone(), &self.doc_id, updates)?;
+        let result = UpdateOperations::apply_updates(new_doc.clone(), &self.doc_id, updates)?;
         
         // Replace the current document with the new one
         self.doc = new_doc;
@@ -131,7 +132,7 @@ impl DocumentService {
         let txn = doc.transact();
         
         // Extract document state through specialized function
-        let state = update_ops::extract_document_state(&txn, root, &self.doc_id)?;
+        let state = UpdateOperations::extract_document_state(&txn, root, &self.doc_id)?;
         
         log_info!("get_document_state: Finished for doc_id: {}", self.doc_id);
         Ok(state)

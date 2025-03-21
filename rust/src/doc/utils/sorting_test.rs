@@ -6,7 +6,7 @@ fn main() {
 mod tests {
     use std::collections::HashMap;
 
-    use crate::doc::{ document_types::BlockDoc, utils::document_impl::DocumentServiceImpl };
+    use crate::doc::{ document_types::BlockDoc, utils::{ sorting::ChainSorting} };
 
     // Helper to create a test block
     fn create_test_block(
@@ -61,7 +61,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = DocumentServiceImpl::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
 
         // Verify: blocks should be grouped by device
         // Either [a1, a2, b1, b2] or [b1, b2, a1, a2] depending on which device sorts first
@@ -123,7 +123,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = DocumentServiceImpl::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
 
         // Verify: blocks should follow prev_id chain (a1, a2, a3)
         let sorted_root = &sorted["root"];
@@ -171,7 +171,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = DocumentServiceImpl::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
         let sorted_root = &sorted["root"];
 
         // Verify:
@@ -245,7 +245,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = DocumentServiceImpl::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
         let sorted_root = &sorted["root"];
 
         // Verify all blocks are present
@@ -283,7 +283,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = DocumentServiceImpl::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
         let sorted_root = &sorted["root"];
 
         // Verify:
@@ -344,7 +344,7 @@ mod tests {
         );
 
         // Sort blocks using the new chain-based algorithm
-        let sorted = DocumentServiceImpl::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
         let sorted_root = &sorted["root"];
 
         // Verify:
@@ -546,7 +546,7 @@ mod tests {
         );
 
         // Sort blocks using the chain-based algorithm
-        let sorted = DocumentServiceImpl::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
 
         // Verify root level sorting
         let sorted_root = &sorted["root"];

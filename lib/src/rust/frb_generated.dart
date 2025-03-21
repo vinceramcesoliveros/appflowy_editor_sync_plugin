@@ -5,7 +5,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'doc/document.dart';
 import 'doc/document_types.dart';
 import 'frb_generated.dart';
 import 'frb_generated.io.dart'
@@ -63,7 +62,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.8.0';
 
   @override
-  int get rustContentHash => 738991356;
+  int get rustContentHash => -747406107;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -74,46 +73,9 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<Uint8List> crateDocDocumentDocumentServiceApplyAction({
-    required DocumentService that,
-    required List<BlockActionDoc> actions,
-    required FutureOr<String> Function(String, String) diffDeltas,
-  });
-
-  Future<FailedToDecodeUpdates> crateDocDocumentDocumentServiceApplyUpdates({
-    required DocumentService that,
-    required List<(String, Uint8List)> update,
-  });
-
-  Future<DocumentState> crateDocDocumentDocumentServiceGetDocumentJson({
-    required DocumentService that,
-  });
-
-  Future<Uint8List> crateDocDocumentDocumentServiceInitEmptyDoc({
-    required DocumentService that,
-  });
-
-  Future<Uint8List> crateDocDocumentDocumentServiceMergeUpdates({
-    required DocumentService that,
-    required List<Uint8List> updates,
-  });
-
-  Future<DocumentService> crateDocDocumentDocumentServiceNew({
-    required String docId,
-  });
-
-  Future<ConcurrentAccessError> crateDocDocumentTypesConcurrentAccessErrorNew({
+  Future<CustomRustError> crateDocDocumentTypesCustomRustErrorNew({
     required String message,
   });
-
-  RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_DocumentService;
-
-  RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_DocumentService;
-
-  CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_DocumentServicePtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -125,235 +87,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<Uint8List> crateDocDocumentDocumentServiceApplyAction({
-    required DocumentService that,
-    required List<BlockActionDoc> actions,
-    required FutureOr<String> Function(String, String) diffDeltas,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-            that,
-            serializer,
-          );
-          sse_encode_list_block_action_doc(actions, serializer);
-          sse_encode_DartFn_Inputs_String_String_Output_String_AnyhowException(
-            diffDeltas,
-            serializer,
-          );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 1,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_prim_u_8_strict,
-          decodeErrorData: sse_decode_concurrent_access_error,
-        ),
-        constMeta: kCrateDocDocumentDocumentServiceApplyActionConstMeta,
-        argValues: [that, actions, diffDeltas],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateDocDocumentDocumentServiceApplyActionConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentService_apply_action",
-        argNames: ["that", "actions", "diffDeltas"],
-      );
-
-  @override
-  Future<FailedToDecodeUpdates> crateDocDocumentDocumentServiceApplyUpdates({
-    required DocumentService that,
-    required List<(String, Uint8List)> update,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-            that,
-            serializer,
-          );
-          sse_encode_list_record_string_list_prim_u_8_strict(
-            update,
-            serializer,
-          );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 2,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_failed_to_decode_updates,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateDocDocumentDocumentServiceApplyUpdatesConstMeta,
-        argValues: [that, update],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateDocDocumentDocumentServiceApplyUpdatesConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentService_apply_updates",
-        argNames: ["that", "update"],
-      );
-
-  @override
-  Future<DocumentState> crateDocDocumentDocumentServiceGetDocumentJson({
-    required DocumentService that,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-            that,
-            serializer,
-          );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 3,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_document_state,
-          decodeErrorData: sse_decode_concurrent_access_error,
-        ),
-        constMeta: kCrateDocDocumentDocumentServiceGetDocumentJsonConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateDocDocumentDocumentServiceGetDocumentJsonConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentService_get_document_json",
-        argNames: ["that"],
-      );
-
-  @override
-  Future<Uint8List> crateDocDocumentDocumentServiceInitEmptyDoc({
-    required DocumentService that,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-            that,
-            serializer,
-          );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 4,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_prim_u_8_strict,
-          decodeErrorData: sse_decode_concurrent_access_error,
-        ),
-        constMeta: kCrateDocDocumentDocumentServiceInitEmptyDocConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateDocDocumentDocumentServiceInitEmptyDocConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentService_init_empty_doc",
-        argNames: ["that"],
-      );
-
-  @override
-  Future<Uint8List> crateDocDocumentDocumentServiceMergeUpdates({
-    required DocumentService that,
-    required List<Uint8List> updates,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-            that,
-            serializer,
-          );
-          sse_encode_list_list_prim_u_8_strict(updates, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 5,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_prim_u_8_strict,
-          decodeErrorData: sse_decode_concurrent_access_error,
-        ),
-        constMeta: kCrateDocDocumentDocumentServiceMergeUpdatesConstMeta,
-        argValues: [that, updates],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateDocDocumentDocumentServiceMergeUpdatesConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentService_merge_updates",
-        argNames: ["that", "updates"],
-      );
-
-  @override
-  Future<DocumentService> crateDocDocumentDocumentServiceNew({
-    required String docId,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(docId, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 6,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData:
-              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateDocDocumentDocumentServiceNewConstMeta,
-        argValues: [docId],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateDocDocumentDocumentServiceNewConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentService_new",
-        argNames: ["docId"],
-      );
-
-  @override
-  Future<ConcurrentAccessError> crateDocDocumentTypesConcurrentAccessErrorNew({
+  Future<CustomRustError> crateDocDocumentTypesCustomRustErrorNew({
     required String message,
   }) {
     return handler.executeNormal(
@@ -364,118 +98,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 1,
             port: port_,
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_concurrent_access_error,
+          decodeSuccessData: sse_decode_custom_rust_error,
           decodeErrorData: null,
         ),
-        constMeta: kCrateDocDocumentTypesConcurrentAccessErrorNewConstMeta,
+        constMeta: kCrateDocDocumentTypesCustomRustErrorNewConstMeta,
         argValues: [message],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateDocDocumentTypesConcurrentAccessErrorNewConstMeta =>
+  TaskConstMeta get kCrateDocDocumentTypesCustomRustErrorNewConstMeta =>
       const TaskConstMeta(
-        debugName: "concurrent_access_error_new",
+        debugName: "custom_rust_error_new",
         argNames: ["message"],
       );
-
-  Future<void> Function(int, dynamic, dynamic)
-  encode_DartFn_Inputs_String_String_Output_String_AnyhowException(
-    FutureOr<String> Function(String, String) raw,
-  ) {
-    return (callId, rawArg0, rawArg1) async {
-      final arg0 = dco_decode_String(rawArg0);
-      final arg1 = dco_decode_String(rawArg1);
-
-      Box<String>? rawOutput;
-      Box<AnyhowException>? rawError;
-      try {
-        rawOutput = Box(await raw(arg0, arg1));
-      } catch (e, s) {
-        rawError = Box(AnyhowException("$e\n\n$s"));
-      }
-
-      final serializer = SseSerializer(generalizedFrbRustBinding);
-      assert((rawOutput != null) ^ (rawError != null));
-      if (rawOutput != null) {
-        serializer.buffer.putUint8(0);
-        sse_encode_String(rawOutput.value, serializer);
-      } else {
-        serializer.buffer.putUint8(1);
-        sse_encode_AnyhowException(rawError!.value, serializer);
-      }
-      final output = serializer.intoRaw();
-
-      generalizedFrbRustBinding.dartFnDeliverOutput(
-        callId: callId,
-        ptr: output.ptr,
-        rustVecLen: output.rustVecLen,
-        dataLen: output.dataLen,
-      );
-    };
-  }
-
-  RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_DocumentService =>
-      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService;
-
-  RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_DocumentService =>
-      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService;
-
-  @protected
-  AnyhowException dco_decode_AnyhowException(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return AnyhowException(raw as String);
-  }
-
-  @protected
-  DocumentService
-  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  DocumentService
-  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  DocumentService
-  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  FutureOr<String> Function(String, String)
-  dco_decode_DartFn_Inputs_String_String_Output_String_AnyhowException(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    throw UnimplementedError('');
-  }
-
-  @protected
-  Object dco_decode_DartOpaque(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return decodeDartOpaque(raw, generalizedFrbRustBinding);
-  }
 
   @protected
   Map<String, String> dco_decode_Map_String_String(dynamic raw) {
@@ -505,15 +147,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         raw,
       ).map((e) => MapEntry(e.$1, e.$2)),
     );
-  }
-
-  @protected
-  DocumentService
-  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -560,12 +193,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ConcurrentAccessError dco_decode_concurrent_access_error(dynamic raw) {
+  CustomRustError dco_decode_custom_rust_error(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
     if (arr.length != 1)
       throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return ConcurrentAccessError(message: dco_decode_String(arr[0]));
+    return CustomRustError(message: dco_decode_String(arr[0]));
   }
 
   @protected
@@ -599,27 +232,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  PlatformInt64 dco_decode_isize(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeI64(raw);
-  }
-
-  @protected
   List<String> dco_decode_list_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_String).toList();
-  }
-
-  @protected
-  List<BlockActionDoc> dco_decode_list_block_action_doc(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_block_action_doc).toList();
-  }
-
-  @protected
-  List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_list_prim_u_8_strict).toList();
   }
 
   @protected
@@ -641,16 +256,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>)
         .map(dco_decode_record_string_block_doc)
-        .toList();
-  }
-
-  @protected
-  List<(String, Uint8List)> dco_decode_list_record_string_list_prim_u_8_strict(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>)
-        .map(dco_decode_record_string_list_prim_u_8_strict)
         .toList();
   }
 
@@ -693,18 +298,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  (String, Uint8List) dco_decode_record_string_list_prim_u_8_strict(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) {
-      throw Exception('Expected 2 elements, got ${arr.length}');
-    }
-    return (dco_decode_String(arr[0]), dco_decode_list_prim_u_8_strict(arr[1]));
-  }
-
-  @protected
   (String, List<String>) dco_decode_record_string_list_string(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -743,62 +336,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BigInt dco_decode_usize(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeU64(raw);
-  }
-
-  @protected
-  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_String(deserializer);
-    return AnyhowException(inner);
-  }
-
-  @protected
-  DocumentService
-  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
-  DocumentService
-  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
-  DocumentService
-  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
-  Object sse_decode_DartOpaque(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_isize(deserializer);
-    return decodeDartOpaque(inner, generalizedFrbRustBinding);
-  }
-
-  @protected
   Map<String, String> sse_decode_Map_String_String(
     SseDeserializer deserializer,
   ) {
@@ -823,18 +360,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_record_string_list_string(deserializer);
     return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
-  }
-
-  @protected
-  DocumentService
-  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return DocumentServiceImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
   }
 
   @protected
@@ -890,12 +415,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ConcurrentAccessError sse_decode_concurrent_access_error(
-    SseDeserializer deserializer,
-  ) {
+  CustomRustError sse_decode_custom_rust_error(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_message = sse_decode_String(deserializer);
-    return ConcurrentAccessError(message: var_message);
+    return CustomRustError(message: var_message);
   }
 
   @protected
@@ -927,12 +450,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  PlatformInt64 sse_decode_isize(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getPlatformInt64();
-  }
-
-  @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -940,34 +457,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <String>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_String(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<BlockActionDoc> sse_decode_list_block_action_doc(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <BlockActionDoc>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_block_action_doc(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<Uint8List> sse_decode_list_list_prim_u_8_strict(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <Uint8List>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_list_prim_u_8_strict(deserializer));
     }
     return ans_;
   }
@@ -996,20 +485,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <(String, BlockDoc)>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_record_string_block_doc(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<(String, Uint8List)> sse_decode_list_record_string_list_prim_u_8_strict(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <(String, Uint8List)>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_record_string_list_prim_u_8_strict(deserializer));
     }
     return ans_;
   }
@@ -1077,16 +552,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  (String, Uint8List) sse_decode_record_string_list_prim_u_8_strict(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_field0 = sse_decode_String(deserializer);
-    var var_field1 = sse_decode_list_prim_u_8_strict(deserializer);
-    return (var_field0, var_field1);
-  }
-
-  @protected
   (String, List<String>) sse_decode_record_string_list_string(
     SseDeserializer deserializer,
   ) {
@@ -1124,90 +589,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BigInt sse_decode_usize(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getBigUint64();
-  }
-
-  @protected
   bool sse_decode_bool(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8() != 0;
-  }
-
-  @protected
-  void sse_encode_AnyhowException(
-    AnyhowException self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.message, serializer);
-  }
-
-  @protected
-  void
-  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    DocumentService self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as DocumentServiceImpl).frbInternalSseEncode(move: true),
-      serializer,
-    );
-  }
-
-  @protected
-  void
-  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    DocumentService self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as DocumentServiceImpl).frbInternalSseEncode(move: false),
-      serializer,
-    );
-  }
-
-  @protected
-  void
-  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    DocumentService self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as DocumentServiceImpl).frbInternalSseEncode(move: false),
-      serializer,
-    );
-  }
-
-  @protected
-  void sse_encode_DartFn_Inputs_String_String_Output_String_AnyhowException(
-    FutureOr<String> Function(String, String) self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_DartOpaque(
-      encode_DartFn_Inputs_String_String_Output_String_AnyhowException(self),
-      serializer,
-    );
-  }
-
-  @protected
-  void sse_encode_DartOpaque(Object self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_isize(
-      PlatformPointerUtil.ptrToPlatformInt64(
-        encodeDartOpaque(
-          self,
-          portManager.dartHandlerPort,
-          generalizedFrbRustBinding,
-        ),
-      ),
-      serializer,
-    );
   }
 
   @protected
@@ -1242,19 +626,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_record_string_list_string(
       self.entries.map((e) => (e.key, e.value)).toList(),
-      serializer,
-    );
-  }
-
-  @protected
-  void
-  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
-    DocumentService self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as DocumentServiceImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -1299,8 +670,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_concurrent_access_error(
-    ConcurrentAccessError self,
+  void sse_encode_custom_rust_error(
+    CustomRustError self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -1331,41 +702,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_isize(PlatformInt64 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putPlatformInt64(self);
-  }
-
-  @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_String(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_block_action_doc(
-    List<BlockActionDoc> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_block_action_doc(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_list_prim_u_8_strict(
-    List<Uint8List> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_list_prim_u_8_strict(item, serializer);
     }
   }
 
@@ -1398,18 +739,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_record_string_block_doc(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_record_string_list_prim_u_8_strict(
-    List<(String, Uint8List)> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_record_string_list_prim_u_8_strict(item, serializer);
     }
   }
 
@@ -1471,16 +800,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_record_string_list_prim_u_8_strict(
-    (String, Uint8List) self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.$1, serializer);
-    sse_encode_list_prim_u_8_strict(self.$2, serializer);
-  }
-
-  @protected
   void sse_encode_record_string_list_string(
     (String, List<String>) self,
     SseSerializer serializer,
@@ -1518,62 +837,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_usize(BigInt self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putBigUint64(self);
-  }
-
-  @protected
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
   }
-}
-
-@sealed
-class DocumentServiceImpl extends RustOpaque implements DocumentService {
-  // Not to be used by end users
-  DocumentServiceImpl.frbInternalDcoDecode(List<dynamic> wire)
-    : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  DocumentServiceImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_DocumentService,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_DocumentService,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_DocumentServicePtr,
-  );
-
-  Future<Uint8List> applyAction({
-    required List<BlockActionDoc> actions,
-    required FutureOr<String> Function(String, String) diffDeltas,
-  }) => RustLib.instance.api.crateDocDocumentDocumentServiceApplyAction(
-    that: this,
-    actions: actions,
-    diffDeltas: diffDeltas,
-  );
-
-  Future<FailedToDecodeUpdates> applyUpdates({
-    required List<(String, Uint8List)> update,
-  }) => RustLib.instance.api.crateDocDocumentDocumentServiceApplyUpdates(
-    that: this,
-    update: update,
-  );
-
-  Future<DocumentState> getDocumentJson() => RustLib.instance.api
-      .crateDocDocumentDocumentServiceGetDocumentJson(that: this);
-
-  Future<Uint8List> initEmptyDoc() => RustLib.instance.api
-      .crateDocDocumentDocumentServiceInitEmptyDoc(that: this);
-
-  Future<Uint8List> mergeUpdates({required List<Uint8List> updates}) =>
-      RustLib.instance.api.crateDocDocumentDocumentServiceMergeUpdates(
-        that: this,
-        updates: updates,
-      );
 }

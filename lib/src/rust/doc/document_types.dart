@@ -3,8 +3,6 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import 'package:appflowy_editor_sync_plugin/utils/uintlist_convertor.dart';
-
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
@@ -18,8 +16,8 @@ class BlockActionDoc with _$BlockActionDoc {
   const factory BlockActionDoc({
     required BlockActionTypeDoc action,
     required BlockDoc block,
-    @Uint32ListConverter() required Uint32List path,
-    @Uint32ListConverter() Uint32List? oldPath,
+    required Uint32List path,
+    Uint32List? oldPath,
   }) = _BlockActionDoc;
 
   factory BlockActionDoc.fromJson(Map<String, dynamic> json) =>
@@ -44,14 +42,14 @@ class BlockDoc with _$BlockDoc {
       _$BlockDocFromJson(json);
 }
 
-class ConcurrentAccessError implements FrbException {
+class CustomRustError {
   final String message;
 
-  const ConcurrentAccessError({required this.message});
+  const CustomRustError({required this.message});
 
   // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
-  static Future<ConcurrentAccessError> newInstance({required String message}) =>
-      RustLib.instance.api.crateDocDocumentTypesConcurrentAccessErrorNew(
+  static Future<CustomRustError> newInstance({required String message}) =>
+      RustLib.instance.api.crateDocDocumentTypesCustomRustErrorNew(
         message: message,
       );
 
@@ -61,7 +59,7 @@ class ConcurrentAccessError implements FrbException {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConcurrentAccessError &&
+      other is CustomRustError &&
           runtimeType == other.runtimeType &&
           message == other.message;
 }

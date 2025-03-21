@@ -120,62 +120,7 @@ impl Conversion {
         json_deltas.map(Value::Array)
     }
 
-    /// Convert a Yrs map to a BlockDoc
-    pub fn map_to_block_doc<T: ReadTxn>(
-        txn: &T, 
-        map: &Map,
-        id: &str
-    ) -> Result<BlockDoc, CustomRustError> {
-        let mut attributes = HashMap::new();
-        
-        // Extract attributes if they exist
-        if let Some(attrs_map) = map.get_map(ATTRIBUTES) {
-            for (k, v) in attrs_map.iter(txn) {
-                attributes.insert(k.to_string(), v.to_string(txn));
-            }
-        }
-        
-        // Extract delta if text exists
-        let delta = if let Some(text) = map.get_text(TEXT) {
-            let deltas = text.delta(txn);
-            let json_deltas = Self::deltas_to_json(txn, deltas)?;
-            Some(serde_json::to_string(&json_deltas).map_err(|e| {
-                DocError::EncodingError(format!("Failed to serialize delta: {}", e))
-            })?)
-        } else {
-            None
-        };
-        
-        // Get block type
-        let ty = map.get(TYPE)
-            .and_then(|v| match v {
-                yrs::Out::Any(YrsAny::String(s)) => Some(s.to_string()),
-                _ => None
-            })
-            .unwrap_or_default();
-        
-        // Get parent_id if it exists
-        let parent_id = map.get(PARENT_ID).and_then(|v| match v {
-            yrs::Out::Any(YrsAny::String(s)) => Some(s.to_string()),
-            _ => None
-        });
-        
-        // Get prev_id if it exists
-        let prev_id = map.get(PREV_ID).and_then(|v| match v {
-            yrs::Out::Any(YrsAny::String(s)) => Some(s.to_string()),
-            _ => None
-        });
-        
-        Ok(BlockDoc {
-            id: id.to_string(),
-            ty,
-            attributes,
-            delta,
-            parent_id,
-            prev_id,
-            old_parent_id: None,
-        })
-    }
+    
 
     /// Convert a document tree to JSON
     pub fn document_to_json(doc_state: &DocumentState) -> Result<Value, CustomRustError> {
@@ -229,92 +174,8 @@ impl Conversion {
         Ok(Value::Object(doc_json))
     }
 
-    /// Extract strings from array for building children lists
-    pub fn array_to_string_vec<T: ReadTxn>(txn: &T, array: &Array) -> Vec<String> {
-        array.iter(txn)
-            .map(|item| item.to_string(txn))
-            .collect()
-    }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use yrs::{Doc, Map, Text, ArrayRef, MapRef, TextRef, TransactionMut};
 
-    #[test]
-    fn test_json_conversion_roundtrip() {
-        // Test that JSON conversion is reversible
-        let original_value = json!({
-            "string": "hello",
-            "number": 42,
-            "bool": true,
-            "null": null,
-            "object": {
-                "nested_key": "nested_value"
-            },
-            "array": ["one", "two"]
-        });
-        
-        // Convert to Yrs Any
-        let yrs_any = Conversion::json_to_yrs_any(&original_value);
-        
-        // Convert back to JSON
-        let roundtrip_value = Conversion::yrs_any_to_json(&yrs_any);
-        
-        // Compare (ignoring some precision issues with floating point)
-        assert_eq!(original_value.to_string(), roundtrip_value.to_string());
-    }
 
-    #[test]
-    fn test_map_to_block_doc() {
-        let doc = Doc::new();
-        let mut txn = doc.transact_mut();
-        
-        // Create a test block map
-        let block_map = doc.get_or_create_map("test_block");
-        block_map.insert(&mut txn, ID, "block1");
-        block_map.insert(&mut txn, TYPE, "paragraph");
-        block_map.insert(&mut txn, PARENT_ID, "parent1");
-        block_map.insert(&mut txn, PREV_ID, "prev1");
-        
-        // Add attributes
-        let attrs_map = block_map.get_or_create_map(ATTRIBUTES);
-        attrs_map.insert(&mut txn, "align", "center");
-        attrs_map.insert(&mut txn, "bold", true);
-        
-        // Add text
-        let text = block_map.get_or_create_text(TEXT);
-        text.insert(&mut txn, 0, "Hello, world!");
-        
-        // Convert to BlockDoc
-        let block_doc = Conversion::map_to_block_doc(&txn, &block_map, "block1").unwrap();
-        
-        // Verify conversion
-        assert_eq!(block_doc.id, "block1");
-        assert_eq!(block_doc.ty, "paragraph");
-        assert_eq!(block_doc.parent_id, Some("parent1".to_string()));
-        assert_eq!(block_doc.prev_id, Some("prev1".to_string()));
-        assert_eq!(block_doc.attributes.get("align").unwrap(), "center");
-        assert_eq!(block_doc.attributes.get("bold").unwrap(), "true");
-        assert!(block_doc.delta.is_some());
-    }
 
-    #[test]
-    fn test_array_to_string_vec() {
-        let doc = Doc::new();
-        let mut txn = doc.transact_mut();
-        
-        // Create a test array
-        let array = doc.get_or_create_array("test_array");
-        array.push_back(&mut txn, "item1");
-        array.push_back(&mut txn, "item2");
-        array.push_back(&mut txn, "item3");
-        
-        // Convert to string vec
-        let strings = Conversion::array_to_string_vec(&txn, &array);
-        
-        // Verify conversion
-        assert_eq!(strings, vec!["item1", "item2", "item3"]);
-    }
-}
