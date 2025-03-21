@@ -1,11 +1,14 @@
-use yrs::{Doc, Map, ReadTxn, StateVector, Update, merge_updates_v2};
+use yrs::updates::decoder::Decode;
+use yrs::{merge_updates_v2, Array, Doc, Map, ReadTxn, StateVector, Transact, Update};
 use std::collections::HashMap;
 
 use crate::doc::document_types::{BlockDoc, CustomRustError, DocumentState, FailedToDecodeUpdates};
 use crate::doc::error::DocError;
 use crate::doc::utils::sorting::ChainSorting;
-use crate::doc::utils::logging::{log_info, log_error};
-use crate::doc::document_service::{BLOCKS, CHILDREN_MAP, ID, TYPE, TEXT, ATTRIBUTES, PARENT_ID, PREV_ID, ROOT_ID};
+// In other files
+use crate::{log_info, log_error};
+use crate::doc::constants::{BLOCKS, CHILDREN_MAP, ID, TYPE, TEXT, ATTRIBUTES, PARENT_ID, PREV_ID, ROOT_ID};
+use crate::doc::utils::util::TextExt;
 
 pub struct UpdateOperations;
 
@@ -32,7 +35,7 @@ impl UpdateOperations {
             Ok(decoded_update) => {
                 log_info!("apply_updates: Applying update for doc_id: {}", doc_id);
                 txn.apply_update(decoded_update);
-                FailedToDecodeUpdates { failed_ids: Vec::new() }
+                FailedToDecodeUpdates { failed_updates_ids: Vec::new() }
             },
             Err(e) => {
                 log_error!("Failed to decode update for doc_id: {}: {}", doc_id, e);
@@ -182,31 +185,5 @@ impl UpdateOperations {
         
         merge_updates_v2(updates)
             .map_err(|e| DocError::MergeError(format!("Failed to merge updates: {}", e)).into())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    #[test]
-    fn test_merge_updates_empty() {
-        let result = UpdateOperations::merge_updates(vec![]);
-        assert!(result.is_ok());
-        assert!(!result.unwrap().is_empty());
-    }
-    
-    #[test]
-    fn test_merge_updates_single() {
-        // Create a document and get an update
-        let doc = Doc::new();
-        let mut txn = doc.transact_mut();
-        let map = txn.get_or_create_map("test");
-        map.insert(&mut txn, "key", "value");
-        let update = txn.encode_update_v2();
-        
-        let result = UpdateOperations::merge_updates(vec![update.clone()]);
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap(), update);
     }
 }

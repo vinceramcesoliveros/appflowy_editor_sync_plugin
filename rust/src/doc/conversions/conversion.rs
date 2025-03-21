@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 use serde_json::{Value, Map as JsonMap, json};
-use yrs::{Any as YrsAny, Delta, ReadTxn, Map, Array};
+use yrs::{Any as YrsAny, types::Delta, ReadTxn, Map, Array};
 
 use crate::doc::document_types::{BlockDoc, DocumentState};
 use crate::doc::constants::{ID, TYPE, PARENT_ID, PREV_ID, TEXT, ATTRIBUTES};

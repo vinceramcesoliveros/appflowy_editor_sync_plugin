@@ -9,6 +9,9 @@ pub enum DocError {
     ValidationError(String),
     StateError(String),
     BlockNotFound(String),
+    MergeError(String),
+    UpdateDecodingFailed(String),
+    StateEncodingFailed(String),
 }
 
 impl fmt::Display for DocError {
@@ -20,6 +23,9 @@ impl fmt::Display for DocError {
             Self::ValidationError(msg) => write!(f, "Validation error: {}", msg),
             Self::StateError(msg) => write!(f, "State error: {}", msg),
             Self::BlockNotFound(msg) => write!(f, "Block not found: {}", msg),
+            Self::MergeError(msg) => write!(f, "Merge error: {}", msg),
+            Self::UpdateDecodingFailed(msg) => write!(f, "Update decoding failed: {}", msg),
+            Self::StateEncodingFailed(msg) => write!(f, "State encoding failed: {}", msg),
         }
     }
 }

@@ -1,13 +1,15 @@
 use flutter_rust_bridge::DartFnFuture;
 use log::info;
 use std::sync::Arc;
-use yrs::{Map, MapPrelim, MapRef, ReadTxn, TextRef, TransactionMut, ArrayRef};
+use yrs::{Array, ArrayRef, Map, MapPrelim, MapRef, ReadTxn, TextRef, TransactionMut};
 
-use crate::doc::document_service::{ATTRIBUTES, DEFAULT_PARENT, ID, PARENT_ID, PREV_ID, TEXT, TYPE};
+use crate::doc::constants::{ATTRIBUTES, DEFAULT_PARENT, ID, PARENT_ID, PREV_ID, TEXT, TYPE};
 use crate::doc::document_types::{BlockActionDoc, CustomRustError};
 use crate::doc::error::DocError;
 use crate::doc::operations::delta_ops::DeltaOperations;
-use crate::doc::utils::logging::log_info;
+use crate::doc::utils::util::MapExt;
+
+use crate::{log_info, log_error};
 
 pub struct BlockOperations;
 
@@ -55,7 +57,7 @@ impl BlockOperations {
             let parent_children = children_map.get_or_init_array(txn, parent_id.clone());
             let node_index = *action.path.last().unwrap_or(&0);
             
-            if node_index as usize > parent_children.len(txn) {
+            if node_index > parent_children.len(txn) {
                 parent_children.push_back(txn, block_id.clone());
             } else {
                 parent_children.insert(txn, node_index, block_id.clone());
@@ -113,8 +115,10 @@ impl BlockOperations {
         // Remove from parent's children array
         if parent_id != DEFAULT_PARENT {
             let parent_children = children_map.get_or_init_array(txn, parent_id);
+            let parent_children_clone = parent_children.clone();
+            
             if let Some(index) = Self::find_block_index(txn, parent_children, block_id) {
-                parent_children.remove(txn, index);
+                parent_children_clone.remove(txn, index);
             }
         }
         

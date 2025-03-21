@@ -2,14 +2,16 @@ use flutter_rust_bridge::DartFnFuture;
 use futures::executor::block_on;
 use log::{info, error};
 use serde_json::{Value, Map as JsonMap};
+use yrs::Text;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use yrs::{Delta, ReadTxn, TextRef, TransactionMut};
+use yrs::{types::Delta, ReadTxn, TextRef, TransactionMut};
 
 use crate::doc::document_types::CustomRustError;
 use crate::doc::error::DocError;
-use crate::doc::utils::logging::{log_info, log_error};
+use crate::doc::utils::util::TextExt;
+use crate::{log_info, log_error};
 
 // Constants for delta operations
 pub const INSERT: &str = "insert";
@@ -77,7 +79,7 @@ impl DeltaOperations {
         d: &HashMap<String, Value>, 
         cursor_pos: &mut u32,
         current_len: &mut u32
-    ) -> Result<Delta, CustomRustError> {
+    ) -> Result<Delta<String>, CustomRustError> {
         if d.contains_key(INSERT) {
             // Handle insert operation
             let insert = d.get(INSERT)
@@ -94,7 +96,7 @@ impl DeltaOperations {
             *current_len += insert_len;
             *cursor_pos += insert_len;
             
-            Ok(Delta::Inserted(insert.to_string(), attributes))
+            Ok(Delta::Inserted(insert.to_string().into(), attributes))
             
         } else if d.contains_key(RETAIN) {
             // Handle retain operation

@@ -1,7 +1,15 @@
 /// flutter_rust_bridge:ignore
-mod util;
+pub mod util;
 /// flutter_rust_bridge:ignore
 pub mod document_impl;
 
 /// flutter_rust_bridge:ignore
 pub mod sorting_test;
+
+
+/// flutter_rust_bridge:ignore
+pub mod sorting;
+
+
+/// flutter_rust_bridge:ignore
+pub mod logging;
