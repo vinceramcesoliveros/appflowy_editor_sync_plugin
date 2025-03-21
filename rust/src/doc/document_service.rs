@@ -11,13 +11,15 @@ use crate::doc::utils::util::MapExt;
 use crate::{log_info, log_error};
 
 
-#[frb(ignore)]
+#[frb]
 pub struct DocumentService {
     doc: Doc,
     doc_id: String,
 }
 
 impl DocumentService {
+
+    #[frb]
     pub fn new(doc_id: String) -> Self {
         log_info!("Creating new document service for doc_id: {}", doc_id);
         Self { doc_id, doc: Doc::new() }
@@ -25,7 +27,8 @@ impl DocumentService {
 
     #[no_mangle]
     #[inline(never)]
-    pub fn init_empty_doc_inner(&mut self) -> Result<Vec<u8>, CustomRustError> {
+    #[frb]
+    pub fn init_empty_doc(&mut self) -> Result<Vec<u8>, CustomRustError> {
         log_info!("init_empty_doc: Starting for doc_id: {}", self.doc_id);
         
         // Get a reference to the document
@@ -50,7 +53,8 @@ impl DocumentService {
 
     #[no_mangle]
     #[inline(never)]
-    pub fn apply_action_inner(
+    #[frb]
+    pub fn apply_action(
         &mut self,
         actions: Vec<BlockActionDoc>,
         diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
@@ -106,14 +110,15 @@ impl DocumentService {
 
     #[no_mangle]
     #[inline(never)]
-    pub fn apply_updates_inner(&mut self, updates: Vec<(String, Vec<u8>)>) -> Result<FailedToDecodeUpdates, CustomRustError> {
+    #[frb]
+    pub fn apply_updates(&mut self, updates: Vec<(String, Vec<u8>)>) -> Result<FailedToDecodeUpdates, CustomRustError> {
         log_info!("apply_updates: Starting with {} updates for doc_id: {}", updates.len(), self.doc_id);
         
         // Create a new document to apply updates to
         let new_doc = Doc::new();
         
         // Apply updates to the new document
-        let result = UpdateOperations::apply_updates(new_doc.clone(), &self.doc_id, updates)?;
+        let result = UpdateOperations::apply_updates_inner(new_doc.clone(), &self.doc_id, updates)?;
         
         // Replace the current document with the new one
         self.doc = new_doc;
@@ -124,6 +129,7 @@ impl DocumentService {
 
     #[no_mangle]
     #[inline(never)]
+    #[frb]
     pub fn get_document_state(&self) -> Result<DocumentState, CustomRustError> {
         log_info!("get_document_state: Starting for doc_id: {}", self.doc_id);
         
@@ -139,7 +145,7 @@ impl DocumentService {
     }
 
     #[frb]
-    pub fn merge_updates_inner(&self, updates: Vec<Vec<u8>>) -> Result<Vec<u8>, CustomRustError> {
+    pub fn merge_updates(&self, updates: Vec<Vec<u8>>) -> Result<Vec<u8>, CustomRustError> {
         log_info!("merge_updates: Merging {} updates", updates.len());
         
         match merge_updates_v2(updates) {

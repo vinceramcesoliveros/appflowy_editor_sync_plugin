@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 
 /// Defines the required database operations for document synchronization
-class SyncDBAttributes {
+class SyncAttributes {
   /// Stream that emits database updates when they occur
   /// Used for real-time monitoring of changes to sync state
   final Stream<List<DbUpdate>> getUpdatesStream;
@@ -24,7 +24,7 @@ class SyncDBAttributes {
   /// Returns a list of tuples containing update ID and binary update data
   final Future<List<(String, Uint8List)>> Function() getUpdates;
 
-  SyncDBAttributes({
+  SyncAttributes({
     required this.getUpdatesStream,
     required this.getRootNodeId,
     required this.saveRootNodeId,

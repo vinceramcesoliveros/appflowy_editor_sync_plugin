@@ -23,7 +23,9 @@ BlockActionDoc _$BlockActionDocFromJson(Map<String, dynamic> json) {
 mixin _$BlockActionDoc {
   BlockActionTypeDoc get action => throw _privateConstructorUsedError;
   BlockDoc get block => throw _privateConstructorUsedError;
+  @Uint32ListConverter()
   Uint32List get path => throw _privateConstructorUsedError;
+  @Uint32ListConverter()
   Uint32List? get oldPath => throw _privateConstructorUsedError;
 
   /// Serializes this BlockActionDoc to a JSON map.
@@ -46,8 +48,8 @@ abstract class $BlockActionDocCopyWith<$Res> {
   $Res call({
     BlockActionTypeDoc action,
     BlockDoc block,
-    Uint32List path,
-    Uint32List? oldPath,
+    @Uint32ListConverter() Uint32List path,
+    @Uint32ListConverter() Uint32List? oldPath,
   });
 
   $BlockDocCopyWith<$Res> get block;
@@ -123,8 +125,8 @@ abstract class _$$BlockActionDocImplCopyWith<$Res>
   $Res call({
     BlockActionTypeDoc action,
     BlockDoc block,
-    Uint32List path,
-    Uint32List? oldPath,
+    @Uint32ListConverter() Uint32List path,
+    @Uint32ListConverter() Uint32List? oldPath,
   });
 
   @override
@@ -183,8 +185,8 @@ class _$BlockActionDocImpl implements _BlockActionDoc {
   const _$BlockActionDocImpl({
     required this.action,
     required this.block,
-    required this.path,
-    this.oldPath,
+    @Uint32ListConverter() required this.path,
+    @Uint32ListConverter() this.oldPath,
   });
 
   factory _$BlockActionDocImpl.fromJson(Map<String, dynamic> json) =>
@@ -195,8 +197,10 @@ class _$BlockActionDocImpl implements _BlockActionDoc {
   @override
   final BlockDoc block;
   @override
+  @Uint32ListConverter()
   final Uint32List path;
   @override
+  @Uint32ListConverter()
   final Uint32List? oldPath;
 
   @override
@@ -246,8 +250,8 @@ abstract class _BlockActionDoc implements BlockActionDoc {
   const factory _BlockActionDoc({
     required final BlockActionTypeDoc action,
     required final BlockDoc block,
-    required final Uint32List path,
-    final Uint32List? oldPath,
+    @Uint32ListConverter() required final Uint32List path,
+    @Uint32ListConverter() final Uint32List? oldPath,
   }) = _$BlockActionDocImpl;
 
   factory _BlockActionDoc.fromJson(Map<String, dynamic> json) =
@@ -258,8 +262,10 @@ abstract class _BlockActionDoc implements BlockActionDoc {
   @override
   BlockDoc get block;
   @override
+  @Uint32ListConverter()
   Uint32List get path;
   @override
+  @Uint32ListConverter()
   Uint32List? get oldPath;
 
   /// Create a copy of BlockActionDoc

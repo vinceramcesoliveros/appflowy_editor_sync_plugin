@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:appflowy_editor_sync_plugin/appflowy_editor_sync_plugin.dart';
+import 'package:flutter/material.dart';
 
 Future<void> main() async {
-  await RustLib.init();
+  await initAppFlowyEditorSync();
   runApp(const MyApp());
 }
 

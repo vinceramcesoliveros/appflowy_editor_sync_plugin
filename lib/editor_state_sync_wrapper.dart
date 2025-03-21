@@ -13,9 +13,9 @@ import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 class EditorStateSyncWrapper {
-  EditorStateSyncWrapper({required this.syncDBAttributes});
+  EditorStateSyncWrapper({required this.syncAttributes});
 
-  final SyncDBAttributes syncDBAttributes;
+  final SyncAttributes syncAttributes;
 
   late final DocumentServiceWrapper docService;
   late final DocumentSyncDB syncDB;
@@ -33,7 +33,7 @@ class EditorStateSyncWrapper {
     initializer = DocumentInitializer(documentService: docService);
     syncDB = DocumentSyncDB(
       docService: docService,
-      syncDBAttributes: syncDBAttributes,
+      syncAttributes: syncAttributes,
     );
 
     editorStateWrapper = await _init();

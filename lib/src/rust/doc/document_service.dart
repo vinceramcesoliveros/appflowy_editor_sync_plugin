@@ -15,16 +15,18 @@ abstract class DocumentService implements RustOpaqueInterface {
   });
 
   Future<FailedToDecodeUpdates> applyUpdates({
-    required List<(String, Uint8List)> update,
+    required List<(String, Uint8List)> updates,
   });
 
-  Future<DocumentState> getDocumentJson();
+  Future<DocumentState> getDocumentState();
 
   Future<Uint8List> initEmptyDoc();
 
   Future<Uint8List> mergeUpdates({required List<Uint8List> updates});
 
   // HINT: Make it `#[frb(sync)]` to let it become the default constructor of Dart class.
-  static Future<DocumentService> newInstance({required String docId}) =>
-      RustLib.instance.api.crateDocDocumentDocumentServiceNew(docId: docId);
+  static Future<DocumentService> newInstance({required String docId}) => RustLib
+      .instance
+      .api
+      .crateDocDocumentServiceDocumentServiceNew(docId: docId);
 }

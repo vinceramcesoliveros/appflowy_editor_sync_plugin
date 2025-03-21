@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/diff_deltas.dart';
-import 'package:appflowy_editor_sync_plugin/src/rust/doc/document.dart';
+import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_service.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mutex/mutex.dart'; // Import the mutex library
@@ -58,7 +58,7 @@ class DocumentServiceWrapper {
   }) async {
     try {
       await _mutex.acquire();
-      final res = await _rustService.applyUpdates(update: update);
+      final res = await _rustService.applyUpdates(updates: update);
       return Option.of(res);
     } catch (e) {
       print('Failed to apply updates: $e');
@@ -72,7 +72,7 @@ class DocumentServiceWrapper {
   Future<DocumentState> getDocumentJson() async {
     try {
       await _mutex.acquire();
-      return await _rustService.getDocumentJson();
+      return await _rustService.getDocumentState();
     } catch (e) {
       throw Exception('Failed to get document JSON: $e');
     } finally {

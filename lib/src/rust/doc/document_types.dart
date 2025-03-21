@@ -3,9 +3,12 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import '../frb_generated.dart';
+import 'package:appflowy_editor_sync_plugin/utils/uintlist_convertor.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+
+import '../frb_generated.dart';
+
 part 'document_types.freezed.dart';
 part 'document_types.g.dart';
 
@@ -16,8 +19,8 @@ class BlockActionDoc with _$BlockActionDoc {
   const factory BlockActionDoc({
     required BlockActionTypeDoc action,
     required BlockDoc block,
-    required Uint32List path,
-    Uint32List? oldPath,
+    @Uint32ListConverter() required Uint32List path,
+    @Uint32ListConverter() Uint32List? oldPath,
   }) = _BlockActionDoc;
 
   factory BlockActionDoc.fromJson(Map<String, dynamic> json) =>
@@ -42,7 +45,7 @@ class BlockDoc with _$BlockDoc {
       _$BlockDocFromJson(json);
 }
 
-class CustomRustError {
+class CustomRustError implements FrbException {
   final String message;
 
   const CustomRustError({required this.message});

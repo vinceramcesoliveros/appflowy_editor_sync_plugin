@@ -14,7 +14,7 @@ pub struct UpdateOperations;
 
 impl UpdateOperations {
     /// Apply a list of updates to a document
-    pub fn apply_updates(
+    pub fn apply_updates_inner(
         doc: Doc,
         doc_id: &str,
         updates: Vec<(String, Vec<u8>)>

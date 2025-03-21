@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:appflowy_editor_sync_plugin/src/rust/doc/document.dart';
+import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_service.dart';
 
 /// Merges multiple document updates into a single update
 ///

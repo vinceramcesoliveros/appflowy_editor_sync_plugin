@@ -11,11 +11,11 @@ import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 class DocumentSyncDB {
-  DocumentSyncDB({required this.docService, required this.syncDBAttributes}) {
+  DocumentSyncDB({required this.docService, required this.syncAttributes}) {
     _initBatcher();
   }
   final DocumentServiceWrapper docService;
-  final SyncDBAttributes syncDBAttributes;
+  final SyncAttributes syncAttributes;
 
   late final syncId = Uuid().v4();
 
@@ -60,7 +60,7 @@ class DocumentSyncDB {
 
   //Get updates stream - that will combine updates from the DB with updates from the batcher
   Stream<(List<LocalUpdate>, List<DbUpdate>)> getAllUpdatesStream() {
-    final dbUpdatesStream = syncDBAttributes.getUpdatesStream;
+    final dbUpdatesStream = syncAttributes.getUpdatesStream;
 
     final batcherUpdatesStream = updatesBatcher.getAllItems();
 
@@ -83,16 +83,16 @@ class DocumentSyncDB {
   }
 
   Future<String?> getRootNodeId() async {
-    return syncDBAttributes.getRootNodeId();
+    return syncAttributes.getRootNodeId();
   }
 
   //Save root node id
   Future<void> saveRootNodeId(String rootNodeId) async {
-    syncDBAttributes.saveRootNodeId(rootNodeId);
+    syncAttributes.saveRootNodeId(rootNodeId);
   }
 
   Future<void> _addUpdateToDB(Uint8List update) async {
-    syncDBAttributes.saveUpdate(update);
+    syncAttributes.saveUpdate(update);
   }
 
   void addUpdate(LocalUpdate update) {
@@ -104,7 +104,7 @@ class DocumentSyncDB {
   }
 
   Future<List<(String, Uint8List)>> getUpdates() async {
-    return syncDBAttributes.getUpdates();
+    return syncAttributes.getUpdates();
   }
 
   String localUpdatesLastModificationId() {
