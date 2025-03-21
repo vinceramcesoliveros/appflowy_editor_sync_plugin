@@ -1,16 +1,18 @@
-# appflowy_editor_sync_plugin_example
+# What it is?
 
-Demonstrates how to use the appflowy_editor_sync_plugin plugin.
+It is a plugin for the Appflowy Editor that allows for synchronization of editor state across multiple devices. It uses the Yrs library, which is a CRDT (Conflict-free Replicated Data Type) library for Rust, to enable real-time collaboration and synchronization of content.
 
-## Getting Started
+# Example
 
-This project is a starting point for a Flutter application.
+The example demonstrates how to use the appflowy_editor_sync_plugin plugin in a Flutter application. It stores updates and data in Isar database.
 
-A few resources to get you started if this is your first Flutter project:
+//TODO: Include Isar DB inside the app - Create two models for Document and DocumentData
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+// Keep the user interface very simple. It should be just a Drawer with document names and option to add another document. On click on specific document it will open that document and allow editing it
+// On edit it will store updatesin the isar database to DocumentData (table?)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+// It neeed to implement the interfpace that the library requires\
+// It should use riverpod library for state management
+
+// It should use the appflowy_editor_sync_plugin library for synchronization
+// It should use appflowy_editor for editing
