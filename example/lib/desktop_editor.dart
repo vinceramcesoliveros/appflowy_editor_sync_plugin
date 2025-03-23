@@ -44,7 +44,6 @@ class _DesktopEditorState extends State<DesktopEditor> {
   @override
   void dispose() {
     editorScrollController.dispose();
-    editorState.dispose();
 
     super.dispose();
   }

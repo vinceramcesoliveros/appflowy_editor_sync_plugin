@@ -16,9 +16,8 @@ class EditorStateWrapper {
   //Add a factory method withDocument
   factory EditorStateWrapper.factoryFromDocumentState(
     DocumentState documentState,
-    String rootNode,
   ) {
-    final document = documentState.toDocument(rootNode);
+    final document = documentState.toDocument();
     if (document == null) {
       throw Exception('Document is null');
     }

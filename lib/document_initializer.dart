@@ -22,24 +22,33 @@ class DocumentInitializer {
       ),
     );
 
+    final setRootNodeIdUpdate = await documentService.setRootNodeId(
+      id: editorStateWrapper.rootNodeId,
+    );
+
+    //Combine applyingInitialOperationsUpdates and setRootNodeIdUpdate that
+    // are options
+
     return applyingInitialOperationsUpdates.match(
       () => (editorStateWrapper, [initEmptyDocUpdates]),
-      (updates) {
-        return (editorStateWrapper, [initEmptyDocUpdates, updates]);
-      },
+      (updates) => setRootNodeIdUpdate.match(
+        () => ((editorStateWrapper, [initEmptyDocUpdates, updates])),
+        (rootNodeUpdate) => (
+          editorStateWrapper,
+          [initEmptyDocUpdates, updates, rootNodeUpdate],
+        ),
+      ),
     );
   }
 
   Future<EditorStateWrapper> initDocumentWithUpdates(
     List<(String, Uint8List)> updates,
-    String rootNodeId,
   ) async {
     await documentService.applyUpdates(update: updates);
     final result = await documentService.getDocumentJson();
 
     final editorStateWrapper = EditorStateWrapper.factoryFromDocumentState(
       result,
-      rootNodeId,
     );
 
     return editorStateWrapper;

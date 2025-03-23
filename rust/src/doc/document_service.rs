@@ -1,6 +1,6 @@
 use flutter_rust_bridge::{frb, DartFnFuture};
 use log::{error, info};
-use yrs::{merge_updates_v2, Doc, ReadTxn, Transact};
+use yrs::{merge_updates_v2, Doc, Map, ReadTxn, Transact};
 
 use super::error::DocError;
 use super::operations::{block_ops::BlockOperations, delta_ops::DeltaOperations, update_ops::UpdateOperations};
@@ -159,4 +159,26 @@ impl DocumentService {
             }
         }
     }
+
+    #[no_mangle]
+    #[inline(never)]
+    #[frb]
+    /// Setting a root node id in the root map
+    pub fn set_root_node_id(&mut self, id: String) -> Result<Vec<u8>, CustomRustError> {
+        log_info!("set_root_node_id: Setting root node id to {}", id);
+        
+        let doc = &self.doc;
+        let root = doc.get_or_insert_map(ROOT_ID);
+        let mut txn = doc.transact_mut();
+        root.insert(&mut txn, ROOT_ID, id.clone());
+        log_info!("set_root_node_id: Successfully set root node id to {}", id);
+
+        // Encode the state as an update
+        let before_state = txn.before_state();
+        let update = txn.encode_diff_v2(before_state);
+        log_info!("set_root_node_id: Finished for doc_id: {}", self.doc_id);
+        Ok(update)
+    }
+
+
 }

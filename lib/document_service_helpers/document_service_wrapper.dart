@@ -52,6 +52,24 @@ class DocumentServiceWrapper {
     }
   }
 
+  /// Setting a root node id in the root map
+  Future<Option<Uint8List>> setRootNodeId({required String id}) async {
+    try {
+      // Acquire the mutex lock asynchronously
+      await _mutex.acquire();
+      final res = await _rustService.setRootNodeId(id: id);
+      return Option.of(res);
+    } catch (e) {
+      // Handle any errors from Rust, including ConcurrentAccessError
+
+      print('Failed to set root id: $e');
+      return const None();
+    } finally {
+      // Release the mutex lock
+      _mutex.release();
+    }
+  }
+
   @override
   Future<Option<FailedToDecodeUpdates>> applyUpdates({
     required List<(String, Uint8List)> update,

@@ -63,7 +63,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.8.0';
 
   @override
-  int get rustContentHash => -1958630229;
+  int get rustContentHash => -766104622;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -101,6 +101,11 @@ abstract class RustLibApi extends BaseApi {
 
   Future<DocumentService> crateDocDocumentServiceDocumentServiceNew({
     required String docId,
+  });
+
+  Future<Uint8List> crateDocDocumentServiceDocumentServiceSetRootNodeId({
+    required DocumentService that,
+    required String id,
   });
 
   Future<CustomRustError> crateDocDocumentTypesCustomRustErrorNew({
@@ -361,6 +366,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<Uint8List> crateDocDocumentServiceDocumentServiceSetRootNodeId({
+    required DocumentService that,
+    required String id,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentService(
+            that,
+            serializer,
+          );
+          sse_encode_String(id, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_prim_u_8_strict,
+          decodeErrorData: sse_decode_custom_rust_error,
+        ),
+        constMeta:
+            kCrateDocDocumentServiceDocumentServiceSetRootNodeIdConstMeta,
+        argValues: [that, id],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta
+  get kCrateDocDocumentServiceDocumentServiceSetRootNodeIdConstMeta =>
+      const TaskConstMeta(
+        debugName: "DocumentService_set_root_node_id",
+        argNames: ["that", "id"],
+      );
+
+  @override
   Future<CustomRustError> crateDocDocumentTypesCustomRustErrorNew({
     required String message,
   }) {
@@ -372,7 +417,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 8,
             port: port_,
           );
         },
@@ -581,12 +626,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DocumentState dco_decode_document_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return DocumentState(
       docId: dco_decode_String(arr[0]),
       blocks: dco_decode_Map_String_block_doc(arr[1]),
       childrenMap: dco_decode_Map_String_list_String(arr[2]),
+      rootId: dco_decode_String(arr[3]),
     );
   }
 
@@ -913,10 +959,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_docId = sse_decode_String(deserializer);
     var var_blocks = sse_decode_Map_String_block_doc(deserializer);
     var var_childrenMap = sse_decode_Map_String_list_String(deserializer);
+    var var_rootId = sse_decode_String(deserializer);
     return DocumentState(
       docId: var_docId,
       blocks: var_blocks,
       childrenMap: var_childrenMap,
+      rootId: var_rootId,
     );
   }
 
@@ -1323,6 +1371,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.docId, serializer);
     sse_encode_Map_String_block_doc(self.blocks, serializer);
     sse_encode_Map_String_list_String(self.childrenMap, serializer);
+    sse_encode_String(self.rootId, serializer);
   }
 
   @protected
@@ -1586,4 +1635,8 @@ class DocumentServiceImpl extends RustOpaque implements DocumentService {
         that: this,
         updates: updates,
       );
+
+  /// Setting a root node id in the root map
+  Future<Uint8List> setRootNodeId({required String id}) => RustLib.instance.api
+      .crateDocDocumentServiceDocumentServiceSetRootNodeId(that: this, id: id);
 }

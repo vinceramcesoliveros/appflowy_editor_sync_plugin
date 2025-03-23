@@ -24,7 +24,6 @@ class Document {
   late int id;
   String? name;
   DateTime? createdAt;
-  String? rootId;
 }
 
 @Collection()
@@ -93,23 +92,6 @@ class EditorStateWrapper extends _$EditorStateWrapper {
   FutureOr<EditorState> build(String docId) {
     final wrapper = EditorStateSyncWrapper(
       syncAttributes: SyncAttributes(
-        getRootNodeId: () async {
-          return _isar.documents
-              .where()
-              .idEqualTo(int.parse(docId))
-              .findFirst()
-              ?.rootId;
-        },
-        saveRootNodeId: (String rootId) async {
-          await _isar.write((isar) async {
-            final docData =
-                isar.documents.where().idEqualTo(int.parse(docId)).findFirst();
-            if (docData != null) {
-              docData.rootId = rootId;
-              isar.documents.put(docData);
-            }
-          });
-        },
         getUpdates: () async {
           final data =
               _isar.documentDatas
@@ -160,7 +142,7 @@ void main() async {
   final isar = Isar.open(
     directory: dir.path,
     engine: IsarEngine.isar,
-    name: 'appflowy_editor',
+    name: 'appflowy_editor_2',
     schemas: [DocumentSchema, DocumentDataSchema],
   );
   await initAppFlowyEditorSync();

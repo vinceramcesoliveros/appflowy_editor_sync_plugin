@@ -103,12 +103,20 @@ impl UpdateOperations {
 
         log_info!("extract_document_state: Extracted {} blocks and {} parent-child relationships", 
                 blocks.len(), sorted_children.len());
+    
+        // Get root id 
+        let root_id = match root.get(txn, ROOT_ID) {
+            Some(yrs::Out::Any(yrs::Any::String(id))) => id.to_string(),
+            _ => return Err(DocError::StateError("Root ID not found in document".into()).into()),
+        };
         
         // Build the complete document state
         Ok(DocumentState {
             blocks,
             children_map: sorted_children,
             doc_id: doc_id.to_string(),
+            root_id,
+
         })
     }
 

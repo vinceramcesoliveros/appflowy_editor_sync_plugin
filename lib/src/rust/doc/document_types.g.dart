@@ -78,6 +78,7 @@ _$DocumentStateImpl _$$DocumentStateImplFromJson(Map<String, dynamic> json) =>
         (k, e) =>
             MapEntry(k, (e as List<dynamic>).map((e) => e as String).toList()),
       ),
+      rootId: json['rootId'] as String,
     );
 
 Map<String, dynamic> _$$DocumentStateImplToJson(_$DocumentStateImpl instance) =>
@@ -85,6 +86,7 @@ Map<String, dynamic> _$$DocumentStateImplToJson(_$DocumentStateImpl instance) =>
       'docId': instance.docId,
       'blocks': instance.blocks.map((k, e) => MapEntry(k, e.toJson())),
       'childrenMap': instance.childrenMap,
+      'rootId': instance.rootId,
     };
 
 _$FailedToDecodeUpdatesImpl _$$FailedToDecodeUpdatesImplFromJson(

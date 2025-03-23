@@ -50,6 +50,7 @@ pub struct DocumentState {
     pub doc_id: String,
     pub blocks: HashMap<String, BlockDoc>,
     pub children_map: HashMap<String, Vec<String>>,
+    pub root_id: String,
 }
 
 

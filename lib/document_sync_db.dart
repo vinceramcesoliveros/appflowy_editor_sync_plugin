@@ -87,15 +87,6 @@ class DocumentSyncDB {
     return _updatesSubject.value;
   }
 
-  Future<String?> getRootNodeId() async {
-    return syncAttributes.getRootNodeId();
-  }
-
-  //Save root node id
-  Future<void> saveRootNodeId(String rootNodeId) async {
-    syncAttributes.saveRootNodeId(rootNodeId);
-  }
-
   Future<void> _addUpdateToDB(Uint8List update) async {
     syncAttributes.saveUpdate(update);
   }

@@ -59,12 +59,10 @@ class EditorStateSyncWrapper {
       syncDB.addUpdates(
         updates.map((e) => LocalUpdate(update: e, id: newClock)).toList(),
       );
-      await syncDB.saveRootNodeId(editorStateWrapper.rootNodeId);
       return editorStateWrapper;
     } else {
       final editorStateWrapper = await initializer.initDocumentWithUpdates(
         documentUpdates,
-        (await syncDB.getRootNodeId())!,
       );
       return editorStateWrapper;
     }
@@ -133,7 +131,6 @@ class EditorStateSyncWrapper {
     // that were not yet recorded in that CRDT Document
     final newEditorStateWrapper = EditorStateWrapper.factoryFromDocumentState(
       result,
-      editorStateWrapper.rootNodeId,
     );
 
     final diffOperations = editorStateWrapper.diffEditorStateWrappers(

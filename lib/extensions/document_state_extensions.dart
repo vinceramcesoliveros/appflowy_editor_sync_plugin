@@ -4,7 +4,7 @@ import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:dartx/dartx.dart';
 
 extension DocumentStateExtension on DocumentState {
-  Document? toDocument(String rootId) {
+  Document? toDocument() {
     try {
       final root = buildNode(rootId);
 

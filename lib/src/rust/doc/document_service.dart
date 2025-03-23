@@ -3,9 +3,10 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+
 import '../frb_generated.dart';
 import 'document_types.dart';
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentService>>
 abstract class DocumentService implements RustOpaqueInterface {
@@ -29,4 +30,7 @@ abstract class DocumentService implements RustOpaqueInterface {
       .instance
       .api
       .crateDocDocumentServiceDocumentServiceNew(docId: docId);
+
+  /// Setting a root node id in the root map
+  Future<Uint8List> setRootNodeId({required String id});
 }

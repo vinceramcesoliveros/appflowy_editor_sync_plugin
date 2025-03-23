@@ -575,6 +575,7 @@ mixin _$DocumentState {
   Map<String, BlockDoc> get blocks => throw _privateConstructorUsedError;
   Map<String, List<String>> get childrenMap =>
       throw _privateConstructorUsedError;
+  String get rootId => throw _privateConstructorUsedError;
 
   /// Serializes this DocumentState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -595,7 +596,8 @@ abstract class $DocumentStateCopyWith<$Res> {
   $Res call(
       {String docId,
       Map<String, BlockDoc> blocks,
-      Map<String, List<String>> childrenMap});
+      Map<String, List<String>> childrenMap,
+      String rootId});
 }
 
 /// @nodoc
@@ -616,6 +618,7 @@ class _$DocumentStateCopyWithImpl<$Res, $Val extends DocumentState>
     Object? docId = null,
     Object? blocks = null,
     Object? childrenMap = null,
+    Object? rootId = null,
   }) {
     return _then(_value.copyWith(
       docId: null == docId
@@ -630,6 +633,10 @@ class _$DocumentStateCopyWithImpl<$Res, $Val extends DocumentState>
           ? _value.childrenMap
           : childrenMap // ignore: cast_nullable_to_non_nullable
               as Map<String, List<String>>,
+      rootId: null == rootId
+          ? _value.rootId
+          : rootId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -645,7 +652,8 @@ abstract class _$$DocumentStateImplCopyWith<$Res>
   $Res call(
       {String docId,
       Map<String, BlockDoc> blocks,
-      Map<String, List<String>> childrenMap});
+      Map<String, List<String>> childrenMap,
+      String rootId});
 }
 
 /// @nodoc
@@ -664,6 +672,7 @@ class __$$DocumentStateImplCopyWithImpl<$Res>
     Object? docId = null,
     Object? blocks = null,
     Object? childrenMap = null,
+    Object? rootId = null,
   }) {
     return _then(_$DocumentStateImpl(
       docId: null == docId
@@ -678,6 +687,10 @@ class __$$DocumentStateImplCopyWithImpl<$Res>
           ? _value._childrenMap
           : childrenMap // ignore: cast_nullable_to_non_nullable
               as Map<String, List<String>>,
+      rootId: null == rootId
+          ? _value.rootId
+          : rootId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -688,7 +701,8 @@ class _$DocumentStateImpl implements _DocumentState {
   const _$DocumentStateImpl(
       {required this.docId,
       required final Map<String, BlockDoc> blocks,
-      required final Map<String, List<String>> childrenMap})
+      required final Map<String, List<String>> childrenMap,
+      required this.rootId})
       : _blocks = blocks,
         _childrenMap = childrenMap;
 
@@ -714,8 +728,11 @@ class _$DocumentStateImpl implements _DocumentState {
   }
 
   @override
+  final String rootId;
+
+  @override
   String toString() {
-    return 'DocumentState(docId: $docId, blocks: $blocks, childrenMap: $childrenMap)';
+    return 'DocumentState(docId: $docId, blocks: $blocks, childrenMap: $childrenMap, rootId: $rootId)';
   }
 
   @override
@@ -726,7 +743,8 @@ class _$DocumentStateImpl implements _DocumentState {
             (identical(other.docId, docId) || other.docId == docId) &&
             const DeepCollectionEquality().equals(other._blocks, _blocks) &&
             const DeepCollectionEquality()
-                .equals(other._childrenMap, _childrenMap));
+                .equals(other._childrenMap, _childrenMap) &&
+            (identical(other.rootId, rootId) || other.rootId == rootId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -735,7 +753,8 @@ class _$DocumentStateImpl implements _DocumentState {
       runtimeType,
       docId,
       const DeepCollectionEquality().hash(_blocks),
-      const DeepCollectionEquality().hash(_childrenMap));
+      const DeepCollectionEquality().hash(_childrenMap),
+      rootId);
 
   /// Create a copy of DocumentState
   /// with the given fields replaced by the non-null parameter values.
@@ -755,10 +774,10 @@ class _$DocumentStateImpl implements _DocumentState {
 
 abstract class _DocumentState implements DocumentState {
   const factory _DocumentState(
-          {required final String docId,
-          required final Map<String, BlockDoc> blocks,
-          required final Map<String, List<String>> childrenMap}) =
-      _$DocumentStateImpl;
+      {required final String docId,
+      required final Map<String, BlockDoc> blocks,
+      required final Map<String, List<String>> childrenMap,
+      required final String rootId}) = _$DocumentStateImpl;
 
   factory _DocumentState.fromJson(Map<String, dynamic> json) =
       _$DocumentStateImpl.fromJson;
@@ -769,6 +788,8 @@ abstract class _DocumentState implements DocumentState {
   Map<String, BlockDoc> get blocks;
   @override
   Map<String, List<String>> get childrenMap;
+  @override
+  String get rootId;
 
   /// Create a copy of DocumentState
   /// with the given fields replaced by the non-null parameter values.

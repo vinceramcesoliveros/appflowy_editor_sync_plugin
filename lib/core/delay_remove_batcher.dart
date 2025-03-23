@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:appflowy_editor_sync_plugin/core/batcher.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:uuid/uuid.dart';
 
 /// Delayed remove batcher that processes elements as batcher, but waits for some duration before it fully removes them
 class DelayedRemoveBatcher<T> extends Batcher<T> {
@@ -33,9 +34,8 @@ class DelayedRemoveBatcher<T> extends Batcher<T> {
         final now = DateTime.now();
         final removalTime = now.add(removalDelay);
 
-        for (final uuid in updatesBatch.map((e) => e.$1).toList()) {
-          final item = updatesBatch.firstWhere((e) => e.$1 == uuid);
-          _processedItems[uuid] = (removalTime, item.$2);
+        for (final val in updatesBatch.map((e) => e.$2).toList()) {
+          _processedItems[Uuid().v4()] = (removalTime, val);
         }
 
         // Update all items stream

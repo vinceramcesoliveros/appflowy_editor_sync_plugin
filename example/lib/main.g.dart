@@ -28,10 +28,6 @@ const DocumentSchema = IsarGeneratedSchema(
         name: 'createdAt',
         type: IsarType.dateTime,
       ),
-      IsarPropertySchema(
-        name: 'rootId',
-        type: IsarType.string,
-      ),
     ],
     indexes: [],
   ),
@@ -55,14 +51,6 @@ int serializeDocument(IsarWriter writer, Document object) {
   }
   IsarCore.writeLong(writer, 2,
       object.createdAt?.toUtc().microsecondsSinceEpoch ?? -9223372036854775808);
-  {
-    final value = object.rootId;
-    if (value == null) {
-      IsarCore.writeNull(writer, 3);
-    } else {
-      IsarCore.writeString(writer, 3, value);
-    }
-  }
   return object.id;
 }
 
@@ -80,7 +68,6 @@ Document deserializeDocument(IsarReader reader) {
           DateTime.fromMicrosecondsSinceEpoch(value, isUtc: true).toLocal();
     }
   }
-  object.rootId = IsarCore.readString(reader, 3);
   return object;
 }
 
@@ -101,8 +88,6 @@ dynamic deserializeDocumentProp(IsarReader reader, int property) {
               .toLocal();
         }
       }
-    case 3:
-      return IsarCore.readString(reader, 3);
     default:
       throw ArgumentError('Unknown property: $property');
   }
@@ -113,7 +98,6 @@ sealed class _DocumentUpdate {
     required int id,
     String? name,
     DateTime? createdAt,
-    String? rootId,
   });
 }
 
@@ -127,14 +111,12 @@ class _DocumentUpdateImpl implements _DocumentUpdate {
     required int id,
     Object? name = ignore,
     Object? createdAt = ignore,
-    Object? rootId = ignore,
   }) {
     return collection.updateProperties([
           id
         ], {
           if (name != ignore) 1: name as String?,
           if (createdAt != ignore) 2: createdAt as DateTime?,
-          if (rootId != ignore) 3: rootId as String?,
         }) >
         0;
   }
@@ -145,7 +127,6 @@ sealed class _DocumentUpdateAll {
     required List<int> id,
     String? name,
     DateTime? createdAt,
-    String? rootId,
   });
 }
 
@@ -159,12 +140,10 @@ class _DocumentUpdateAllImpl implements _DocumentUpdateAll {
     required List<int> id,
     Object? name = ignore,
     Object? createdAt = ignore,
-    Object? rootId = ignore,
   }) {
     return collection.updateProperties(id, {
       if (name != ignore) 1: name as String?,
       if (createdAt != ignore) 2: createdAt as DateTime?,
-      if (rootId != ignore) 3: rootId as String?,
     });
   }
 }
@@ -179,7 +158,6 @@ sealed class _DocumentQueryUpdate {
   int call({
     String? name,
     DateTime? createdAt,
-    String? rootId,
   });
 }
 
@@ -193,12 +171,10 @@ class _DocumentQueryUpdateImpl implements _DocumentQueryUpdate {
   int call({
     Object? name = ignore,
     Object? createdAt = ignore,
-    Object? rootId = ignore,
   }) {
     return query.updateProperties(limit: limit, {
       if (name != ignore) 1: name as String?,
       if (createdAt != ignore) 2: createdAt as DateTime?,
-      if (rootId != ignore) 3: rootId as String?,
     });
   }
 }
@@ -220,14 +196,12 @@ class _DocumentQueryBuilderUpdateImpl implements _DocumentQueryUpdate {
   int call({
     Object? name = ignore,
     Object? createdAt = ignore,
-    Object? rootId = ignore,
   }) {
     final q = query.build();
     try {
       return q.updateProperties(limit: limit, {
         if (name != ignore) 1: name as String?,
         if (createdAt != ignore) 2: createdAt as DateTime?,
-        if (rootId != ignore) 3: rootId as String?,
       });
     } finally {
       q.close();
@@ -604,192 +578,6 @@ extension DocumentQueryFilter
       );
     });
   }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 3));
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdIsNotNull() {
-    return QueryBuilder.apply(not(), (query) {
-      return query.addFilterCondition(const IsNullCondition(property: 3));
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        EqualCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdGreaterThan(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        GreaterCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition>
-      rootIdGreaterThanOrEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        GreaterOrEqualCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdLessThan(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        LessCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition>
-      rootIdLessThanOrEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        LessOrEqualCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdBetween(
-    String? lower,
-    String? upper, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        BetweenCondition(
-          property: 3,
-          lower: lower,
-          upper: upper,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        StartsWithCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        EndsWithCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        ContainsCondition(
-          property: 3,
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        MatchesCondition(
-          property: 3,
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const EqualCondition(
-          property: 3,
-          value: '',
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterFilterCondition> rootIdIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const GreaterCondition(
-          property: 3,
-          value: '',
-        ),
-      );
-    });
-  }
 }
 
 extension DocumentQueryObject
@@ -840,27 +628,6 @@ extension DocumentQuerySortBy on QueryBuilder<Document, Document, QSortBy> {
       return query.addSortBy(2, sort: Sort.desc);
     });
   }
-
-  QueryBuilder<Document, Document, QAfterSortBy> sortByRootId(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(
-        3,
-        caseSensitive: caseSensitive,
-      );
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterSortBy> sortByRootIdDesc(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(
-        3,
-        sort: Sort.desc,
-        caseSensitive: caseSensitive,
-      );
-    });
-  }
 }
 
 extension DocumentQuerySortThenBy
@@ -902,20 +669,6 @@ extension DocumentQuerySortThenBy
       return query.addSortBy(2, sort: Sort.desc);
     });
   }
-
-  QueryBuilder<Document, Document, QAfterSortBy> thenByRootId(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(3, caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterSortBy> thenByRootIdDesc(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(3, sort: Sort.desc, caseSensitive: caseSensitive);
-    });
-  }
 }
 
 extension DocumentQueryWhereDistinct
@@ -930,13 +683,6 @@ extension DocumentQueryWhereDistinct
   QueryBuilder<Document, Document, QAfterDistinct> distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(2);
-    });
-  }
-
-  QueryBuilder<Document, Document, QAfterDistinct> distinctByRootId(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(3, caseSensitive: caseSensitive);
     });
   }
 }
@@ -960,12 +706,6 @@ extension DocumentQueryProperty1
       return query.addProperty(2);
     });
   }
-
-  QueryBuilder<Document, String?, QAfterProperty> rootIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addProperty(3);
-    });
-  }
 }
 
 extension DocumentQueryProperty2<R>
@@ -987,12 +727,6 @@ extension DocumentQueryProperty2<R>
       return query.addProperty(2);
     });
   }
-
-  QueryBuilder<Document, (R, String?), QAfterProperty> rootIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addProperty(3);
-    });
-  }
 }
 
 extension DocumentQueryProperty3<R1, R2>
@@ -1012,12 +746,6 @@ extension DocumentQueryProperty3<R1, R2>
   QueryBuilder<Document, (R1, R2, DateTime?), QOperations> createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addProperty(2);
-    });
-  }
-
-  QueryBuilder<Document, (R1, R2, String?), QOperations> rootIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addProperty(3);
     });
   }
 }
@@ -2006,7 +1734,7 @@ final documentsProvider = NotifierProvider<Documents, List<Document>>.internal(
 
 typedef _$Documents = Notifier<List<Document>>;
 String _$editorStateWrapperHash() =>
-    r'4f8610ae55379a849000edd48b796ec32254b3ef';
+    r'41ee2d3178f93d9e1b4078b6e7b9ee8c25556f05';
 
 abstract class _$EditorStateWrapper
     extends BuildlessAsyncNotifier<EditorState> {

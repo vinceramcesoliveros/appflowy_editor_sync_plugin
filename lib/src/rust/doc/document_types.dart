@@ -74,6 +74,7 @@ class DocumentState with _$DocumentState {
     required String docId,
     required Map<String, BlockDoc> blocks,
     required Map<String, List<String>> childrenMap,
+    required String rootId,
   }) = _DocumentState;
 
   factory DocumentState.fromJson(Map<String, dynamic> json) =>
