@@ -16,3 +16,8 @@ The example demonstrates how to use the appflowy_editor_sync_plugin plugin in a 
 
 // It should use the appflowy_editor_sync_plugin library for synchronization
 // It should use appflowy_editor for editing
+
+---
+
+[ ] add nextId and use that to handle the outlined cases
+[ ] Maybe copy parameters from nodes when adding a node before the root node to mantain the order

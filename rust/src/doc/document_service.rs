@@ -91,7 +91,7 @@ impl DocumentService {
                         BlockOperations::move_block(
                             &mut txn, children_map, blocks_map,
                             old_path, &action.path, parent_id, old_parent_id,
-                            &action.block.id, action.block.prev_id
+                            &action.block.id, action.block.prev_id, action.block.next_id
                         )?;
                     } else {
                         return Err(DocError::InvalidOperation("Missing required fields for move operation".into()).into());

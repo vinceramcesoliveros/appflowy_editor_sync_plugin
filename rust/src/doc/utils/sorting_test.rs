@@ -6,7 +6,7 @@ fn main() {
 mod tests {
     use std::collections::HashMap;
 
-    use crate::doc::{ document_types::BlockDoc, utils::{ sorting::ChainSorting} };
+    use crate::doc::{ document_types::BlockDoc, utils::{ sorting::ChainSorting } };
 
     // Helper to create a test block
     fn create_test_block(
@@ -29,6 +29,7 @@ mod tests {
             parent_id: parent_id.map(|s| s.to_string()),
             prev_id: prev_id.map(|s| s.to_string()),
             old_parent_id: None,
+            next_id: None,
         }
     }
 
@@ -645,4 +646,5 @@ mod tests {
             "Block with non-existent prev_id should still be included"
         );
     }
+
 }

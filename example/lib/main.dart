@@ -2,13 +2,17 @@
 import 'dart:typed_data';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
-import 'package:appflowy_editor_sync_plugin/editor_state_sync_wrapper.dart';
+import 'package:appflowy_editor_sync_plugin/appflowy_editor_sync_plugin.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
+import 'package:appflowy_editor_sync_plugin_example/desktop_editor.dart';
+import 'package:appflowy_editor_sync_plugin_example/mobile_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 part 'main.g.dart';
 
@@ -49,7 +53,8 @@ class Documents extends _$Documents {
     final doc =
         Document()
           ..name = name
-          ..createdAt = DateTime.now();
+          ..createdAt = DateTime.now()
+          ..id = _isar.documents.autoIncrement();
     _isar.write((isar) async {
       isar.documents.put(doc);
     });
@@ -133,13 +138,14 @@ class EditorStateWrapper extends _$EditorStateWrapper {
           final docData =
               DocumentData()
                 ..data = update
-                ..documentId = int.parse(docId);
+                ..documentId = int.parse(docId)
+                ..id = _isar.documentDatas.autoIncrement();
           await _isar.write((isar) async {
             isar.documentDatas.put(docData);
           });
         },
       ),
-    )..initAndHandleChanges();
+    );
 
     return wrapper.initAndHandleChanges();
   }
@@ -150,12 +156,14 @@ class EditorStateWrapper extends _$EditorStateWrapper {
 // ====================
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  final dir = await getApplicationDocumentsDirectory();
   final isar = Isar.open(
-    directory: Isar.defaultName,
+    directory: dir.path,
     engine: IsarEngine.isar,
+    name: 'appflowy_editor',
     schemas: [DocumentSchema, DocumentDataSchema],
   );
+  await initAppFlowyEditorSync();
 
   runApp(
     ProviderScope(
@@ -269,7 +277,10 @@ class DocumentEditorScreen extends ConsumerWidget {
           final editorState = ref.watch(editorStateWrapperProvider(docId));
           return editorState.when(
             data: (editorState) {
-              return AppFlowyEditor(editorState: editorState);
+              if (UniversalPlatform.isDesktopOrWeb) {
+                return DesktopEditor(editorState: editorState);
+              }
+              return MobileEditor(editorState: editorState);
             },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(child: Text('Error: $error')),

@@ -21,6 +21,7 @@ pub struct BlockDoc {
     pub delta: Option<String>,
     pub parent_id: Option<String>,
     pub prev_id: Option<String>,
+    pub next_id: Option<String>,
     pub old_parent_id: Option<String>, //For Move action
 }
 

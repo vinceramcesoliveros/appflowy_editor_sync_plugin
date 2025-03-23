@@ -1,8 +1,10 @@
 // transaction_adapter_helpers.dart
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
+import 'package:appflowy_editor_sync_plugin/extensions/document_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/operation_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/types/operation_wrapper.dart';
@@ -130,25 +132,58 @@ class TransactionAdapterHelpers {
       final deleteNode = op.nodes.first;
       final insertNode = nextOp.nodes.first;
 
-      final newPath = insertNode.path;
+      final newPath = nextOp.path;
+      final oldPath = op.path;
+
+      //If the path is the same, return an empty list
+      if (newPath.equals(oldPath)) {
+        return [];
+      }
 
       var prevId = '';
+
+      final editorStateWrapperCopy = EditorStateWrapper.factoryWithDocument(
+        DocumentExtensions.fromJsonWithIds(
+          jsonDecode(
+            jsonEncode(editorStateWrapper.editorState.document.toJsonWithIds()),
+          ),
+        ),
+      );
+      editorStateWrapperCopy.applyRemoteChanges([
+        DeleteOperation.fromJson(op.toJson()),
+      ]);
+
       // if the node is the first child of the parent, then its prevId should be empty.
       final isFirstChild = newPath.previous.equals(newPath);
 
       if (!isFirstChild) {
-        prevId = editorStateWrapper.getNodeAtPath(newPath.previous)?.id ?? '';
+        prevId =
+            editorStateWrapperCopy.getNodeAtPath(newPath.previous)?.id ?? '';
       }
+
+      var nextId = '';
+
+      editorStateWrapperCopy.applyRemoteChanges([
+        InsertOperation.fromJson(nextOp.toJson()),
+      ]);
+
+      //If the node is the last child of the parent, then its nextId should be empty.
+      final isLastChild = newPath.next.equals(newPath);
+      if (!isLastChild) {
+        nextId = editorStateWrapperCopy.getNodeAtPath(newPath.next)?.id ?? '';
+      }
+
       return [
         BlockActionDoc(
           action: BlockActionTypeDoc.move,
           block: BlockDoc(
-            id: 'xxxx',
-            ty: 'xxxx',
+            id: deleteNode.id,
+            ty: deleteNode.type,
             attributes: {},
             parentId: insertNode.parent?.id ?? '', //Just this
             oldParentId: deleteNode.parent?.id ?? '', // And this
-            prevId: prevId,
+            prevId: prevId == '' ? null : prevId, // Previous ID
+            nextId: nextId == '' ? null : nextId, // Next ID
           ), // No block data needed; move uses paths
           path: Uint32List.fromList(nextOp.path.toList()), // New path
           oldPath: Uint32List.fromList(op.path.toList()), // Old path

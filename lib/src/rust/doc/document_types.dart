@@ -38,6 +38,7 @@ class BlockDoc with _$BlockDoc {
     String? delta,
     String? parentId,
     String? prevId,
+    String? nextId,
     String? oldParentId,
   }) = _BlockDoc;
 

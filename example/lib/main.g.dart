@@ -1991,7 +1991,7 @@ class _DocProviderElement extends AutoDisposeProviderElement<Document>
   int get docId => (origin as DocProvider).docId;
 }
 
-String _$documentsHash() => r'9662fb5c8b783dbafaa16be60aec98e22dbcb144';
+String _$documentsHash() => r'05d88a15b37ae5e44c6ceb008031c48ffdc988a0';
 
 /// See also [Documents].
 @ProviderFor(Documents)
@@ -2006,7 +2006,7 @@ final documentsProvider = NotifierProvider<Documents, List<Document>>.internal(
 
 typedef _$Documents = Notifier<List<Document>>;
 String _$editorStateWrapperHash() =>
-    r'36f9c13c9c762e16d3acfce046743da1b0f7486e';
+    r'4f8610ae55379a849000edd48b796ec32254b3ef';
 
 abstract class _$EditorStateWrapper
     extends BuildlessAsyncNotifier<EditorState> {

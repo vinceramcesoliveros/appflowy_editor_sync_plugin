@@ -7,7 +7,7 @@ use crate::doc::error::DocError;
 use crate::doc::utils::sorting::ChainSorting;
 // In other files
 use crate::{log_info, log_error};
-use crate::doc::constants::{BLOCKS, CHILDREN_MAP, ID, TYPE, TEXT, ATTRIBUTES, PARENT_ID, PREV_ID, ROOT_ID};
+use crate::doc::constants::{ATTRIBUTES, BLOCKS, CHILDREN_MAP, ID, NEXT_ID, PARENT_ID, PREV_ID, ROOT_ID, TEXT, TYPE};
 use crate::doc::utils::util::TextExt;
 
 pub struct UpdateOperations;
@@ -171,6 +171,8 @@ impl UpdateOperations {
                 prev_id: block_map.get(txn, PREV_ID)
                     .map(|out| out.to_string(txn)),
                 old_parent_id: None,
+                next_id: block_map.get(txn, NEXT_ID)
+                    .map(|out| out.to_string(txn)),
             };
 
             Ok(Some(block))

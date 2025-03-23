@@ -11,4 +11,5 @@ pub const ID: &str = "id";
 pub const TYPE: &str = "type";
 pub const PARENT_ID: &str = "parentId";
 pub const PREV_ID: &str = "prevId";
+pub const NEXT_ID: &str = "nextId";
 pub const DEFAULT_PARENT: &str = "default_parent";

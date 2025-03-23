@@ -47,6 +47,14 @@ extension on InsertOperation {
         assert(prevId.isNotEmpty && prevId != node.id);
       }
 
+      var nextId = '';
+
+      //If the node is the last child of the parent, then its nextId should be empty.
+      final isLastChild = currentPath.next.equals(currentPath);
+      if (!isLastChild) {
+        nextId = editorStateWrapper.getNodeAtPath(currentPath.next)?.id ?? '';
+      }
+
       //TODO: Maybe use prevID to set it faste the previous node if it exists
       // BUt currently it seems to me that it should work well enough with just the indexes
 
@@ -69,7 +77,8 @@ extension on InsertOperation {
               }),
           delta: encodedDelta,
           parentId: node.type == 'page' ? null : parentId, //HANDLING EDGE CASE
-          prevId: prevId,
+          prevId: prevId == '' ? null : prevId, // Previous ID
+          nextId: nextId == '' ? null : nextId, // Next ID
         ),
         path: Uint32List.fromList(currentPath.toList()),
       );

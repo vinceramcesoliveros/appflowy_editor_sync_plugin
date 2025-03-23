@@ -154,6 +154,7 @@ class EditorStateSyncWrapper {
       final (transactionTime, transaction, options) = data;
 
       if (TransactionTime.before != transactionTime) {
+        print("Transaction done");
         return;
       }
 

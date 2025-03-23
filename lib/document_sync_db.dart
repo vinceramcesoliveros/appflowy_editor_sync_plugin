@@ -55,11 +55,16 @@ class DocumentSyncDB {
     _updatesSubject = BehaviorSubject<(List<LocalUpdate>, List<DbUpdate>)>();
 
     // Connect the stream to the subject
-    getAllUpdatesStream().listen(_updatesSubject.add);
+    _getAllUpdatesStream().listen(_updatesSubject.add);
   }
 
   //Get updates stream - that will combine updates from the DB with updates from the batcher
   Stream<(List<LocalUpdate>, List<DbUpdate>)> getAllUpdatesStream() {
+    return _updatesSubject.stream;
+  }
+
+  //Get updates stream - that will combine updates from the DB with updates from the batcher
+  Stream<(List<LocalUpdate>, List<DbUpdate>)> _getAllUpdatesStream() {
     final dbUpdatesStream = syncAttributes.getUpdatesStream;
 
     final batcherUpdatesStream = updatesBatcher.getAllItems();

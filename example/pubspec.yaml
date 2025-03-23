@@ -53,6 +53,8 @@ dependencies:
   riverpod_annotation: ^2.6.1
   path_provider: ^2.1.5
   hooks_riverpod: ^2.6.1
+  google_fonts: ^6.2.1
+  universal_platform: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -554,8 +554,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BlockDoc dco_decode_block_doc(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
     return BlockDoc(
       id: dco_decode_String(arr[0]),
       ty: dco_decode_String(arr[1]),
@@ -563,7 +563,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       delta: dco_decode_opt_String(arr[3]),
       parentId: dco_decode_opt_String(arr[4]),
       prevId: dco_decode_opt_String(arr[5]),
-      oldParentId: dco_decode_opt_String(arr[6]),
+      nextId: dco_decode_opt_String(arr[6]),
+      oldParentId: dco_decode_opt_String(arr[7]),
     );
   }
 
@@ -885,6 +886,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_delta = sse_decode_opt_String(deserializer);
     var var_parentId = sse_decode_opt_String(deserializer);
     var var_prevId = sse_decode_opt_String(deserializer);
+    var var_nextId = sse_decode_opt_String(deserializer);
     var var_oldParentId = sse_decode_opt_String(deserializer);
     return BlockDoc(
       id: var_id,
@@ -893,6 +895,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       delta: var_delta,
       parentId: var_parentId,
       prevId: var_prevId,
+      nextId: var_nextId,
       oldParentId: var_oldParentId,
     );
   }
@@ -1301,6 +1304,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_String(self.delta, serializer);
     sse_encode_opt_String(self.parentId, serializer);
     sse_encode_opt_String(self.prevId, serializer);
+    sse_encode_opt_String(self.nextId, serializer);
     sse_encode_opt_String(self.oldParentId, serializer);
   }
 

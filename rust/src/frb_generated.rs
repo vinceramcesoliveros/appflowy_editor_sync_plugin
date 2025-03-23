@@ -556,6 +556,7 @@ impl SseDecode for crate::doc::document_types::BlockDoc {
         let mut var_delta = <Option<String>>::sse_decode(deserializer);
         let mut var_parentId = <Option<String>>::sse_decode(deserializer);
         let mut var_prevId = <Option<String>>::sse_decode(deserializer);
+        let mut var_nextId = <Option<String>>::sse_decode(deserializer);
         let mut var_oldParentId = <Option<String>>::sse_decode(deserializer);
         return crate::doc::document_types::BlockDoc {
             id: var_id,
@@ -564,6 +565,7 @@ impl SseDecode for crate::doc::document_types::BlockDoc {
             delta: var_delta,
             parent_id: var_parentId,
             prev_id: var_prevId,
+            next_id: var_nextId,
             old_parent_id: var_oldParentId,
         };
     }
@@ -962,6 +964,7 @@ impl flutter_rust_bridge::IntoDart for crate::doc::document_types::BlockDoc {
             self.delta.into_into_dart().into_dart(),
             self.parent_id.into_into_dart().into_dart(),
             self.prev_id.into_into_dart().into_dart(),
+            self.next_id.into_into_dart().into_dart(),
             self.old_parent_id.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -1135,6 +1138,7 @@ impl SseEncode for crate::doc::document_types::BlockDoc {
         <Option<String>>::sse_encode(self.delta, serializer);
         <Option<String>>::sse_encode(self.parent_id, serializer);
         <Option<String>>::sse_encode(self.prev_id, serializer);
+        <Option<String>>::sse_encode(self.next_id, serializer);
         <Option<String>>::sse_encode(self.old_parent_id, serializer);
     }
 }
