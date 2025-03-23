@@ -116,11 +116,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, BlockDoc)> dco_decode_list_record_string_block_doc(dynamic raw);
 
   @protected
-  List<(String, Uint8List)> dco_decode_list_record_string_list_prim_u_8_strict(
-    dynamic raw,
-  );
-
-  @protected
   List<(String, List<String>)> dco_decode_list_record_string_list_string(
     dynamic raw,
   );
@@ -136,11 +131,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (String, BlockDoc) dco_decode_record_string_block_doc(dynamic raw);
-
-  @protected
-  (String, Uint8List) dco_decode_record_string_list_prim_u_8_strict(
-    dynamic raw,
-  );
 
   @protected
   (String, List<String>) dco_decode_record_string_list_string(dynamic raw);
@@ -261,11 +251,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  List<(String, Uint8List)> sse_decode_list_record_string_list_prim_u_8_strict(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   List<(String, List<String>)> sse_decode_list_record_string_list_string(
     SseDeserializer deserializer,
   );
@@ -285,11 +270,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   (String, BlockDoc) sse_decode_record_string_block_doc(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  (String, Uint8List) sse_decode_record_string_list_prim_u_8_strict(
     SseDeserializer deserializer,
   );
 
@@ -452,12 +432,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_list_record_string_list_prim_u_8_strict(
-    List<(String, Uint8List)> self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_list_record_string_list_string(
     List<(String, List<String>)> self,
     SseSerializer serializer,
@@ -481,12 +455,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_record_string_block_doc(
     (String, BlockDoc) self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_record_string_list_prim_u_8_strict(
-    (String, Uint8List) self,
     SseSerializer serializer,
   );
 

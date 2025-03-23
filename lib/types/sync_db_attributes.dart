@@ -14,7 +14,7 @@ class SyncAttributes {
 
   /// Function to retrieve all stored updates from persistence layer
   /// Returns a list of tuples containing update ID and binary update data
-  final Future<List<(String, Uint8List)>> Function() getUpdates;
+  final Future<List<DbUpdate>> Function() getUpdates;
 
   SyncAttributes({
     required this.getUpdatesStream,

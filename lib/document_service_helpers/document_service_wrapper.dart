@@ -71,16 +71,16 @@ class DocumentServiceWrapper {
   }
 
   @override
-  Future<Option<FailedToDecodeUpdates>> applyUpdates({
-    required List<(String, Uint8List)> update,
+  Future<Either<Error, Unit>> applyUpdates({
+    required List<Uint8List> update,
   }) async {
     try {
       await _mutex.acquire();
-      final res = await _rustService.applyUpdates(updates: update);
-      return Option.of(res);
+      await _rustService.applyUpdates(updates: update);
+      return Either.right(unit);
     } catch (e) {
       print('Failed to apply updates: $e');
-      return const None();
+      return Either.left(Error());
     } finally {
       _mutex.release();
     }

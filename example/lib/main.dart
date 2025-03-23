@@ -99,7 +99,7 @@ class EditorStateWrapper extends _$EditorStateWrapper {
                   .documentIdEqualTo(int.parse(docId))
                   .findAll();
           return data.map((e) {
-            return (e.id.toString(), Uint8List.fromList(e.data!));
+            return DbUpdate(update: Uint8List.fromList(e.data!));
           }).toList();
         },
         getUpdatesStream: _isar.documentDatas
@@ -108,12 +108,7 @@ class EditorStateWrapper extends _$EditorStateWrapper {
             .watch(fireImmediately: true)
             .asyncMap((data) {
               return data
-                  .map(
-                    (e) => DbUpdate(
-                      update: Uint8List.fromList(e.data!),
-                      id: e.id.toString(),
-                    ),
-                  )
+                  .map((e) => DbUpdate(update: Uint8List.fromList(e.data!)))
                   .toList();
             }),
         saveUpdate: (Uint8List update) async {

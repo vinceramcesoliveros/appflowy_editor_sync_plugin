@@ -17,12 +17,12 @@ impl UpdateOperations {
     pub fn apply_updates_inner(
         doc: Doc,
         doc_id: &str,
-        updates: Vec<(String, Vec<u8>)>
-    ) -> Result<FailedToDecodeUpdates, CustomRustError> {
+        updates: Vec<Vec<u8>>
+    ) -> Result<(), CustomRustError> {
         log_info!("apply_updates: Starting with {} updates for doc_id: {}", updates.len(), doc_id);
 
         // Extract just the binary updates
-        let updates_only: Vec<Vec<u8>> = updates.into_iter().map(|(_, v)| v).collect();
+        let updates_only = updates;
         
         // Merge all the updates together
         let merged_update = merge_updates_v2(updates_only)
@@ -31,11 +31,10 @@ impl UpdateOperations {
         // Apply the merged update to the document
         let mut txn = doc.transact_mut();
         
-        let result = match Update::decode_v2(&merged_update) {
+        match Update::decode_v2(&merged_update) {
             Ok(decoded_update) => {
                 log_info!("apply_updates: Applying update for doc_id: {}", doc_id);
                 txn.apply_update(decoded_update);
-                FailedToDecodeUpdates { failed_updates_ids: Vec::new() }
             },
             Err(e) => {
                 log_error!("Failed to decode update for doc_id: {}: {}", doc_id, e);
@@ -44,7 +43,7 @@ impl UpdateOperations {
         };
 
         log_info!("apply_updates: Finished for doc_id: {}", doc_id);
-        Ok(result)
+        Ok(())
     }
 
     /// Extract the current document state

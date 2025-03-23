@@ -111,7 +111,7 @@ impl DocumentService {
     #[no_mangle]
     #[inline(never)]
     #[frb]
-    pub fn apply_updates(&mut self, updates: Vec<(String, Vec<u8>)>) -> Result<FailedToDecodeUpdates, CustomRustError> {
+    pub fn apply_updates(&mut self, updates: Vec<Vec<u8>>) -> Result<(), CustomRustError> {
         log_info!("apply_updates: Starting with {} updates for doc_id: {}", updates.len(), self.doc_id);
         
         // Create a new document to apply updates to

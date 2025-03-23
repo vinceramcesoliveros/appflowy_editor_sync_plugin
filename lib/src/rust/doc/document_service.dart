@@ -3,10 +3,9 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-
 import '../frb_generated.dart';
 import 'document_types.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentService>>
 abstract class DocumentService implements RustOpaqueInterface {
@@ -15,9 +14,7 @@ abstract class DocumentService implements RustOpaqueInterface {
     required FutureOr<String> Function(String, String) diffDeltas,
   });
 
-  Future<FailedToDecodeUpdates> applyUpdates({
-    required List<(String, Uint8List)> updates,
-  });
+  Future<void> applyUpdates({required List<Uint8List> updates});
 
   Future<DocumentState> getDocumentState();
 

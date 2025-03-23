@@ -6,7 +6,6 @@ import 'package:appflowy_editor_sync_plugin/core/delay_remove_batcher.dart';
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_service_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
-import 'package:drift/drift.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
@@ -99,7 +98,7 @@ class DocumentSyncDB {
     updatesBatcher.addValues(updates);
   }
 
-  Future<List<(String, Uint8List)>> getUpdates() async {
+  Future<List<DbUpdate>> getUpdates() async {
     return syncAttributes.getUpdates();
   }
 

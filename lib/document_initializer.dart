@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:appflowy_editor_sync_plugin/convertors/transaction_adapter_helpers.dart';
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_service_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
+import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 
 class DocumentInitializer {
   DocumentInitializer({required this.documentService});
@@ -42,9 +43,11 @@ class DocumentInitializer {
   }
 
   Future<EditorStateWrapper> initDocumentWithUpdates(
-    List<(String, Uint8List)> updates,
+    List<DbUpdate> updates,
   ) async {
-    await documentService.applyUpdates(update: updates);
+    await documentService.applyUpdates(
+      update: updates.map((e) => e.update).toList(),
+    );
     final result = await documentService.getDocumentJson();
 
     final editorStateWrapper = EditorStateWrapper.factoryFromDocumentState(

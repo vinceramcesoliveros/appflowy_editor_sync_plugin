@@ -109,8 +109,8 @@ class EditorStateSyncWrapper {
     try {
       await docService.applyUpdates(
         update:
-            updates.$1.map((e) => (e.id, e.update)).toList() +
-            updates.$2.map((e) => (e.id, e.update)).toList(),
+            updates.$1.map((e) => e.update).toList() +
+            updates.$2.map((e) => e.update).toList(),
       );
     } catch (e) {
       print(e);

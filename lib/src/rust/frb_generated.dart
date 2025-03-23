@@ -80,10 +80,9 @@ abstract class RustLibApi extends BaseApi {
     required FutureOr<String> Function(String, String) diffDeltas,
   });
 
-  Future<FailedToDecodeUpdates>
-  crateDocDocumentServiceDocumentServiceApplyUpdates({
+  Future<void> crateDocDocumentServiceDocumentServiceApplyUpdates({
     required DocumentService that,
-    required List<(String, Uint8List)> updates,
+    required List<Uint8List> updates,
   });
 
   Future<DocumentState> crateDocDocumentServiceDocumentServiceGetDocumentState({
@@ -175,10 +174,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<FailedToDecodeUpdates>
-  crateDocDocumentServiceDocumentServiceApplyUpdates({
+  Future<void> crateDocDocumentServiceDocumentServiceApplyUpdates({
     required DocumentService that,
-    required List<(String, Uint8List)> updates,
+    required List<Uint8List> updates,
   }) {
     return handler.executeNormal(
       NormalTask(
@@ -188,10 +186,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          sse_encode_list_record_string_list_prim_u_8_strict(
-            updates,
-            serializer,
-          );
+          sse_encode_list_list_prim_u_8_strict(updates, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
@@ -200,7 +195,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_failed_to_decode_updates,
+          decodeSuccessData: sse_decode_unit,
           decodeErrorData: sse_decode_custom_rust_error,
         ),
         constMeta: kCrateDocDocumentServiceDocumentServiceApplyUpdatesConstMeta,
@@ -700,16 +695,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<(String, Uint8List)> dco_decode_list_record_string_list_prim_u_8_strict(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>)
-        .map(dco_decode_record_string_list_prim_u_8_strict)
-        .toList();
-  }
-
-  @protected
   List<(String, List<String>)> dco_decode_list_record_string_list_string(
     dynamic raw,
   ) {
@@ -745,18 +730,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       throw Exception('Expected 2 elements, got ${arr.length}');
     }
     return (dco_decode_String(arr[0]), dco_decode_block_doc(arr[1]));
-  }
-
-  @protected
-  (String, Uint8List) dco_decode_record_string_list_prim_u_8_strict(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) {
-      throw Exception('Expected 2 elements, got ${arr.length}');
-    }
-    return (dco_decode_String(arr[0]), dco_decode_list_prim_u_8_strict(arr[1]));
   }
 
   @protected
@@ -1058,20 +1031,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<(String, Uint8List)> sse_decode_list_record_string_list_prim_u_8_strict(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <(String, Uint8List)>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_record_string_list_prim_u_8_strict(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
   List<(String, List<String>)> sse_decode_list_record_string_list_string(
     SseDeserializer deserializer,
   ) {
@@ -1130,16 +1089,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_field0 = sse_decode_String(deserializer);
     var var_field1 = sse_decode_block_doc(deserializer);
-    return (var_field0, var_field1);
-  }
-
-  @protected
-  (String, Uint8List) sse_decode_record_string_list_prim_u_8_strict(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_field0 = sse_decode_String(deserializer);
-    var var_field1 = sse_decode_list_prim_u_8_strict(deserializer);
     return (var_field0, var_field1);
   }
 
@@ -1461,18 +1410,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_record_string_list_prim_u_8_strict(
-    List<(String, Uint8List)> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_record_string_list_prim_u_8_strict(item, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_list_record_string_list_string(
     List<(String, List<String>)> self,
     SseSerializer serializer,
@@ -1527,16 +1464,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.$1, serializer);
     sse_encode_block_doc(self.$2, serializer);
-  }
-
-  @protected
-  void sse_encode_record_string_list_prim_u_8_strict(
-    (String, Uint8List) self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.$1, serializer);
-    sse_encode_list_prim_u_8_strict(self.$2, serializer);
   }
 
   @protected
@@ -1617,12 +1544,11 @@ class DocumentServiceImpl extends RustOpaque implements DocumentService {
     diffDeltas: diffDeltas,
   );
 
-  Future<FailedToDecodeUpdates> applyUpdates({
-    required List<(String, Uint8List)> updates,
-  }) => RustLib.instance.api.crateDocDocumentServiceDocumentServiceApplyUpdates(
-    that: this,
-    updates: updates,
-  );
+  Future<void> applyUpdates({required List<Uint8List> updates}) =>
+      RustLib.instance.api.crateDocDocumentServiceDocumentServiceApplyUpdates(
+        that: this,
+        updates: updates,
+      );
 
   Future<DocumentState> getDocumentState() => RustLib.instance.api
       .crateDocDocumentServiceDocumentServiceGetDocumentState(that: this);
