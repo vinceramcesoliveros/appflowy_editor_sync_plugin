@@ -13,6 +13,7 @@ import 'package:appflowy_editor_sync_plugin/extensions/list_of_updates_extension
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
+import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 class EditorStateSyncWrapper {
@@ -156,7 +157,7 @@ class EditorStateSyncWrapper {
     final prettyJson = JsonEncoder.withIndent('  ').convert(json);
     final lines = prettyJson.split('\n');
     for (var line in lines) {
-      print(line);
+      debugPrint(line);
     }
   }
 
