@@ -647,4 +647,193 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_external_prev_id_becomes_root() {
+        // A block with prev_id pointing to a block not in current children becomes root
+        let mut blocks = HashMap::new();
+        blocks.insert(
+            "a1".to_string(),
+            create_test_block("a1", "para", "device_a", "1", None, Some("root"))
+        );
+        // b1's prev_id points to a2 which doesn't exist in children
+        blocks.insert(
+            "b1".to_string(),
+            create_test_block("b1", "para", "device_b", "2", Some("a2"), Some("root"))
+        );
+
+        let mut children_map = HashMap::new();
+        children_map.insert("root".to_string(), vec!["a1".to_string(), "b1".to_string()]);
+
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted_root = &sorted["root"];
+
+        // b1 should be treated as root since its prev_id is invalid
+        // Order should be device_a first (sorted devices), then device_b
+        assert_eq!(sorted_root, &["a1", "b1"]);
+    }
+
+    #[test]
+    fn test_valid_prev_id_across_devices() {
+        // prev_id valid but points to block from different device
+        let mut blocks = HashMap::new();
+        blocks.insert(
+            "a1".to_string(),
+            create_test_block("a1", "para", "device_a", "1", None, Some("root"))
+        );
+        blocks.insert(
+            "b1".to_string(),
+            create_test_block("b1", "para", "device_b", "2", Some("a1"), Some("root"))
+        );
+
+        let mut children_map = HashMap::new();
+        children_map.insert("root".to_string(), vec!["a1".to_string(), "b1".to_string()]);
+
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted_root = &sorted["root"];
+
+        // Even though b1 points to a1, devices should be grouped
+        // Device A (a1) first, then device B (b1 as root)
+        assert_eq!(sorted_root, &["a1", "b1"]);
+    }
+
+    #[test]
+    fn test_mixed_valid_and_invalid_prev_id() {
+        // Some valid prev_ids, some invalid within same device
+        let mut blocks = HashMap::new();
+        blocks.insert(
+            "a1".to_string(),
+            create_test_block("a1", "para", "device_a", "1", None, Some("root"))
+        );
+        blocks.insert(
+            "a2".to_string(),
+            create_test_block("a2", "para", "device_a", "2", Some("a1"), Some("root"))
+        );
+        blocks.insert(
+            "a3".to_string(),
+            create_test_block("a3", "para", "device_a", "3", Some("invalid"), Some("root"))
+        );
+
+        let mut children_map = HashMap::new();
+        children_map.insert(
+            "root".to_string(),
+            vec!["a1".to_string(), "a2".to_string(), "a3".to_string()]
+        );
+
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted_root = &sorted["root"];
+
+        // Should have a1->a2 chain first, then a3 as root
+        assert_eq!(sorted_root, &["a1", "a2", "a3"]);
+    }
+
+    #[test]
+    fn test_multiple_roots_in_device() {
+        // Device has multiple root blocks (no valid prev_ids)
+        let mut blocks = HashMap::new();
+        blocks.insert(
+            "a1".to_string(),
+            create_test_block("a1", "para", "device_a", "1", None, Some("root"))
+        );
+        blocks.insert(
+            "a2".to_string(),
+            create_test_block("a2", "para", "device_a", "2", None, Some("root"))
+        );
+        blocks.insert(
+            "a3".to_string(),
+            create_test_block("a3", "para", "device_a", "3", Some("a1"), Some("root"))
+        );
+
+        let mut children_map = HashMap::new();
+        children_map.insert(
+            "root".to_string(),
+            vec!["a1".to_string(), "a2".to_string(), "a3".to_string()]
+        );
+
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted_root = &sorted["root"];
+
+        // Roots sorted by timestamp: a1 (1), a2 (2)
+        // Followed by a3 chain
+        assert_eq!(sorted_root, &["a1", "a3", "a2"]);
+    }
+
+    #[test]
+    fn test_deep_chain_with_device_groups() {
+        // Complex chains within and across devices
+        let mut blocks = HashMap::new();
+        // Device A chain
+        blocks.insert(
+            "a1".to_string(),
+            create_test_block("a1", "para", "device_a", "1", None, Some("root"))
+        );
+        blocks.insert(
+            "a2".to_string(),
+            create_test_block("a2", "para", "device_a", "2", Some("a1"), Some("root"))
+        );
+        
+        // Device B chain with cross-device reference
+        blocks.insert(
+            "b1".to_string(),
+            create_test_block("b1", "para", "device_b", "3", Some("a2"), Some("root"))
+        );
+        blocks.insert(
+            "b2".to_string(),
+            create_test_block("b2", "para", "device_b", "4", Some("b1"), Some("root"))
+        );
+
+        // Device C independent chain
+        blocks.insert(
+            "c1".to_string(),
+            create_test_block("c1", "para", "device_c", "5", None, Some("root"))
+        );
+
+        let mut children_map = HashMap::new();
+        children_map.insert(
+            "root".to_string(),
+            vec!["a1".to_string(), "a2".to_string(), "b1".to_string(), "b2".to_string(), "c1".to_string()]
+        );
+
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted_root = &sorted["root"];
+
+        // Expected order:
+        // 1. device_a: a1->a2
+        // 2. device_b: b1 (prev_id valid but in different device) -> b2
+        // 3. device_c: c1
+        // Actual order depends on device sorting (device_a, device_b, device_c)
+        assert!(sorted_root[0] == "a1" && sorted_root[1] == "a2");
+        assert!(sorted_root[2] == "b1" && sorted_root[3] == "b2");
+        assert_eq!(sorted_root[4], "c1");
+    }
+
+    #[test]
+    fn test_moved_block_with_new_parent() {
+        // Block moved to new parent with prev_id from old parent
+        let mut blocks = HashMap::new();
+        // Original parent blocks
+        blocks.insert(
+            "p1a".to_string(),
+            create_test_block("p1a", "para", "device_a", "1", None, Some("parent1"))
+        );
+        blocks.insert(
+            "p1b".to_string(),
+            create_test_block("p1b", "para", "device_a", "2", Some("p1a"), Some("parent1"))
+        );
+        
+        // New parent with moved block
+        blocks.insert(
+            "p2a".to_string(),
+            create_test_block("p2a", "para", "device_b", "3", Some("p1b"), Some("parent2"))
+        );
+
+        let mut children_map = HashMap::new();
+        children_map.insert("parent1".to_string(), vec!["p1a".to_string(), "p1b".to_string()]);
+        children_map.insert("parent2".to_string(), vec!["p2a".to_string()]);
+
+        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+
+        // In parent2, p2a's prev_id (p1b) doesn't exist -> should be root
+        assert_eq!(sorted["parent2"], vec!["p2a"]);
+    }
+
 }

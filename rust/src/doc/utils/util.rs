@@ -91,7 +91,16 @@ pub trait TextExt: Text {
 impl TextExt for TextRef {}
 
 
-
+/// Converts a Yrs ArrayRef to a Vec<String> for easier comparison in tests
+pub fn array_to_vec<T: ReadTxn>(txn: &T, array: &ArrayRef) -> Vec<String> {
+    let mut result = Vec::new();
+    for i in 0..array.len(txn) {
+        if let Some(item) = array.get(txn, i) {
+            result.push(item.to_string(txn));
+        }
+    }
+    result
+}
 
 #[frb(ignore)]
 pub trait ArrayExt: Array {

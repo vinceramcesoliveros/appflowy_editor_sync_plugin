@@ -83,6 +83,7 @@ class _DesktopEditorState extends State<DesktopEditor> {
         textDirection: widget.textDirection,
         child: AppFlowyEditor(
           editorState: editorState,
+
           editorScrollController: editorScrollController,
           blockComponentBuilders: blockComponentBuilders,
           commandShortcutEvents: commandShortcuts,

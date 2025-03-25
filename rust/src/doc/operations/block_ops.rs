@@ -230,6 +230,16 @@ impl BlockOperations {
         let new_parent_children = children_map.get_or_init_array(txn, parent_id);
         new_parent_children.insert(txn, new_index, block_id);
 
+        //Save new parent id
+        let node = blocks_map.get_or_init_map(txn, block_id);
+        if parent_id != old_parent_id {
+            if parent_id != DEFAULT_PARENT {
+                node.insert(txn, Arc::from(PARENT_ID), parent_id.to_string());
+            } else {
+                node.remove(txn, &Arc::from(PARENT_ID));
+            }
+        }
+
         log_info!("move_block: Moved block between parents");
         Ok(())
     }
@@ -381,6 +391,18 @@ impl BlockOperations {
                     block_id
                 );
                 next_block.remove(txn, &Arc::from(PREV_ID));
+                //Give this node its deviceId and timestamp
+                let attributes = next_block.get_or_init_map(txn, ATTRIBUTES);
+                if let Some(device_out) = block_data.get(txn, "device") {
+                    if let yrs::Out::Any(device_any) = device_out {
+                        attributes.insert(txn, Arc::from("device"), device_any);
+                    }
+                }
+                if let Some(timestamp_out) = block_data.get(txn, "timestamp") {
+                    if let yrs::Out::Any(timestamp_any) = timestamp_out {
+                        attributes.insert(txn, Arc::from("timestamp"), timestamp_any);
+                    }
+                }
             }
         }
 
