@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:appflowy_editor_sync_plugin/convertors/transaction_adapter_helpers.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/node_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
@@ -30,9 +31,13 @@ extension on InsertOperation {
     final actions = <BlockActionDoc>[];
     for (final node in nodes) {
       final parentId =
-          node.parent?.id ??
-          editorStateWrapper.getNodeAtPath(currentPath.parent)?.id ??
-          '';
+          TransactionAdapterHelpers.parentFromPath(
+            editorStateWrapper.editorState.document,
+            currentPath,
+          ).id;
+      // node.parent?.id ??
+      //     editorStateWrapper.getNodeAtPath(currentPath.parent)?.id ??
+      //     '';
       assert(parentId.isNotEmpty);
 
       var prevId = '';
@@ -118,10 +123,15 @@ extension on UpdateOperation {
       assert(false, 'node not found at path: $path');
       return actions;
     }
+    // final parentId =
+    //     node.parent?.id ??
+    //     editorStateWrapper.getNodeAtPath(path.parent)?.id ??
+    //     '';
     final parentId =
-        node.parent?.id ??
-        editorStateWrapper.getNodeAtPath(path.parent)?.id ??
-        '';
+        TransactionAdapterHelpers.parentFromPath(
+          editorStateWrapper.editorState.document,
+          node.path,
+        ).id;
     assert(parentId.isNotEmpty);
 
     // create the external text if the node contains the delta in its data.
@@ -160,9 +170,14 @@ extension on DeleteOperation {
     final actions = <BlockActionDoc>[];
     for (final node in nodes) {
       final parentId =
-          node.parent?.id ??
-          editorStateWrapper.getNodeAtPath(path.parent)?.id ??
-          '';
+          TransactionAdapterHelpers.parentFromPath(
+            editorStateWrapper.editorState.document,
+            node.path,
+          ).id;
+      // final parentId =
+      //     node.parent?.id ??
+      //     editorStateWrapper.getNodeAtPath(path.parent)?.id ??
+      //     '';
       assert(parentId.isNotEmpty);
 
       final blockAction = BlockActionDoc(

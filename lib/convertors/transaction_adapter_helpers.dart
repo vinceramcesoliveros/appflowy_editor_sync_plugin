@@ -149,6 +149,8 @@ class TransactionAdapterHelpers {
       );
       documentCopy.delete(DeleteOperation.fromJson(op.toJson()).path);
 
+      final parentId = parentFromPath(documentCopy, deleteNode.path);
+
       // if the node is the first child of the parent, then its prevId should be empty.
       final isFirstChild = newPath.previous.equals(newPath);
 
@@ -174,8 +176,9 @@ class TransactionAdapterHelpers {
             id: deleteNode.id,
             ty: deleteNode.type,
             attributes: {},
-            parentId: insertNode.parent?.id ?? '', //Just this
-            oldParentId: deleteNode.parent?.id ?? '', // And this
+            parentId: parentId.id,
+            oldParentId:
+                parentFromPath(documentCopy, deleteNode.path).id, // And this
             prevId: prevId == '' ? null : prevId, // Previous ID
             nextId: nextId == '' ? null : nextId, // Next ID
           ), // No block data needed; move uses paths
@@ -199,5 +202,16 @@ class TransactionAdapterHelpers {
   ) {
     final wrapped = convertToOperationWrappers(operations, editorStateWrapper);
     return operationWrappersToBlockActions(wrapped, editorStateWrapper);
+  }
+
+  static Node parentFromPath(Document doc, Path path) {
+    // Makes from [0, 1] -> [0]
+    final withoutLast = path.parent;
+    if (withoutLast.isEmpty) {
+      return doc.root;
+    }
+
+    //Take node based on withoutLast
+    return doc.nodeAtPath(withoutLast) ?? doc.root;
   }
 }
