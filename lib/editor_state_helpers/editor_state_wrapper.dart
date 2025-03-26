@@ -47,12 +47,12 @@ class EditorStateWrapper {
     return editorState.getNodeAtPath(path);
   }
 
-  void applyRemoteChanges(List<Operation> operations) {
+  Future<void> applyRemoteChanges(List<Operation> operations) async {
     final transaction = editorState.transaction;
     transaction.operations.clear();
     transaction.operations.addAll(operations);
 
-    editorState.apply(transaction, isRemote: true);
+    await editorState.apply(transaction, isRemote: true);
   }
 
   Stream<EditorTransactionValue> listenEditorChanges() {

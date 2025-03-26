@@ -1,0 +1,359 @@
+flutter: Moving node(Node(id: I4098s, type: heading, attributes: {level: 1, timestamp: 2025-03-25T19:58:35.249376, device: 07e39b04-a422-4806-b54b-68d4afc1c8ab, delta: [{insert: Mobile}]}, children: []), [0]) to path([5])
+flutter: Transaction done
+apply_action: Starting with 1 actions for doc_id: xxx
+move_block: Moving block_id: I4098s from parent: j62VDi to parent: j62VDi
+remove_block_from_prev_id_chain: Removing block I4098s from chain
+  Finding blocks that reference I4098s as their prev_id
+find_block_referencing_prev_id: Searching for blocks with prev_id = I4098s
+  Found 9 total blocks to check
+  Checking block: SXTmU4
+    Block has prev_id: 1WVpT8, matches target: false
+  Checking block: n9Bx2_
+    Block does not have prev_id
+  Checking block: jBMJf8
+    Block does not have prev_id
+  Checking block: I4098s
+    Block does not have prev_id
+  Checking block: 1WVpT8
+    Block has prev_id: UX_nxA, matches target: false
+  Checking block: j62VDi
+    Block does not have prev_id
+  Checking block: FcPUds
+    Block does not have prev_id
+  Checking block: Zq4qVr
+    Block has prev_id: n9Bx2_, matches target: false
+  Checking block: UX_nxA
+    Block does not have prev_id
+find_block_referencing_prev_id: Found 0 blocks with prev_id = I4098s: []
+  Found 0 next blocks: []
+remove_block_from_prev_id_chain: Completed
+handle_following_connection: block_id=I4098s, next_id=None, prev_id=None
+  No prev_id or next_id provided, nothing to handle
+handle_following_connection: Completed
+move_block: Moved block within same parent
+apply_action: Encoding state for doc_id: xxx
+apply_updates: Starting with 71 updates for doc_id: xxx
+apply_updates: Starting with 71 updates for doc_id: xxx
+apply_updates: Applying update for doc_id: xxx
+apply_updates: Finished for doc_id: xxx
+apply_updates: Successfully applied updates for doc_id: xxx
+get_document_state: Starting for doc_id: xxx
+extract_document_state: Starting for doc_id: xxx
+extract_document_state: Processing 9 blocks
+deltas_to_json: Converting 1 deltas
+deltas_to_json: Converting 1 deltas
+deltas_to_json: Converting 0 deltas
+deltas_to_json: Converting 0 deltas
+deltas_to_json: Converting 1 deltas
+deltas_to_json: Converting 0 deltas
+deltas_to_json: Converting 1 deltas
+deltas_to_json: Converting 1 deltas
+====== STARTING BLOCK SORTING ======
+Input children_map has 9 parent nodes
+
+----- Sorting children of parent: j62VDi -----
+Parent has 8 children to sort
+Mapped 8 valid blocks by ID
+Block UX_nxA assigned to device 07e39b04-a422-4806-b54b-68d4afc1c8ab
+Block 1WVpT8 assigned to device dd27e019-fdd2-4238-af8f-8af1ba410805
+Block Zq4qVr assigned to device 76d16ea0-07d0-4a5a-aca9-59c99e6689d5
+Block n9Bx2_ assigned to device 91d7fbf1-495b-43a7-a203-b884d7efc3e4
+Block SXTmU4 assigned to device dd27e019-fdd2-4238-af8f-8af1ba410805
+Block FcPUds assigned to device 91d7fbf1-495b-43a7-a203-b884d7efc3e4
+Block I4098s assigned to device 07e39b04-a422-4806-b54b-68d4afc1c8ab
+Block jBMJf8 assigned to device 91d7fbf1-495b-43a7-a203-b884d7efc3e4
+Grouped blocks into 4 devices
+  - Device 76d16ea0-07d0-4a5a-aca9-59c99e6689d5 has 1 blocks
+  - Device 07e39b04-a422-4806-b54b-68d4afc1c8ab has 2 blocks
+  - Device 91d7fbf1-495b-43a7-a203-b884d7efc3e4 has 3 blocks
+  - Device dd27e019-fdd2-4238-af8f-8af1ba410805 has 2 blocks
+Block UX_nxA has no prev_id
+Block 1WVpT8 has prev_id UX_nxA
+Block Zq4qVr has prev_id n9Bx2_
+Block n9Bx2_ has no prev_id
+Block SXTmU4 has prev_id 1WVpT8
+Block FcPUds has no prev_id
+Block I4098s has no prev_id
+Block jBMJf8 has no prev_id
+Built prev->next map with 3 entries
+  - 1WVpT8 has 1 next blocks: ["SXTmU4"]
+  - n9Bx2_ has 1 next blocks: ["Zq4qVr"]
+  - UX_nxA has 1 next blocks: ["1WVpT8"]
+Device 76d16ea0-07d0-4a5a-aca9-59c99e6689d5 has no root blocks
+Device 07e39b04-a422-4806-b54b-68d4afc1c8ab has 2 root blocks: ["UX_nxA", "I4098s"]
+Device 91d7fbf1-495b-43a7-a203-b884d7efc3e4 has 3 root blocks: ["n9Bx2_", "FcPUds", "jBMJf8"]
+Device dd27e019-fdd2-4238-af8f-8af1ba410805 has no root blocks
+Processing devices in order: ["07e39b04-a422-4806-b54b-68d4afc1c8ab", "76d16ea0-07d0-4a5a-aca9-59c99e6689d5", "91d7fbf1-495b-43a7-a203-b884d7efc3e4", "dd27e019-fdd2-4238-af8f-8af1ba410805"]
+
+Processing device: 07e39b04-a422-4806-b54b-68d4afc1c8ab
+Comparing root blocks: I4098s (time: 2025-03-25T19:58:35.249376) vs UX_nxA (time: 2025-03-25T19:58:38.633303)
+Sorted roots for device 07e39b04-a422-4806-b54b-68d4afc1c8ab: ["I4098s", "UX_nxA"]
+Starting chain from root: I4098s
+  Adding block I4098s to sorted list
+  No next blocks for I4098s
+Starting chain from root: UX_nxA
+  Adding block UX_nxA to sorted list
+    Pushing 1WVpT8 onto stack
+  Adding block 1WVpT8 to sorted list
+    Pushing SXTmU4 onto stack
+  Adding block SXTmU4 to sorted list
+  No next blocks for SXTmU4
+No remaining blocks for device 07e39b04-a422-4806-b54b-68d4afc1c8ab
+
+Processing device: 76d16ea0-07d0-4a5a-aca9-59c99e6689d5
+No roots for device 76d16ea0-07d0-4a5a-aca9-59c99e6689d5, skipping
+
+Processing device: 91d7fbf1-495b-43a7-a203-b884d7efc3e4
+Comparing root blocks: FcPUds (time: 2025-03-25T19:58:18.595632) vs n9Bx2_ (time: 2025-03-25T20:00:41.995320)
+Comparing root blocks: jBMJf8 (time: 2025-03-25T19:57:52.267600) vs n9Bx2_ (time: 2025-03-25T20:00:41.995320)
+Comparing root blocks: jBMJf8 (time: 2025-03-25T19:57:52.267600) vs FcPUds (time: 2025-03-25T19:58:18.595632)
+Sorted roots for device 91d7fbf1-495b-43a7-a203-b884d7efc3e4: ["jBMJf8", "FcPUds", "n9Bx2_"]
+Starting chain from root: jBMJf8
+  Adding block jBMJf8 to sorted list
+  No next blocks for jBMJf8
+Starting chain from root: FcPUds
+  Adding block FcPUds to sorted list
+  No next blocks for FcPUds
+Starting chain from root: n9Bx2_
+  Adding block n9Bx2_ to sorted list
+    Pushing Zq4qVr onto stack
+  Adding block Zq4qVr to sorted list
+  No next blocks for Zq4qVr
+No remaining blocks for device 91d7fbf1-495b-43a7-a203-b884d7efc3e4
+
+Processing device: dd27e019-fdd2-4238-af8f-8af1ba410805
+No roots for device dd27e019-fdd2-4238-af8f-8af1ba410805, skipping
+No globally remaining blocks
+Final sorted order for parent j62VDi: ["I4098s", "UX_nxA", "1WVpT8", "SXTmU4", "jBMJf8", "FcPUds", "n9Bx2_", "Zq4qVr"]
+
+----- Sorting children of parent: jBMJf8 -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent jBMJf8: []
+
+----- Sorting children of parent: FcPUds -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent FcPUds: []
+
+----- Sorting children of parent: 1WVpT8 -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent 1WVpT8: []
+
+----- Sorting children of parent: SXTmU4 -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent SXTmU4: []
+
+----- Sorting children of parent: n9Bx2_ -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent n9Bx2_: []
+
+----- Sorting children of parent: Zq4qVr -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent Zq4qVr: []
+
+----- Sorting children of parent: I4098s -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent I4098s: []
+
+----- Sorting children of parent: UX_nxA -----
+Parent has 0 children to sort
+Mapped 0 valid blocks by ID
+Grouped blocks into 0 devices
+Built prev->next map with 0 entries
+Processing devices in order: []
+No globally remaining blocks
+Final sorted order for parent UX_nxA: []
+====== COMPLETED BLOCK SORTING ======
+Final sorted children map has 9 parents
+extract_document_state: Extracted 9 blocks and 9 parent-child relationships
+get_document_state: Finished for doc_id: xxx
+flutter: {
+flutter:   "docId": "xxx",
+flutter:   "blocks": {
+flutter:     "UX_nxA": {
+flutter:       "id": "UX_nxA",
+flutter:       "ty": "paragraph",
+flutter:       "attributes": {
+flutter:         "device": "07e39b04-a422-4806-b54b-68d4afc1c8ab",
+flutter:         "delta": "[]",
+flutter:         "timestamp": "2025-03-25T19:58:38.633303"
+flutter:       },
+flutter:       "delta": "[]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": null,
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "Zq4qVr": {
+flutter:       "id": "Zq4qVr",
+flutter:       "ty": "paragraph",
+flutter:       "attributes": {
+flutter:         "delta": "[]",
+flutter:         "device": "76d16ea0-07d0-4a5a-aca9-59c99e6689d5",
+flutter:         "timestamp": "2025-03-25T20:29:13.662875"
+flutter:       },
+flutter:       "delta": "[]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": "n9Bx2_",
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "FcPUds": {
+flutter:       "id": "FcPUds",
+flutter:       "ty": "heading",
+flutter:       "attributes": {
+flutter:         "delta": "[]",
+flutter:         "timestamp": "2025-03-25T19:58:18.595632",
+flutter:         "level": "1",
+flutter:         "device": "91d7fbf1-495b-43a7-a203-b884d7efc3e4"
+flutter:       },
+flutter:       "delta": "[{\"insert\":\"Desktop\"}]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": null,
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "n9Bx2_": {
+flutter:       "id": "n9Bx2_",
+flutter:       "ty": "heading",
+flutter:       "attributes": {
+flutter:         "level": "1",
+flutter:         "delta": "[]",
+flutter:         "timestamp": "2025-03-25T20:00:41.995320",
+flutter:         "device": "91d7fbf1-495b-43a7-a203-b884d7efc3e4"
+flutter:       },
+flutter:       "delta": "[{\"insert\":\"New way of handling things xxxxx\"}]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": null,
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "1WVpT8": {
+flutter:       "id": "1WVpT8",
+flutter:       "ty": "paragraph",
+flutter:       "attributes": {
+flutter:         "delta": "[]",
+flutter:         "device": "dd27e019-fdd2-4238-af8f-8af1ba410805",
+flutter:         "timestamp": "2025-03-25T20:01:18.530099"
+flutter:       },
+flutter:       "delta": "[]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": "UX_nxA",
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "jBMJf8": {
+flutter:       "id": "jBMJf8",
+flutter:       "ty": "heading",
+flutter:       "attributes": {
+flutter:         "level": "1",
+flutter:         "timestamp": "2025-03-25T19:57:52.267600",
+flutter:         "device": "91d7fbf1-495b-43a7-a203-b884d7efc3e4",
+flutter:         "delta": "[]"
+flutter:       },
+flutter:       "delta": "[{\"insert\":\"Intro\"}]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": null,
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "SXTmU4": {
+flutter:       "id": "SXTmU4",
+flutter:       "ty": "heading",
+flutter:       "attributes": {
+flutter:         "delta": "[]",
+flutter:         "timestamp": "2025-03-25T20:01:19.827692",
+flutter:         "level": "1",
+flutter:         "device": "dd27e019-fdd2-4238-af8f-8af1ba410805"
+flutter:       },
+flutter:       "delta": "[{\"insert\":\"Heroes is mine\"}]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": "1WVpT8",
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "I4098s": {
+flutter:       "id": "I4098s",
+flutter:       "ty": "heading",
+flutter:       "attributes": {
+flutter:         "device": "07e39b04-a422-4806-b54b-68d4afc1c8ab",
+flutter:         "timestamp": "2025-03-25T19:58:35.249376",
+flutter:         "level": "1",
+flutter:         "delta": "[]"
+flutter:       },
+flutter:       "delta": "[{\"insert\":\"Mobile\"}]",
+flutter:       "parentId": "j62VDi",
+flutter:       "prevId": null,
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     },
+flutter:     "j62VDi": {
+flutter:       "id": "j62VDi",
+flutter:       "ty": "page",
+flutter:       "attributes": {
+flutter:         "timestamp": "2025-03-25T19:57:49.833325",
+flutter:         "device": "91d7fbf1-495b-43a7-a203-b884d7efc3e4"
+flutter:       },
+flutter:       "delta": null,
+flutter:       "parentId": null,
+flutter:       "prevId": null,
+flutter:       "nextId": null,
+flutter:       "oldParentId": null
+flutter:     }
+flutter:   },
+flutter:   "childrenMap": {
+flutter:     "jBMJf8": [],
+flutter:     "1WVpT8": [],
+flutter:     "n9Bx2_": [],
+flutter:     "j62VDi": [
+flutter:       "I4098s",
+flutter:       "UX_nxA",
+flutter:       "1WVpT8",
+flutter:       "SXTmU4",
+flutter:       "jBMJf8",
+flutter:       "FcPUds",
+flutter:       "n9Bx2_",
+flutter:       "Zq4qVr"
+flutter:     ],
+flutter:     "FcPUds": [],
+flutter:     "Zq4qVr": [],
+flutter:     "UX_nxA": [],
+flutter:     "I4098s": [],
+flutter:     "SXTmU4": []
+flutter:   },
+flutter:   "rootId": "j62VDi"
+flutter: }

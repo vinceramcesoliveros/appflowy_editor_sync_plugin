@@ -9,6 +9,9 @@ pub mod sorting_test;
 /// flutter_rust_bridge:ignore
 pub mod another_tests2;
 
+/// flutter_rust_bridge:ignore
+pub mod another_test3;
+
 
 /// flutter_rust_bridge:ignore
 pub mod sorting;

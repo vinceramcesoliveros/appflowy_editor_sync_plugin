@@ -142,35 +142,29 @@ class TransactionAdapterHelpers {
 
       var prevId = '';
 
-      final editorStateWrapperCopy = EditorStateWrapper.factoryWithDocument(
-        DocumentExtensions.fromJsonWithIds(
-          jsonDecode(
-            jsonEncode(editorStateWrapper.editorState.document.toJsonWithIds()),
-          ),
+      final documentCopy = DocumentExtensions.fromJsonWithIds(
+        jsonDecode(
+          jsonEncode(editorStateWrapper.editorState.document.toJsonWithIds()),
         ),
       );
-      editorStateWrapperCopy.applyRemoteChanges([
-        DeleteOperation.fromJson(op.toJson()),
-      ]);
+      documentCopy.delete(DeleteOperation.fromJson(op.toJson()).path);
 
       // if the node is the first child of the parent, then its prevId should be empty.
       final isFirstChild = newPath.previous.equals(newPath);
 
       if (!isFirstChild) {
-        prevId =
-            editorStateWrapperCopy.getNodeAtPath(newPath.previous)?.id ?? '';
+        prevId = documentCopy.nodeAtPath(newPath.previous)?.id ?? '';
       }
 
       var nextId = '';
 
-      editorStateWrapperCopy.applyRemoteChanges([
-        InsertOperation.fromJson(nextOp.toJson()),
-      ]);
+      final insertCopy = InsertOperation.fromJson(nextOp.toJson());
+      documentCopy.insert(insertCopy.path, insertCopy.nodes);
 
       //If the node is the last child of the parent, then its nextId should be empty.
       final isLastChild = newPath.next.equals(newPath);
       if (!isLastChild) {
-        nextId = editorStateWrapperCopy.getNodeAtPath(newPath.next)?.id ?? '';
+        nextId = documentCopy.nodeAtPath(newPath.next)?.id ?? '';
       }
 
       return [
