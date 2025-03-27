@@ -98,9 +98,7 @@ abstract class RustLibApi extends BaseApi {
     required List<Uint8List> updates,
   });
 
-  Future<DocumentService> crateDocDocumentServiceDocumentServiceNew({
-    required String docId,
-  });
+  Future<DocumentService> crateDocDocumentServiceDocumentServiceNew();
 
   Future<Uint8List> crateDocDocumentServiceDocumentServiceSetRootNodeId({
     required DocumentService that,
@@ -327,14 +325,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<DocumentService> crateDocDocumentServiceDocumentServiceNew({
-    required String docId,
-  }) {
+  Future<DocumentService> crateDocDocumentServiceDocumentServiceNew() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(docId, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
@@ -348,17 +343,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: null,
         ),
         constMeta: kCrateDocDocumentServiceDocumentServiceNewConstMeta,
-        argValues: [docId],
+        argValues: [],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta get kCrateDocDocumentServiceDocumentServiceNewConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentService_new",
-        argNames: ["docId"],
-      );
+      const TaskConstMeta(debugName: "DocumentService_new", argNames: []);
 
   @override
   Future<Uint8List> crateDocDocumentServiceDocumentServiceSetRootNodeId({

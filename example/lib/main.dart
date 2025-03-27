@@ -140,7 +140,7 @@ void main() async {
     name: 'appflowy_editor_2',
     schemas: [DocumentSchema, DocumentDataSchema],
   );
-  await initAppFlowyEditorSync();
+  await AppflowyEditorSyncUtilityFunctions.initAppFlowyEditorSync();
 
   runApp(
     ProviderScope(

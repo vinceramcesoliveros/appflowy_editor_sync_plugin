@@ -17,10 +17,8 @@ class DocumentServiceWrapper {
 
   // Factory constructor to create a new instance with mutex handling
   // This uses flutter_rust_bridge's generated method
-  static Future<DocumentServiceWrapper> newInstance({
-    required String docId,
-  }) async {
-    final rustService = await DocumentService.newInstance(docId: docId);
+  static Future<DocumentServiceWrapper> newInstance() async {
+    final rustService = await DocumentService.newInstance();
     return DocumentServiceWrapper._(rustService);
   }
 

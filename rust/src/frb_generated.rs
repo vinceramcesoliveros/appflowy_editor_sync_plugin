@@ -349,13 +349,11 @@ fn wire__crate__doc__document_service__DocumentService_new_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_doc_id = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(
-                        crate::doc::document_service::DocumentService::new(api_doc_id),
-                    )?;
+                    let output_ok =
+                        Result::<_, ()>::Ok(crate::doc::document_service::DocumentService::new())?;
                     Ok(output_ok)
                 })())
             }

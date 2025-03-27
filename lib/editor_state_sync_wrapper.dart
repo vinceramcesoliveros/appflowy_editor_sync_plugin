@@ -33,7 +33,7 @@ class EditorStateSyncWrapper {
   UpdateClock updateClock = UpdateClock();
 
   Future<EditorState> initAndHandleChanges() async {
-    docService = await DocumentServiceWrapper.newInstance(docId: "xxx");
+    docService = await DocumentServiceWrapper.newInstance();
     initializer = DocumentInitializer(documentService: docService);
     syncDB = DocumentSyncDB(
       docService: docService,

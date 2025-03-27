@@ -20,8 +20,9 @@ pub struct DocumentService {
 impl DocumentService {
 
     #[frb]
-    pub fn new(doc_id: String) -> Self {
-        log_info!("Creating new document service for doc_id: {}", doc_id);
+    pub fn new() -> Self {
+        log_info!("Creating new document service");
+        let doc_id = "xxxx".to_string();
         Self { doc_id, doc: Doc::new() }
     }
 

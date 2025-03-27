@@ -12,7 +12,8 @@ part of 'document_types.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 BlockActionDoc _$BlockActionDocFromJson(Map<String, dynamic> json) {
   return _BlockActionDoc.fromJson(json);
@@ -40,14 +41,16 @@ mixin _$BlockActionDoc {
 /// @nodoc
 abstract class $BlockActionDocCopyWith<$Res> {
   factory $BlockActionDocCopyWith(
-          BlockActionDoc value, $Res Function(BlockActionDoc) then) =
-      _$BlockActionDocCopyWithImpl<$Res, BlockActionDoc>;
+    BlockActionDoc value,
+    $Res Function(BlockActionDoc) then,
+  ) = _$BlockActionDocCopyWithImpl<$Res, BlockActionDoc>;
   @useResult
-  $Res call(
-      {BlockActionTypeDoc action,
-      BlockDoc block,
-      @Uint32ListConverter() Uint32List path,
-      @Uint32ListConverter() Uint32List? oldPath});
+  $Res call({
+    BlockActionTypeDoc action,
+    BlockDoc block,
+    @Uint32ListConverter() Uint32List path,
+    @Uint32ListConverter() Uint32List? oldPath,
+  });
 
   $BlockDocCopyWith<$Res> get block;
 }
@@ -72,24 +75,31 @@ class _$BlockActionDocCopyWithImpl<$Res, $Val extends BlockActionDoc>
     Object? path = null,
     Object? oldPath = freezed,
   }) {
-    return _then(_value.copyWith(
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as BlockActionTypeDoc,
-      block: null == block
-          ? _value.block
-          : block // ignore: cast_nullable_to_non_nullable
-              as BlockDoc,
-      path: null == path
-          ? _value.path
-          : path // ignore: cast_nullable_to_non_nullable
-              as Uint32List,
-      oldPath: freezed == oldPath
-          ? _value.oldPath
-          : oldPath // ignore: cast_nullable_to_non_nullable
-              as Uint32List?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            action:
+                null == action
+                    ? _value.action
+                    : action // ignore: cast_nullable_to_non_nullable
+                        as BlockActionTypeDoc,
+            block:
+                null == block
+                    ? _value.block
+                    : block // ignore: cast_nullable_to_non_nullable
+                        as BlockDoc,
+            path:
+                null == path
+                    ? _value.path
+                    : path // ignore: cast_nullable_to_non_nullable
+                        as Uint32List,
+            oldPath:
+                freezed == oldPath
+                    ? _value.oldPath
+                    : oldPath // ignore: cast_nullable_to_non_nullable
+                        as Uint32List?,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of BlockActionDoc
@@ -106,16 +116,18 @@ class _$BlockActionDocCopyWithImpl<$Res, $Val extends BlockActionDoc>
 /// @nodoc
 abstract class _$$BlockActionDocImplCopyWith<$Res>
     implements $BlockActionDocCopyWith<$Res> {
-  factory _$$BlockActionDocImplCopyWith(_$BlockActionDocImpl value,
-          $Res Function(_$BlockActionDocImpl) then) =
-      __$$BlockActionDocImplCopyWithImpl<$Res>;
+  factory _$$BlockActionDocImplCopyWith(
+    _$BlockActionDocImpl value,
+    $Res Function(_$BlockActionDocImpl) then,
+  ) = __$$BlockActionDocImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {BlockActionTypeDoc action,
-      BlockDoc block,
-      @Uint32ListConverter() Uint32List path,
-      @Uint32ListConverter() Uint32List? oldPath});
+  $Res call({
+    BlockActionTypeDoc action,
+    BlockDoc block,
+    @Uint32ListConverter() Uint32List path,
+    @Uint32ListConverter() Uint32List? oldPath,
+  });
 
   @override
   $BlockDocCopyWith<$Res> get block;
@@ -126,8 +138,9 @@ class __$$BlockActionDocImplCopyWithImpl<$Res>
     extends _$BlockActionDocCopyWithImpl<$Res, _$BlockActionDocImpl>
     implements _$$BlockActionDocImplCopyWith<$Res> {
   __$$BlockActionDocImplCopyWithImpl(
-      _$BlockActionDocImpl _value, $Res Function(_$BlockActionDocImpl) _then)
-      : super(_value, _then);
+    _$BlockActionDocImpl _value,
+    $Res Function(_$BlockActionDocImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of BlockActionDoc
   /// with the given fields replaced by the non-null parameter values.
@@ -139,35 +152,42 @@ class __$$BlockActionDocImplCopyWithImpl<$Res>
     Object? path = null,
     Object? oldPath = freezed,
   }) {
-    return _then(_$BlockActionDocImpl(
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as BlockActionTypeDoc,
-      block: null == block
-          ? _value.block
-          : block // ignore: cast_nullable_to_non_nullable
-              as BlockDoc,
-      path: null == path
-          ? _value.path
-          : path // ignore: cast_nullable_to_non_nullable
-              as Uint32List,
-      oldPath: freezed == oldPath
-          ? _value.oldPath
-          : oldPath // ignore: cast_nullable_to_non_nullable
-              as Uint32List?,
-    ));
+    return _then(
+      _$BlockActionDocImpl(
+        action:
+            null == action
+                ? _value.action
+                : action // ignore: cast_nullable_to_non_nullable
+                    as BlockActionTypeDoc,
+        block:
+            null == block
+                ? _value.block
+                : block // ignore: cast_nullable_to_non_nullable
+                    as BlockDoc,
+        path:
+            null == path
+                ? _value.path
+                : path // ignore: cast_nullable_to_non_nullable
+                    as Uint32List,
+        oldPath:
+            freezed == oldPath
+                ? _value.oldPath
+                : oldPath // ignore: cast_nullable_to_non_nullable
+                    as Uint32List?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$BlockActionDocImpl implements _BlockActionDoc {
-  const _$BlockActionDocImpl(
-      {required this.action,
-      required this.block,
-      @Uint32ListConverter() required this.path,
-      @Uint32ListConverter() this.oldPath});
+  const _$BlockActionDocImpl({
+    required this.action,
+    required this.block,
+    @Uint32ListConverter() required this.path,
+    @Uint32ListConverter() this.oldPath,
+  });
 
   factory _$BlockActionDocImpl.fromJson(Map<String, dynamic> json) =>
       _$$BlockActionDocImplFromJson(json);
@@ -202,11 +222,12 @@ class _$BlockActionDocImpl implements _BlockActionDoc {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      action,
-      block,
-      const DeepCollectionEquality().hash(path),
-      const DeepCollectionEquality().hash(oldPath));
+    runtimeType,
+    action,
+    block,
+    const DeepCollectionEquality().hash(path),
+    const DeepCollectionEquality().hash(oldPath),
+  );
 
   /// Create a copy of BlockActionDoc
   /// with the given fields replaced by the non-null parameter values.
@@ -215,22 +236,23 @@ class _$BlockActionDocImpl implements _BlockActionDoc {
   @pragma('vm:prefer-inline')
   _$$BlockActionDocImplCopyWith<_$BlockActionDocImpl> get copyWith =>
       __$$BlockActionDocImplCopyWithImpl<_$BlockActionDocImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$BlockActionDocImplToJson(
-      this,
-    );
+    return _$$BlockActionDocImplToJson(this);
   }
 }
 
 abstract class _BlockActionDoc implements BlockActionDoc {
-  const factory _BlockActionDoc(
-      {required final BlockActionTypeDoc action,
-      required final BlockDoc block,
-      @Uint32ListConverter() required final Uint32List path,
-      @Uint32ListConverter() final Uint32List? oldPath}) = _$BlockActionDocImpl;
+  const factory _BlockActionDoc({
+    required final BlockActionTypeDoc action,
+    required final BlockDoc block,
+    @Uint32ListConverter() required final Uint32List path,
+    @Uint32ListConverter() final Uint32List? oldPath,
+  }) = _$BlockActionDocImpl;
 
   factory _BlockActionDoc.fromJson(Map<String, dynamic> json) =
       _$BlockActionDocImpl.fromJson;
@@ -284,15 +306,16 @@ abstract class $BlockDocCopyWith<$Res> {
   factory $BlockDocCopyWith(BlockDoc value, $Res Function(BlockDoc) then) =
       _$BlockDocCopyWithImpl<$Res, BlockDoc>;
   @useResult
-  $Res call(
-      {String id,
-      String ty,
-      Map<String, String> attributes,
-      String? delta,
-      String? parentId,
-      String? prevId,
-      String? nextId,
-      String? oldParentId});
+  $Res call({
+    String id,
+    String ty,
+    Map<String, String> attributes,
+    String? delta,
+    String? parentId,
+    String? prevId,
+    String? nextId,
+    String? oldParentId,
+  });
 }
 
 /// @nodoc
@@ -319,40 +342,51 @@ class _$BlockDocCopyWithImpl<$Res, $Val extends BlockDoc>
     Object? nextId = freezed,
     Object? oldParentId = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      ty: null == ty
-          ? _value.ty
-          : ty // ignore: cast_nullable_to_non_nullable
-              as String,
-      attributes: null == attributes
-          ? _value.attributes
-          : attributes // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>,
-      delta: freezed == delta
-          ? _value.delta
-          : delta // ignore: cast_nullable_to_non_nullable
-              as String?,
-      parentId: freezed == parentId
-          ? _value.parentId
-          : parentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      prevId: freezed == prevId
-          ? _value.prevId
-          : prevId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nextId: freezed == nextId
-          ? _value.nextId
-          : nextId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      oldParentId: freezed == oldParentId
-          ? _value.oldParentId
-          : oldParentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id:
+                null == id
+                    ? _value.id
+                    : id // ignore: cast_nullable_to_non_nullable
+                        as String,
+            ty:
+                null == ty
+                    ? _value.ty
+                    : ty // ignore: cast_nullable_to_non_nullable
+                        as String,
+            attributes:
+                null == attributes
+                    ? _value.attributes
+                    : attributes // ignore: cast_nullable_to_non_nullable
+                        as Map<String, String>,
+            delta:
+                freezed == delta
+                    ? _value.delta
+                    : delta // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            parentId:
+                freezed == parentId
+                    ? _value.parentId
+                    : parentId // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            prevId:
+                freezed == prevId
+                    ? _value.prevId
+                    : prevId // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            nextId:
+                freezed == nextId
+                    ? _value.nextId
+                    : nextId // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            oldParentId:
+                freezed == oldParentId
+                    ? _value.oldParentId
+                    : oldParentId // ignore: cast_nullable_to_non_nullable
+                        as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -360,19 +394,21 @@ class _$BlockDocCopyWithImpl<$Res, $Val extends BlockDoc>
 abstract class _$$BlockDocImplCopyWith<$Res>
     implements $BlockDocCopyWith<$Res> {
   factory _$$BlockDocImplCopyWith(
-          _$BlockDocImpl value, $Res Function(_$BlockDocImpl) then) =
-      __$$BlockDocImplCopyWithImpl<$Res>;
+    _$BlockDocImpl value,
+    $Res Function(_$BlockDocImpl) then,
+  ) = __$$BlockDocImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String ty,
-      Map<String, String> attributes,
-      String? delta,
-      String? parentId,
-      String? prevId,
-      String? nextId,
-      String? oldParentId});
+  $Res call({
+    String id,
+    String ty,
+    Map<String, String> attributes,
+    String? delta,
+    String? parentId,
+    String? prevId,
+    String? nextId,
+    String? oldParentId,
+  });
 }
 
 /// @nodoc
@@ -380,8 +416,9 @@ class __$$BlockDocImplCopyWithImpl<$Res>
     extends _$BlockDocCopyWithImpl<$Res, _$BlockDocImpl>
     implements _$$BlockDocImplCopyWith<$Res> {
   __$$BlockDocImplCopyWithImpl(
-      _$BlockDocImpl _value, $Res Function(_$BlockDocImpl) _then)
-      : super(_value, _then);
+    _$BlockDocImpl _value,
+    $Res Function(_$BlockDocImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of BlockDoc
   /// with the given fields replaced by the non-null parameter values.
@@ -397,56 +434,66 @@ class __$$BlockDocImplCopyWithImpl<$Res>
     Object? nextId = freezed,
     Object? oldParentId = freezed,
   }) {
-    return _then(_$BlockDocImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      ty: null == ty
-          ? _value.ty
-          : ty // ignore: cast_nullable_to_non_nullable
-              as String,
-      attributes: null == attributes
-          ? _value._attributes
-          : attributes // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>,
-      delta: freezed == delta
-          ? _value.delta
-          : delta // ignore: cast_nullable_to_non_nullable
-              as String?,
-      parentId: freezed == parentId
-          ? _value.parentId
-          : parentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      prevId: freezed == prevId
-          ? _value.prevId
-          : prevId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      nextId: freezed == nextId
-          ? _value.nextId
-          : nextId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      oldParentId: freezed == oldParentId
-          ? _value.oldParentId
-          : oldParentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$BlockDocImpl(
+        id:
+            null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                    as String,
+        ty:
+            null == ty
+                ? _value.ty
+                : ty // ignore: cast_nullable_to_non_nullable
+                    as String,
+        attributes:
+            null == attributes
+                ? _value._attributes
+                : attributes // ignore: cast_nullable_to_non_nullable
+                    as Map<String, String>,
+        delta:
+            freezed == delta
+                ? _value.delta
+                : delta // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        parentId:
+            freezed == parentId
+                ? _value.parentId
+                : parentId // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        prevId:
+            freezed == prevId
+                ? _value.prevId
+                : prevId // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        nextId:
+            freezed == nextId
+                ? _value.nextId
+                : nextId // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        oldParentId:
+            freezed == oldParentId
+                ? _value.oldParentId
+                : oldParentId // ignore: cast_nullable_to_non_nullable
+                    as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$BlockDocImpl implements _BlockDoc {
-  const _$BlockDocImpl(
-      {required this.id,
-      required this.ty,
-      required final Map<String, String> attributes,
-      this.delta,
-      this.parentId,
-      this.prevId,
-      this.nextId,
-      this.oldParentId})
-      : _attributes = attributes;
+  const _$BlockDocImpl({
+    required this.id,
+    required this.ty,
+    required final Map<String, String> attributes,
+    this.delta,
+    this.parentId,
+    this.prevId,
+    this.nextId,
+    this.oldParentId,
+  }) : _attributes = attributes;
 
   factory _$BlockDocImpl.fromJson(Map<String, dynamic> json) =>
       _$$BlockDocImplFromJson(json);
@@ -486,8 +533,10 @@ class _$BlockDocImpl implements _BlockDoc {
             other is _$BlockDocImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.ty, ty) || other.ty == ty) &&
-            const DeepCollectionEquality()
-                .equals(other._attributes, _attributes) &&
+            const DeepCollectionEquality().equals(
+              other._attributes,
+              _attributes,
+            ) &&
             (identical(other.delta, delta) || other.delta == delta) &&
             (identical(other.parentId, parentId) ||
                 other.parentId == parentId) &&
@@ -500,15 +549,16 @@ class _$BlockDocImpl implements _BlockDoc {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      ty,
-      const DeepCollectionEquality().hash(_attributes),
-      delta,
-      parentId,
-      prevId,
-      nextId,
-      oldParentId);
+    runtimeType,
+    id,
+    ty,
+    const DeepCollectionEquality().hash(_attributes),
+    delta,
+    parentId,
+    prevId,
+    nextId,
+    oldParentId,
+  );
 
   /// Create a copy of BlockDoc
   /// with the given fields replaced by the non-null parameter values.
@@ -520,22 +570,21 @@ class _$BlockDocImpl implements _BlockDoc {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$BlockDocImplToJson(
-      this,
-    );
+    return _$$BlockDocImplToJson(this);
   }
 }
 
 abstract class _BlockDoc implements BlockDoc {
-  const factory _BlockDoc(
-      {required final String id,
-      required final String ty,
-      required final Map<String, String> attributes,
-      final String? delta,
-      final String? parentId,
-      final String? prevId,
-      final String? nextId,
-      final String? oldParentId}) = _$BlockDocImpl;
+  const factory _BlockDoc({
+    required final String id,
+    required final String ty,
+    required final Map<String, String> attributes,
+    final String? delta,
+    final String? parentId,
+    final String? prevId,
+    final String? nextId,
+    final String? oldParentId,
+  }) = _$BlockDocImpl;
 
   factory _BlockDoc.fromJson(Map<String, dynamic> json) =
       _$BlockDocImpl.fromJson;
@@ -590,14 +639,16 @@ mixin _$DocumentState {
 /// @nodoc
 abstract class $DocumentStateCopyWith<$Res> {
   factory $DocumentStateCopyWith(
-          DocumentState value, $Res Function(DocumentState) then) =
-      _$DocumentStateCopyWithImpl<$Res, DocumentState>;
+    DocumentState value,
+    $Res Function(DocumentState) then,
+  ) = _$DocumentStateCopyWithImpl<$Res, DocumentState>;
   @useResult
-  $Res call(
-      {String docId,
-      Map<String, BlockDoc> blocks,
-      Map<String, List<String>> childrenMap,
-      String rootId});
+  $Res call({
+    String docId,
+    Map<String, BlockDoc> blocks,
+    Map<String, List<String>> childrenMap,
+    String rootId,
+  });
 }
 
 /// @nodoc
@@ -620,24 +671,31 @@ class _$DocumentStateCopyWithImpl<$Res, $Val extends DocumentState>
     Object? childrenMap = null,
     Object? rootId = null,
   }) {
-    return _then(_value.copyWith(
-      docId: null == docId
-          ? _value.docId
-          : docId // ignore: cast_nullable_to_non_nullable
-              as String,
-      blocks: null == blocks
-          ? _value.blocks
-          : blocks // ignore: cast_nullable_to_non_nullable
-              as Map<String, BlockDoc>,
-      childrenMap: null == childrenMap
-          ? _value.childrenMap
-          : childrenMap // ignore: cast_nullable_to_non_nullable
-              as Map<String, List<String>>,
-      rootId: null == rootId
-          ? _value.rootId
-          : rootId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            docId:
+                null == docId
+                    ? _value.docId
+                    : docId // ignore: cast_nullable_to_non_nullable
+                        as String,
+            blocks:
+                null == blocks
+                    ? _value.blocks
+                    : blocks // ignore: cast_nullable_to_non_nullable
+                        as Map<String, BlockDoc>,
+            childrenMap:
+                null == childrenMap
+                    ? _value.childrenMap
+                    : childrenMap // ignore: cast_nullable_to_non_nullable
+                        as Map<String, List<String>>,
+            rootId:
+                null == rootId
+                    ? _value.rootId
+                    : rootId // ignore: cast_nullable_to_non_nullable
+                        as String,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -645,15 +703,17 @@ class _$DocumentStateCopyWithImpl<$Res, $Val extends DocumentState>
 abstract class _$$DocumentStateImplCopyWith<$Res>
     implements $DocumentStateCopyWith<$Res> {
   factory _$$DocumentStateImplCopyWith(
-          _$DocumentStateImpl value, $Res Function(_$DocumentStateImpl) then) =
-      __$$DocumentStateImplCopyWithImpl<$Res>;
+    _$DocumentStateImpl value,
+    $Res Function(_$DocumentStateImpl) then,
+  ) = __$$DocumentStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String docId,
-      Map<String, BlockDoc> blocks,
-      Map<String, List<String>> childrenMap,
-      String rootId});
+  $Res call({
+    String docId,
+    Map<String, BlockDoc> blocks,
+    Map<String, List<String>> childrenMap,
+    String rootId,
+  });
 }
 
 /// @nodoc
@@ -661,8 +721,9 @@ class __$$DocumentStateImplCopyWithImpl<$Res>
     extends _$DocumentStateCopyWithImpl<$Res, _$DocumentStateImpl>
     implements _$$DocumentStateImplCopyWith<$Res> {
   __$$DocumentStateImplCopyWithImpl(
-      _$DocumentStateImpl _value, $Res Function(_$DocumentStateImpl) _then)
-      : super(_value, _then);
+    _$DocumentStateImpl _value,
+    $Res Function(_$DocumentStateImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of DocumentState
   /// with the given fields replaced by the non-null parameter values.
@@ -674,37 +735,43 @@ class __$$DocumentStateImplCopyWithImpl<$Res>
     Object? childrenMap = null,
     Object? rootId = null,
   }) {
-    return _then(_$DocumentStateImpl(
-      docId: null == docId
-          ? _value.docId
-          : docId // ignore: cast_nullable_to_non_nullable
-              as String,
-      blocks: null == blocks
-          ? _value._blocks
-          : blocks // ignore: cast_nullable_to_non_nullable
-              as Map<String, BlockDoc>,
-      childrenMap: null == childrenMap
-          ? _value._childrenMap
-          : childrenMap // ignore: cast_nullable_to_non_nullable
-              as Map<String, List<String>>,
-      rootId: null == rootId
-          ? _value.rootId
-          : rootId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    return _then(
+      _$DocumentStateImpl(
+        docId:
+            null == docId
+                ? _value.docId
+                : docId // ignore: cast_nullable_to_non_nullable
+                    as String,
+        blocks:
+            null == blocks
+                ? _value._blocks
+                : blocks // ignore: cast_nullable_to_non_nullable
+                    as Map<String, BlockDoc>,
+        childrenMap:
+            null == childrenMap
+                ? _value._childrenMap
+                : childrenMap // ignore: cast_nullable_to_non_nullable
+                    as Map<String, List<String>>,
+        rootId:
+            null == rootId
+                ? _value.rootId
+                : rootId // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DocumentStateImpl implements _DocumentState {
-  const _$DocumentStateImpl(
-      {required this.docId,
-      required final Map<String, BlockDoc> blocks,
-      required final Map<String, List<String>> childrenMap,
-      required this.rootId})
-      : _blocks = blocks,
-        _childrenMap = childrenMap;
+  const _$DocumentStateImpl({
+    required this.docId,
+    required final Map<String, BlockDoc> blocks,
+    required final Map<String, List<String>> childrenMap,
+    required this.rootId,
+  }) : _blocks = blocks,
+       _childrenMap = childrenMap;
 
   factory _$DocumentStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$DocumentStateImplFromJson(json);
@@ -742,19 +809,22 @@ class _$DocumentStateImpl implements _DocumentState {
             other is _$DocumentStateImpl &&
             (identical(other.docId, docId) || other.docId == docId) &&
             const DeepCollectionEquality().equals(other._blocks, _blocks) &&
-            const DeepCollectionEquality()
-                .equals(other._childrenMap, _childrenMap) &&
+            const DeepCollectionEquality().equals(
+              other._childrenMap,
+              _childrenMap,
+            ) &&
             (identical(other.rootId, rootId) || other.rootId == rootId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      docId,
-      const DeepCollectionEquality().hash(_blocks),
-      const DeepCollectionEquality().hash(_childrenMap),
-      rootId);
+    runtimeType,
+    docId,
+    const DeepCollectionEquality().hash(_blocks),
+    const DeepCollectionEquality().hash(_childrenMap),
+    rootId,
+  );
 
   /// Create a copy of DocumentState
   /// with the given fields replaced by the non-null parameter values.
@@ -766,18 +836,17 @@ class _$DocumentStateImpl implements _DocumentState {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DocumentStateImplToJson(
-      this,
-    );
+    return _$$DocumentStateImplToJson(this);
   }
 }
 
 abstract class _DocumentState implements DocumentState {
-  const factory _DocumentState(
-      {required final String docId,
-      required final Map<String, BlockDoc> blocks,
-      required final Map<String, List<String>> childrenMap,
-      required final String rootId}) = _$DocumentStateImpl;
+  const factory _DocumentState({
+    required final String docId,
+    required final Map<String, BlockDoc> blocks,
+    required final Map<String, List<String>> childrenMap,
+    required final String rootId,
+  }) = _$DocumentStateImpl;
 
   factory _DocumentState.fromJson(Map<String, dynamic> json) =
       _$DocumentStateImpl.fromJson;
@@ -800,7 +869,8 @@ abstract class _DocumentState implements DocumentState {
 }
 
 FailedToDecodeUpdates _$FailedToDecodeUpdatesFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _FailedToDecodeUpdates.fromJson(json);
 }
 
@@ -820,16 +890,19 @@ mixin _$FailedToDecodeUpdates {
 
 /// @nodoc
 abstract class $FailedToDecodeUpdatesCopyWith<$Res> {
-  factory $FailedToDecodeUpdatesCopyWith(FailedToDecodeUpdates value,
-          $Res Function(FailedToDecodeUpdates) then) =
-      _$FailedToDecodeUpdatesCopyWithImpl<$Res, FailedToDecodeUpdates>;
+  factory $FailedToDecodeUpdatesCopyWith(
+    FailedToDecodeUpdates value,
+    $Res Function(FailedToDecodeUpdates) then,
+  ) = _$FailedToDecodeUpdatesCopyWithImpl<$Res, FailedToDecodeUpdates>;
   @useResult
   $Res call({List<String> failedUpdatesIds});
 }
 
 /// @nodoc
-class _$FailedToDecodeUpdatesCopyWithImpl<$Res,
-        $Val extends FailedToDecodeUpdates>
+class _$FailedToDecodeUpdatesCopyWithImpl<
+  $Res,
+  $Val extends FailedToDecodeUpdates
+>
     implements $FailedToDecodeUpdatesCopyWith<$Res> {
   _$FailedToDecodeUpdatesCopyWithImpl(this._value, this._then);
 
@@ -842,15 +915,17 @@ class _$FailedToDecodeUpdatesCopyWithImpl<$Res,
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? failedUpdatesIds = null,
-  }) {
-    return _then(_value.copyWith(
-      failedUpdatesIds: null == failedUpdatesIds
-          ? _value.failedUpdatesIds
-          : failedUpdatesIds // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-    ) as $Val);
+  $Res call({Object? failedUpdatesIds = null}) {
+    return _then(
+      _value.copyWith(
+            failedUpdatesIds:
+                null == failedUpdatesIds
+                    ? _value.failedUpdatesIds
+                    : failedUpdatesIds // ignore: cast_nullable_to_non_nullable
+                        as List<String>,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -858,9 +933,9 @@ class _$FailedToDecodeUpdatesCopyWithImpl<$Res,
 abstract class _$$FailedToDecodeUpdatesImplCopyWith<$Res>
     implements $FailedToDecodeUpdatesCopyWith<$Res> {
   factory _$$FailedToDecodeUpdatesImplCopyWith(
-          _$FailedToDecodeUpdatesImpl value,
-          $Res Function(_$FailedToDecodeUpdatesImpl) then) =
-      __$$FailedToDecodeUpdatesImplCopyWithImpl<$Res>;
+    _$FailedToDecodeUpdatesImpl value,
+    $Res Function(_$FailedToDecodeUpdatesImpl) then,
+  ) = __$$FailedToDecodeUpdatesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<String> failedUpdatesIds});
@@ -868,35 +943,37 @@ abstract class _$$FailedToDecodeUpdatesImplCopyWith<$Res>
 
 /// @nodoc
 class __$$FailedToDecodeUpdatesImplCopyWithImpl<$Res>
-    extends _$FailedToDecodeUpdatesCopyWithImpl<$Res,
-        _$FailedToDecodeUpdatesImpl>
+    extends
+        _$FailedToDecodeUpdatesCopyWithImpl<$Res, _$FailedToDecodeUpdatesImpl>
     implements _$$FailedToDecodeUpdatesImplCopyWith<$Res> {
-  __$$FailedToDecodeUpdatesImplCopyWithImpl(_$FailedToDecodeUpdatesImpl _value,
-      $Res Function(_$FailedToDecodeUpdatesImpl) _then)
-      : super(_value, _then);
+  __$$FailedToDecodeUpdatesImplCopyWithImpl(
+    _$FailedToDecodeUpdatesImpl _value,
+    $Res Function(_$FailedToDecodeUpdatesImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of FailedToDecodeUpdates
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? failedUpdatesIds = null,
-  }) {
-    return _then(_$FailedToDecodeUpdatesImpl(
-      failedUpdatesIds: null == failedUpdatesIds
-          ? _value._failedUpdatesIds
-          : failedUpdatesIds // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-    ));
+  $Res call({Object? failedUpdatesIds = null}) {
+    return _then(
+      _$FailedToDecodeUpdatesImpl(
+        failedUpdatesIds:
+            null == failedUpdatesIds
+                ? _value._failedUpdatesIds
+                : failedUpdatesIds // ignore: cast_nullable_to_non_nullable
+                    as List<String>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$FailedToDecodeUpdatesImpl implements _FailedToDecodeUpdates {
-  const _$FailedToDecodeUpdatesImpl(
-      {required final List<String> failedUpdatesIds})
-      : _failedUpdatesIds = failedUpdatesIds;
+  const _$FailedToDecodeUpdatesImpl({
+    required final List<String> failedUpdatesIds,
+  }) : _failedUpdatesIds = failedUpdatesIds;
 
   factory _$FailedToDecodeUpdatesImpl.fromJson(Map<String, dynamic> json) =>
       _$$FailedToDecodeUpdatesImplFromJson(json);
@@ -920,14 +997,18 @@ class _$FailedToDecodeUpdatesImpl implements _FailedToDecodeUpdates {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$FailedToDecodeUpdatesImpl &&
-            const DeepCollectionEquality()
-                .equals(other._failedUpdatesIds, _failedUpdatesIds));
+            const DeepCollectionEquality().equals(
+              other._failedUpdatesIds,
+              _failedUpdatesIds,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_failedUpdatesIds));
+    runtimeType,
+    const DeepCollectionEquality().hash(_failedUpdatesIds),
+  );
 
   /// Create a copy of FailedToDecodeUpdates
   /// with the given fields replaced by the non-null parameter values.
@@ -935,21 +1016,22 @@ class _$FailedToDecodeUpdatesImpl implements _FailedToDecodeUpdates {
   @override
   @pragma('vm:prefer-inline')
   _$$FailedToDecodeUpdatesImplCopyWith<_$FailedToDecodeUpdatesImpl>
-      get copyWith => __$$FailedToDecodeUpdatesImplCopyWithImpl<
-          _$FailedToDecodeUpdatesImpl>(this, _$identity);
+  get copyWith =>
+      __$$FailedToDecodeUpdatesImplCopyWithImpl<_$FailedToDecodeUpdatesImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$FailedToDecodeUpdatesImplToJson(
-      this,
-    );
+    return _$$FailedToDecodeUpdatesImplToJson(this);
   }
 }
 
 abstract class _FailedToDecodeUpdates implements FailedToDecodeUpdates {
-  const factory _FailedToDecodeUpdates(
-          {required final List<String> failedUpdatesIds}) =
-      _$FailedToDecodeUpdatesImpl;
+  const factory _FailedToDecodeUpdates({
+    required final List<String> failedUpdatesIds,
+  }) = _$FailedToDecodeUpdatesImpl;
 
   factory _FailedToDecodeUpdates.fromJson(Map<String, dynamic> json) =
       _$FailedToDecodeUpdatesImpl.fromJson;
@@ -962,5 +1044,5 @@ abstract class _FailedToDecodeUpdates implements FailedToDecodeUpdates {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FailedToDecodeUpdatesImplCopyWith<_$FailedToDecodeUpdatesImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
