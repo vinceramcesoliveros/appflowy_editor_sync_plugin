@@ -8,7 +8,10 @@ environment:
   flutter: ">=3.3.0"
 
 dependencies:
-  appflowy_editor: ^5.1.0
+  appflowy_editor:
+    git:
+      url: git@github.com:AppFlowy-IO/appflowy-editor.git
+      ref: 5ad9d771a8496dea95a9c5b1ec77f76df3983037
   dart_quill_delta: ^10.8.3
   dartx: ^1.2.0
   easy_debounce: ^2.0.3

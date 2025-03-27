@@ -241,31 +241,28 @@ class DocumentEditorScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Theme(
-      data: ThemeData.dark(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Editing Document $docId'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Editing Document $docId'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: Consumer(
-          builder: (context, ref, child) {
-            final editorState = ref.watch(editorStateWrapperProvider(docId));
-            return editorState.when(
-              data: (editorState) {
-                if (UniversalPlatform.isDesktopOrWeb) {
-                  return DesktopEditor(editorState: editorState);
-                }
-                return MobileEditor(editorState: editorState);
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Error: $error')),
-            );
-          },
-        ),
+      ),
+      body: Consumer(
+        builder: (context, ref, child) {
+          final editorState = ref.watch(editorStateWrapperProvider(docId));
+          return editorState.when(
+            data: (editorState) {
+              if (UniversalPlatform.isDesktopOrWeb) {
+                return DesktopEditor(editorState: editorState);
+              }
+              return MobileEditor(editorState: editorState);
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Error: $error')),
+          );
+        },
       ),
     );
   }

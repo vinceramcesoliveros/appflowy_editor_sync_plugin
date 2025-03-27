@@ -48,7 +48,11 @@ dependencies:
   isar_flutter_libs:
     hosted: https://pub.isar-community.dev
     version: ^4.0.3
-  appflowy_editor: ^5.1.0
+  appflowy_editor:
+    git:
+      url: git@github.com:AppFlowy-IO/appflowy-editor.git
+      ref: 5ad9d771a8496dea95a9c5b1ec77f76df3983037
+
   riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
   path_provider: ^2.1.5

@@ -45,6 +45,7 @@ class _DragToReorderEditorState extends State<DragToReorderEditor> {
         editorState: editorState,
         editorStyle: editorStyle,
         blockComponentBuilders: blockComponentBuilders,
+
         dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
       ),
     );

@@ -26,11 +26,14 @@ extension on InsertOperation {
   List<BlockActionDoc> toBlockAction(
     EditorStateWrapper editorStateWrapper, {
     Node? previousNode,
+    Node? nextNode,
+    Node? parentNode,
   }) {
     var currentPath = path;
     final actions = <BlockActionDoc>[];
     for (final node in nodes) {
       final parentId =
+          parentNode?.id ??
           TransactionAdapterHelpers.parentFromPath(
             editorStateWrapper.editorState.document,
             currentPath,
@@ -58,6 +61,11 @@ extension on InsertOperation {
       final isLastChild = currentPath.next.equals(currentPath);
       if (!isLastChild) {
         nextId = editorStateWrapper.getNodeAtPath(currentPath.next)?.id ?? '';
+      }
+
+      //If I have a parent from insert, don't share nextid
+      if (parentNode != null) {
+        nextId = '';
       }
 
       //TODO: Maybe use prevID to set it faste the previous node if it exists
@@ -93,9 +101,11 @@ extension on InsertOperation {
         Node? prevChild;
         for (final child in node.children) {
           actions.addAll(
-            InsertOperation(child.path, [
-              child,
-            ]).toBlockAction(editorStateWrapper, previousNode: prevChild),
+            InsertOperation(child.path, [child]).toBlockAction(
+              editorStateWrapper,
+              previousNode: prevChild,
+              parentNode: node,
+            ),
           );
           prevChild = child;
         }

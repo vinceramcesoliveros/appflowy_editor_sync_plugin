@@ -38,9 +38,6 @@ class DelayedRemoveBatcher<T> extends Batcher<T> {
           _processedItems[Uuid().v4()] = (removalTime, val);
         }
 
-        // Update all items stream
-        _updateAllItemsStream();
-
         // Start cleanup
         _cleanupExpiredItems();
       }
@@ -77,9 +74,6 @@ class DelayedRemoveBatcher<T> extends Batcher<T> {
       for (final key in expiredKeys) {
         _processedItems.remove(key);
       }
-
-      // Update the all items stream
-      _updateAllItemsStream();
     }
 
     // If no more processed items, cancel the timer
@@ -91,7 +85,6 @@ class DelayedRemoveBatcher<T> extends Batcher<T> {
 
   @override
   void emitCurrentValues() {
-    super.emitCurrentValues();
     _updateAllItemsStream();
   }
 

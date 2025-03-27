@@ -2,9 +2,7 @@
 
 // Interface for EditorUpdatesBatcher
 import 'dart:async';
-import 'dart:typed_data';
 
-import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mutex/mutex.dart';
@@ -94,7 +92,6 @@ class Batcher<T> implements BatcherInterface<T> {
       final success = await _processCallback!(batchUpdates);
       if (success) {
         updatesBatch.removeWhere((element) => batchUuids.contains(element.$1));
-        emitCurrentValues();
       }
     });
   }

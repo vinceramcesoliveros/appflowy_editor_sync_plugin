@@ -149,7 +149,7 @@ class TransactionAdapterHelpers {
       );
       documentCopy.delete(DeleteOperation.fromJson(op.toJson()).path);
 
-      final parentId = parentFromPath(documentCopy, deleteNode.path);
+      final oldParent = parentFromPath(documentCopy, deleteNode.path);
 
       // if the node is the first child of the parent, then its prevId should be empty.
       final isFirstChild = newPath.previous.equals(newPath);
@@ -176,9 +176,8 @@ class TransactionAdapterHelpers {
             id: deleteNode.id,
             ty: deleteNode.type,
             attributes: {},
-            parentId: parentId.id,
-            oldParentId:
-                parentFromPath(documentCopy, deleteNode.path).id, // And this
+            parentId: parentFromPath(documentCopy, newPath).id,
+            oldParentId: oldParent.id,
             prevId: prevId == '' ? null : prevId, // Previous ID
             nextId: nextId == '' ? null : nextId, // Next ID
           ), // No block data needed; move uses paths
