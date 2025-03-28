@@ -14,11 +14,11 @@ class SyncAttributes {
 
   /// Function to retrieve all stored updates from persistence layer
   /// Returns a list of tuples containing update ID and binary update data
-  final Future<List<DbUpdate>> Function() getUpdates;
+  final Future<List<DbUpdate>> Function() getInitialUpdates;
 
   SyncAttributes({
     required this.getUpdatesStream,
     required this.saveUpdate,
-    required this.getUpdates,
+    required this.getInitialUpdates,
   });
 }

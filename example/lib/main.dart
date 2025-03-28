@@ -92,7 +92,7 @@ class EditorStateWrapper extends _$EditorStateWrapper {
   FutureOr<EditorState> build(String docId) {
     final wrapper = EditorStateSyncWrapper(
       syncAttributes: SyncAttributes(
-        getUpdates: () async {
+        getInitialUpdates: () async {
           final data =
               _isar.documentDatas
                   .where()

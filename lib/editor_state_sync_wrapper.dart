@@ -54,7 +54,7 @@ class EditorStateSyncWrapper {
   }
 
   Future<EditorStateWrapper> _init() async {
-    final documentUpdates = await syncDB.getUpdates();
+    final documentUpdates = await syncDB.getInitialUpdates();
     if (documentUpdates.isEmpty) {
       final (editorStateWrapper, updates) =
           await initializer.initEmptyDocument();

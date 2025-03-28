@@ -98,8 +98,8 @@ class DocumentSyncDB {
     updatesBatcher.addValues(updates);
   }
 
-  Future<List<DbUpdate>> getUpdates() async {
-    return syncAttributes.getUpdates();
+  Future<List<DbUpdate>> getInitialUpdates() async {
+    return syncAttributes.getInitialUpdates();
   }
 
   String localUpdatesLastModificationId() {
