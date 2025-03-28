@@ -41,7 +41,7 @@ class AppflowyEditorSyncUtilityFunctions {
 
   /// Init from existing document
   /// This function will create default state for a document without the need to open it
-  static Future<List<Uint8List>> initDocumentFromExistingDocument(
+  static Future<Uint8List> initDocumentFromExistingDocument(
     Document document,
   ) async {
     final docService = await DocumentServiceWrapper.newInstance();
@@ -55,11 +55,13 @@ class AppflowyEditorSyncUtilityFunctions {
       editorStateWrapper,
     );
     final newUpdate = await docService.applyAction(actions: operations);
-    return newUpdate.match(() => updates, (d) => [...updates, d]);
+    final allUpdates = newUpdate.match(() => updates, (d) => [...updates, d]);
+    final allUpdatesMerged = await docService.mergeUpdates(allUpdates);
+    return allUpdatesMerged;
   }
 
   /// Init from existing markdown document
-  static Future<List<Uint8List>> initDocumentFromMarkdownDocument(
+  static Future<Uint8List> initDocumentFromExistingMarkdownDocument(
     String markdown,
   ) async {
     final document = markdownToDocument(markdown);
