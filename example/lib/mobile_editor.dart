@@ -85,10 +85,10 @@ class _MobileEditorState extends State<MobileEditor> {
                 blockComponentBuilders: blockComponentBuilders,
                 showMagnifier: true,
                 // showcase 3: customize the header and footer.
-                header: Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Image.asset('assets/images/header.png'),
-                ),
+                // header: Padding(
+                //   padding: const EdgeInsets.only(bottom: 10.0),
+                //   child: Image.asset('assets/images/header.png'),
+                // ),
                 footer: const SizedBox(height: 100),
               ),
             ),
