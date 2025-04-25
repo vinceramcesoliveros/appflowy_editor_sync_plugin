@@ -126,6 +126,8 @@ class EditorStateSyncWrapper {
 
     final result = await docService.getDocumentJson();
 
+    prettyfyAndPrintInChunksDocumentState(result);
+
     //Check if I have latest update
     if (!updates.$1.syncCanBeDone(updateClock)) {
       return;
@@ -148,7 +150,9 @@ class EditorStateSyncWrapper {
       // Apply the operations to the editor state
       editorStateWrapper.applyRemoteChanges(diffOperations);
 
-      prettyfyAndPrintInChunksDocumentState(result);
+      debugPrint(
+        "Applied ${diffOperations.length} operations to the editor state",
+      );
     }
   }
 
