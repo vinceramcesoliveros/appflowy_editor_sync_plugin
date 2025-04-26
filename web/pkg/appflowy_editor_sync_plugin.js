@@ -50,18 +50,6 @@ function _assertBoolean(n) {
     }
 }
 
-function dropObject(idx) {
-    if (idx < 132) return;
-    heap[idx] = heap_next;
-    heap_next = idx;
-}
-
-function takeObject(idx) {
-    const ret = getObject(idx);
-    dropObject(idx);
-    return ret;
-}
-
 function isLikeNone(x) {
     return x === undefined || x === null;
 }
@@ -140,6 +128,18 @@ function passStringToWasm0(arg, malloc, realloc) {
 
     WASM_VECTOR_LEN = offset;
     return ptr;
+}
+
+function dropObject(idx) {
+    if (idx < 132) return;
+    heap[idx] = heap_next;
+    heap_next = idx;
+}
+
+function takeObject(idx) {
+    const ret = getObject(idx);
+    dropObject(idx);
+    return ret;
 }
 
 function debugString(val) {
@@ -256,7 +256,7 @@ function logError(f, args) {
 function __wbg_adapter_36(arg0, arg1, arg2) {
     _assertNum(arg0);
     _assertNum(arg1);
-    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h130c6800d4c47af2(arg0, arg1, addHeapObject(arg2));
+    wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h0996bdc1f3ebfa35(arg0, arg1, addHeapObject(arg2));
 }
 
 function __wbg_adapter_39(arg0, arg1, arg2) {
@@ -338,6 +338,42 @@ function handleError(f, args) {
         wasm.__wbindgen_exn_store(addHeapObject(e));
     }
 }
+/**
+* @param {number} ptr
+*/
+__exports.frb_dart_opaque_drop_thread_box_persistent_handle = function(ptr) {
+    _assertNum(ptr);
+    wasm.frb_dart_opaque_drop_thread_box_persistent_handle(ptr);
+};
+
+/**
+*/
+__exports.wasm_start_callback = function() {
+    wasm.wasm_start_callback();
+};
+
+/**
+* # Safety
+*
+* This should never be called manually.
+* @param {any} handle
+* @param {any} dart_handler_port
+* @returns {number}
+*/
+__exports.frb_dart_opaque_dart2rust_encode = function(handle, dart_handler_port) {
+    const ret = wasm.frb_dart_opaque_dart2rust_encode(addHeapObject(handle), addHeapObject(dart_handler_port));
+    return ret >>> 0;
+};
+
+/**
+* @param {number} ptr
+* @returns {any}
+*/
+__exports.frb_dart_opaque_rust2dart_decode = function(ptr) {
+    _assertNum(ptr);
+    const ret = wasm.frb_dart_opaque_rust2dart_decode(ptr);
+    return takeObject(ret);
+};
 
 let cachedUint32Memory0 = null;
 
@@ -383,57 +419,12 @@ __exports.receive_transfer_closure = function(payload, transfer) {
     }
 };
 
-/**
-* # Safety
-*
-* This should never be called manually.
-* @param {any} handle
-* @param {any} dart_handler_port
-* @returns {number}
-*/
-__exports.frb_dart_opaque_dart2rust_encode = function(handle, dart_handler_port) {
-    const ret = wasm.frb_dart_opaque_dart2rust_encode(addHeapObject(handle), addHeapObject(dart_handler_port));
-    return ret >>> 0;
-};
-
-/**
-* @param {number} ptr
-*/
-__exports.frb_dart_opaque_drop_thread_box_persistent_handle = function(ptr) {
-    _assertNum(ptr);
-    wasm.frb_dart_opaque_drop_thread_box_persistent_handle(ptr);
-};
-
-/**
-* @param {number} ptr
-* @returns {any}
-*/
-__exports.frb_dart_opaque_rust2dart_decode = function(ptr) {
-    _assertNum(ptr);
-    const ret = wasm.frb_dart_opaque_rust2dart_decode(ptr);
-    return takeObject(ret);
-};
-
-/**
-*/
-__exports.wasm_start_callback = function() {
-    wasm.wasm_start_callback();
-};
-
 const WorkerPoolFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_workerpool_free(ptr >>> 0));
 /**
 */
 class WorkerPool {
-
-    static __wrap(ptr) {
-        ptr = ptr >>> 0;
-        const obj = Object.create(WorkerPool.prototype);
-        obj.__wbg_ptr = ptr;
-        WorkerPoolFinalization.register(obj, obj.__wbg_ptr, obj);
-        return obj;
-    }
 
     __destroy_into_raw() {
         const ptr = this.__wbg_ptr;
@@ -445,34 +436,6 @@ class WorkerPool {
     free() {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_workerpool_free(ptr);
-    }
-    /**
-    * @param {number | undefined} [initial]
-    * @param {string | undefined} [script_src]
-    * @param {string | undefined} [worker_js_preamble]
-    * @returns {WorkerPool}
-    */
-    static new(initial, script_src, worker_js_preamble) {
-        try {
-            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            if (!isLikeNone(initial)) {
-                _assertNum(initial);
-            }
-            var ptr0 = isLikeNone(script_src) ? 0 : passStringToWasm0(script_src, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len0 = WASM_VECTOR_LEN;
-            var ptr1 = isLikeNone(worker_js_preamble) ? 0 : passStringToWasm0(worker_js_preamble, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            var len1 = WASM_VECTOR_LEN;
-            wasm.workerpool_new(retptr, !isLikeNone(initial), isLikeNone(initial) ? 0 : initial, ptr0, len0, ptr1, len1);
-            var r0 = getInt32Memory0()[retptr / 4 + 0];
-            var r1 = getInt32Memory0()[retptr / 4 + 1];
-            var r2 = getInt32Memory0()[retptr / 4 + 2];
-            if (r2) {
-                throw takeObject(r1);
-            }
-            return WorkerPool.__wrap(r0);
-        } finally {
-            wasm.__wbindgen_add_to_stack_pointer(16);
-        }
     }
     /**
     * Creates a new `WorkerPool` which immediately creates `initial` workers.
@@ -487,17 +450,14 @@ class WorkerPool {
     * message is sent to it.
     * @param {number} initial
     * @param {string} script_src
-    * @param {string} worker_js_preamble
     */
-    constructor(initial, script_src, worker_js_preamble) {
+    constructor(initial, script_src) {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
             _assertNum(initial);
             const ptr0 = passStringToWasm0(script_src, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
             const len0 = WASM_VECTOR_LEN;
-            const ptr1 = passStringToWasm0(worker_js_preamble, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-            const len1 = WASM_VECTOR_LEN;
-            wasm.workerpool_new_raw(retptr, initial, ptr0, len0, ptr1, len1);
+            wasm.workerpool_new(retptr, initial, ptr0, len0);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -596,22 +556,6 @@ function __wbg_get_imports() {
         const ret = getObject(arg0).node;
         return addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbg_error_a41c87efb8f143fa = function() { return logError(function (arg0, arg1) {
-        console.error(getStringFromWasm0(arg0, arg1));
-    }, arguments) };
-    imports.wbg.__wbindgen_cb_drop = function(arg0) {
-        const obj = takeObject(arg0).original;
-        if (obj.cnt-- == 1) {
-            obj.a = 0;
-            return true;
-        }
-        const ret = false;
-        _assertBoolean(ret);
-        return ret;
-    };
-    imports.wbg.__wbg_postMessage_9ce7d62c6062a37c = function() { return handleError(function (arg0, arg1) {
-        getObject(arg0).postMessage(getObject(arg1));
-    }, arguments) };
     imports.wbg.__wbindgen_number_get = function(arg0, arg1) {
         const obj = getObject(arg1);
         const ret = typeof(obj) === 'number' ? obj : undefined;
@@ -643,6 +587,22 @@ function __wbg_get_imports() {
         _assertBoolean(ret);
         return ret;
     };
+    imports.wbg.__wbindgen_cb_drop = function(arg0) {
+        const obj = takeObject(arg0).original;
+        if (obj.cnt-- == 1) {
+            obj.a = 0;
+            return true;
+        }
+        const ret = false;
+        _assertBoolean(ret);
+        return ret;
+    };
+    imports.wbg.__wbg_error_bd98d45e8ab09b53 = function() { return logError(function (arg0, arg1) {
+        console.error(getStringFromWasm0(arg0, arg1));
+    }, arguments) };
+    imports.wbg.__wbg_postMessage_55e8ff7bbdc0e381 = function() { return handleError(function (arg0, arg1) {
+        getObject(arg0).postMessage(getObject(arg1));
+    }, arguments) };
     imports.wbg.__wbindgen_is_function = function(arg0) {
         const ret = typeof(getObject(arg0)) === 'function';
         _assertBoolean(ret);
@@ -879,12 +839,12 @@ function __wbg_get_imports() {
         const ret = wasm.memory;
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper12969 = function() { return logError(function (arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 322, __wbg_adapter_36);
+    imports.wbg.__wbindgen_closure_wrapper13112 = function() { return logError(function (arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 329, __wbg_adapter_36);
         return addHeapObject(ret);
     }, arguments) };
-    imports.wbg.__wbindgen_closure_wrapper13865 = function() { return logError(function (arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 352, __wbg_adapter_39);
+    imports.wbg.__wbindgen_closure_wrapper13919 = function() { return logError(function (arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 353, __wbg_adapter_39);
         return addHeapObject(ret);
     }, arguments) };
 
