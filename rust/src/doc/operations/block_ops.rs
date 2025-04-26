@@ -19,7 +19,6 @@ impl BlockOperations {
         txn: &mut TransactionMut,
         blocks_map: MapRef,
         action: BlockActionDoc,
-        diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
     ) -> Result<MapRef, CustomRustError> {
         let block_id = action.block.id.clone();
         log_info!("insert_node: Starting for block_id: {}", block_id);
@@ -45,7 +44,7 @@ impl BlockOperations {
         // Apply delta if present
         if let Some(delta_json) = action.block.delta {
             let text = node_ref.get_or_init_text(txn, TEXT);
-            DeltaOperations::apply_delta_to_text(txn, text, delta_json, diff_deltas)?;
+            DeltaOperations::apply_delta_to_text(txn, text, delta_json)?;
         }
 
         // Handle the prev_id chain
@@ -79,7 +78,6 @@ impl BlockOperations {
         txn: &mut TransactionMut,
         blocks_map: MapRef,
         action: BlockActionDoc,
-        diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
     ) -> Result<(), CustomRustError> {
         let block_id = action.block.id.clone();
         log_info!("update_node: Updating block_id: {}", block_id);
@@ -97,7 +95,7 @@ impl BlockOperations {
         // Apply delta if present
         if let Some(delta_json) = action.block.delta {
             let text = node.get_or_init_text(txn, TEXT);
-            DeltaOperations::apply_delta_to_text(txn, text, delta_json, diff_deltas)?;
+            DeltaOperations::apply_delta_to_text(txn, text, delta_json)?;
         }
 
         log_info!("update_node: Updated block_id: {}", block_id);

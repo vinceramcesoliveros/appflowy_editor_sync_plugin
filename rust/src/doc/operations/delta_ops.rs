@@ -26,18 +26,15 @@ impl DeltaOperations {
         txn: &mut TransactionMut,
         text: TextRef,
         new_delta: String,
-        diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
     ) -> Result<(), CustomRustError> {
         // Get current text delta
         let current_delta = text.delta(txn);
         let current_delta_value = Self::deltas_to_json(txn, current_delta)?;
         
-        let current_delta_str = serde_json::to_string(&current_delta_value)
-            .map_err(|e| DocError::EncodingError(format!("Failed to serialize delta: {}", e)))?;
-        
+
         // Get delta diff from the Dart side
         log_info!("apply_delta_to_text: Computing delta diff");
-        let new_delta_diff = block_on(diff_deltas(current_delta_str, new_delta));
+        let new_delta_diff = new_delta;
         
         // Parse the delta diff
         log_info!("apply_delta_to_text: Parsing delta diff from JSON");

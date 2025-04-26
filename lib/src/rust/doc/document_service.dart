@@ -9,10 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentService>>
 abstract class DocumentService implements RustOpaqueInterface {
-  Future<Uint8List> applyAction({
-    required List<BlockActionDoc> actions,
-    required FutureOr<String> Function(String, String) diffDeltas,
-  });
+  Future<Uint8List> applyAction({required List<BlockActionDoc> actions});
 
   Future<void> applyUpdates({required List<Uint8List> updates});
 

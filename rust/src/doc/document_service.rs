@@ -57,7 +57,6 @@ impl DocumentService {
 pub fn apply_action(
     &mut self,
     actions: Vec<BlockActionDoc>,
-    diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
 ) -> Result<Vec<u8>, CustomRustError> {
     log_info!("apply_action: Starting with {} actions for doc_id: {}", 
              actions.len(), self.doc_id);
@@ -74,10 +73,10 @@ pub fn apply_action(
         // Delegate to specialized operation handlers
         match action.action {
             BlockActionTypeDoc::Insert => {
-                BlockOperations::insert_node(&mut txn, blocks_map, action, diff_deltas)?;
+                BlockOperations::insert_node(&mut txn, blocks_map, action)?;
             },
             BlockActionTypeDoc::Update => {
-                BlockOperations::update_node(&mut txn, blocks_map, action, diff_deltas)?;
+                BlockOperations::update_node(&mut txn, blocks_map, action)?;
             },
             BlockActionTypeDoc::Delete => {
                 let parent_id = action.block.parent_id

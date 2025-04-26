@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:appflowy_editor_sync_plugin/document_service_helpers/diff_deltas.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_service.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:fpdart/fpdart.dart';
@@ -34,10 +33,7 @@ class DocumentServiceWrapper {
     try {
       // Acquire the mutex lock asynchronously
       await _mutex.acquire();
-      final res = await _rustService.applyAction(
-        actions: actions,
-        diffDeltas: diffDeltas,
-      );
+      final res = await _rustService.applyAction(actions: actions);
       return Option.of(res);
     } catch (e) {
       // Handle any errors from Rust, including ConcurrentAccessError

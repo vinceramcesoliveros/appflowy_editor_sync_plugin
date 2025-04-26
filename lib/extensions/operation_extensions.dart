@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:appflowy_editor_sync_plugin/convertors/transaction_adapter_helpers.dart';
+import 'package:appflowy_editor_sync_plugin/document_service_helpers/diff_deltas.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/node_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
@@ -148,6 +149,14 @@ extension on UpdateOperation {
     final prevDelta = oldAttributes[blockComponentDelta];
     final delta = attributes[blockComponentDelta];
 
+    final diff =
+        prevDelta != null && delta != null
+            ? diffDeltas(
+              jsonEncode(Delta.fromJson(prevDelta)),
+              jsonEncode(Delta.fromJson(delta)),
+            )
+            : null;
+
     final composedAttributes = composeAttributes(oldAttributes, attributes);
     final composedDelta = composedAttributes?[blockComponentDelta];
     composedAttributes?.remove(blockComponentDelta);
@@ -160,10 +169,7 @@ extension on UpdateOperation {
         // I am using compose attributes to say that I had changed all attributes at once
         // So that we don't have some wierd combinations of attributes
         attributes: composedAttributes?.toMap() ?? {},
-        delta:
-            delta == null
-                ? null
-                : jsonEncode(Delta.fromJson(delta as List<dynamic>).toJson()),
+        delta: diff,
         parentId: parentId,
       ),
       path: Uint32List.fromList(path.toList()),
