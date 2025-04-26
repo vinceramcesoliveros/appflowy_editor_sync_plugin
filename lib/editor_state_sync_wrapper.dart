@@ -102,6 +102,10 @@ class EditorStateSyncWrapper {
     }
   }
 
+  // What I need to guraentee:
+  // If the sync is executed, I have all local updates + db updates available, including updates
+  // for the latest state of the document.
+
   Future<void> _processSyncOperation(
     (List<LocalUpdate>, List<DbUpdate>) updates,
   ) async {
@@ -126,7 +130,7 @@ class EditorStateSyncWrapper {
 
     final result = await docService.getDocumentJson();
 
-    prettyfyAndPrintInChunksDocumentState(result);
+    _prettyfyAndPrintInChunksDocumentState(result);
 
     //Check if I have latest update
     if (!updates.$1.syncCanBeDone(updateClock)) {
@@ -156,7 +160,7 @@ class EditorStateSyncWrapper {
     }
   }
 
-  void prettyfyAndPrintInChunksDocumentState(DocumentState docState) {
+  void _prettyfyAndPrintInChunksDocumentState(DocumentState docState) {
     final json = docState.toJson();
     final prettyJson = JsonEncoder.withIndent('  ').convert(json);
     final lines = prettyJson.split('\n');
@@ -182,37 +186,9 @@ class EditorStateSyncWrapper {
       final newClock = updateClock.incrementClock();
 
       final update = await docService.applyAction(actions: actions);
-      await update.match(
-        () async {
-          // //Recreate document with all available updates
-          // final latestUpdates = syncDB.getLastUpdates();
-          // if (latestUpdates != null) {
-          //   final mergedUpdates = latestUpdates.$2
-          //     ..addAll(latestUpdates.$1.map((e) => (uuid.v4(), e)).toList());
-          //   await docService.applyUpdates(
-          //     update: mergedUpdates,
-          //   );
-          // }
-
-          // final update = await docService.applyAction(actions: actions);
-
-          // update.match(() => null, (update) {
-          //   syncDB.addUpdates([update]);
-          // });
-        },
-        (update) {
-          syncDB.addUpdates([LocalUpdate(update: update, id: newClock)]);
-        },
-      );
+      await update.match(() async {}, (update) {
+        syncDB.addUpdates([LocalUpdate(update: update, id: newClock)]);
+      });
     });
   }
 }
-//I will save with each local update its Datetime and then I will check inside the sync,
-// that the latest id of local updates is the same as the latest datetime of local updates
-// Or maybe by using some kind of int version number
-
-
-// What I need to guraentee:
-// If the sync is executed, I have all local updates + db updates available, including updates
-// for the latest state of the document.
-

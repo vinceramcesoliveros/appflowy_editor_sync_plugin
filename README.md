@@ -1,91 +1,124 @@
-# appflowy_editor_sync_plugin
+# AppFlowy Editor Sync Plugin
 
-A new Flutter FFI plugin project.
+This library enables seamless content sharing for the AppFlowy text editor across devices and users. It leverages the CRDT (Conflict-free Replicated Data Type) structures from the yrs library to merge changes from multiple devices consistently, ensuring identical results regardless of the order or frequency of updates.
 
-## Getting Started
+## How It Works
 
-This project is a starting point for a Flutter
-[FFI plugin](https://flutter.dev/to/ffi-package),
-a specialized package that includes native code directly invoked with Dart FFI.
+Init the plugin inside main:
 
-## Project structure
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppflowyEditorSyncUtilityFunctions.initAppFlowyEditorSync();
 
-This template uses the following structure:
-
-- `src`: Contains the native source code, and a CmakeFile.txt file for building
-  that source code into a dynamic library.
-
-- `lib`: Contains the Dart code that defines the API of the plugin, and which
-  calls into the native code using `dart:ffi`.
-
-- platform folders (`android`, `ios`, `windows`, etc.): Contains the build files
-  for building and bundling the native code library with the platform application.
-
-## Building and bundling native code
-
-The `pubspec.yaml` specifies FFI plugins as follows:
-
-```yaml
-plugin:
-  platforms:
-    some_platform:
-      ffiPlugin: true
+  runApp(App());
+}
 ```
 
-This configuration invokes the native build for the various target platforms
-and bundles the binaries in Flutter applications using these FFI plugins.
+Override three methods to handle document update storage and retrieval:
 
-This can be combined with dartPluginClass, such as when FFI is used for the
-implementation of one platform in a federated plugin:
+```dart
+@Riverpod(keepAlive: true)
+class EditorStateWrapper extends _$EditorStateWrapper {
+...
+@override
+FutureOr<EditorState> build(String docId) {
+    final wrapper = EditorStateSyncWrapper(
+      syncAttributes: SyncAttributes(
+      /// Provide all editor updates or initialize the editor, save the updates
+      /// and return them.
+      /// See: [AppflowyEditorSyncUtilityFunctions]
+      getInitialUpdates: () async {
+      ...
+      },
+      getUpdatesStream: ...,
 
-```yaml
-plugin:
-  implements: some_other_plugin
-  platforms:
-    some_platform:
-      dartPluginClass: SomeClass
-      ffiPlugin: true
+      saveUpdate: (Uint8List update) async {
+        ...
+        },
+      ),
+    );
+
+    return wrapper.initAndHandleChanges();
+
+}
+}
 ```
 
-A plugin can have both FFI and method channels:
+Pass the resulting EditorState to the AppFlowy text editor. See the example for details.
 
-```yaml
-plugin:
-  platforms:
-    some_platform:
-      pluginClass: SomeName
-      ffiPlugin: true
-```
+## Initialization
 
-The native build systems that are invoked by FFI (and method channel) plugins are:
+When creating a document, initialize it using one of the following methods from AppflowyEditorSyncUtilityFunctions:
 
-- For Android: Gradle, which invokes the Android NDK for native builds.
-  - See the documentation in android/build.gradle.
-- For iOS and MacOS: Xcode, via CocoaPods.
-  - See the documentation in ios/appflowy_editor_sync_plugin.podspec.
-  - See the documentation in macos/appflowy_editor_sync_plugin.podspec.
-- For Linux and Windows: CMake.
-  - See the documentation in linux/CMakeLists.txt.
-  - See the documentation in windows/CMakeLists.txt.
+`initDocument`
+`initDocumentFromExistingDocument`
+`initDocumentFromExistingMarkdownDocument`
 
-## Binding to native code
+These methods set up the default document structure for future updates.
 
-To use the native code, bindings in Dart are needed.
-To avoid writing these by hand, they are generated from the header file
-(`src/appflowy_editor_sync_plugin.h`) by `package:ffigen`.
-Regenerate the bindings by running `dart run ffigen --config ffigen.yaml`.
+## Demos
 
-## Invoking native code
+Run the example app to see the plugin in action.
+PowerSync + Supabase + Drift
 
-Very short-running native functions can be directly invoked from any isolate.
-For example, see `sum` in `lib/appflowy_editor_sync_plugin.dart`.
+Link: [Insert Link]
 
-Longer-running functions should be invoked on a helper isolate to avoid
-dropping frames in Flutter applications.
-For example, see `sumAsync` in `lib/appflowy_editor_sync_plugin.dart`.
+Custom Synchronization + Supabase + Drift
 
-## Flutter help
+Live Demo: [Insert Live Demo Link]
+Link: [Insert Link]
 
-For help getting started with Flutter, view our
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Behind the Scenes
+
+The library builds on AppFlowy’s approach to convert transactions into structures compatible with the Rust-based yrs library, maintaining a synchronized copy of the text editor. Changes are reflected in yrs CRDT structures, ensuring consistent state across devices.
+However, CRDT alone may produce unexpected results when users’ changes interleave. For example:
+
+### User A (offline):
+
+- 111 - User A
+- 222 - User A
+- 333 - User A
+
+### User B (offline):
+
+- 111 - User B
+- 222 - User B
+- 333 - User B
+
+When both devices sync, a naive CRDT merge might yield:
+
+- 111 - User A
+- 111 - User B
+- 222 - User A
+- 333 - User A
+
+This is not user-friendly. To address this, each text node (line) includes additional attributes:
+
+- deviceId
+- timestamp
+
+And pointers:
+
+- prevId (for reflection and sorting)
+- nextId (for CRDT reflection)
+
+Using these, the plugin sorts nodes to produce a user-expected merge, such as:
+
+- 111 - User A
+- 222 - User A
+- 333 - User A
+- 111 - User B
+- 222 - User B
+- 333 - User B
+
+Or:
+
+- 111 - User B
+- 222 - User B
+- 333 - User B
+- 111 - User A
+- 222 - User A
+- 333 - User A
+
+For conflicts (e.g., multiple nodes with the same prevId), the sorting algorithm uses timestamp and deviceId to resolve ordering. This logic is implemented in rust/src/doc/utils/sorting.rs.

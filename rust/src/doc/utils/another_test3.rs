@@ -70,7 +70,7 @@ mod tests {
         }
 
         // Test initial sorting
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let parent_children = sorted.get("j62VDi").unwrap();
 
         // Verify expected device grouping and ordering
@@ -91,7 +91,7 @@ mod tests {
         );
         blocks.get_mut("SXTmU4").unwrap().prev_id = Some("n9Bx2_".to_string());
 
-        let sorted_after_move = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted_after_move = ChainSorting::sort_blocks_by_chain(&blocks);
         let moved_children = sorted_after_move.get("j62VDi").unwrap();
 
         // Verify new position of moved block

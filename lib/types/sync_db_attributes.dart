@@ -12,8 +12,11 @@ class SyncAttributes {
   /// Takes a serialized update as Uint8List (binary data)
   final Future<void> Function(Uint8List update) saveUpdate;
 
-  /// Function to retrieve all stored updates from persistence layer
-  /// Returns a list of tuples containing update ID and binary update data
+  /// Provide initial set of updates
+  /// Or init the text editor, viz: [AppflowyEditorSyncUtilityFunctions.initDocument]
+  /// [AppflowyEditorSyncUtilityFunctions.initDocumentFromExistingDocument]
+  /// [AppflowyEditorSyncUtilityFunctions.initDocumentFromExistingMarkdownDocument]
+  ///
   final Future<List<DbUpdate>> Function() getInitialUpdates;
 
   SyncAttributes({

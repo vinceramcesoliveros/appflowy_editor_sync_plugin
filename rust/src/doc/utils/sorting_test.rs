@@ -54,15 +54,15 @@ mod tests {
             create_test_block("b2", "paragraph", "device_b", "4", None, Some("root"))
         );
 
-        // Create children map
-        let mut children_map = HashMap::new();
-        children_map.insert(
-            "root".to_string(),
-            vec!["a1".to_string(), "b1".to_string(), "a2".to_string(), "b2".to_string()]
-        );
+        // // Create children map
+        // let mut children_map = HashMap::new();
+        // children_map.insert(
+        //     "root".to_string(),
+        //     vec!["a1".to_string(), "b1".to_string(), "a2".to_string(), "b2".to_string()]
+        // );
 
         // Sort blocks
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain( &blocks);
 
         // Verify: blocks should be grouped by device
         // Either [a1, a2, b1, b2] or [b1, b2, a1, a2] depending on which device sorts first
@@ -116,15 +116,10 @@ mod tests {
             create_test_block("a3", "paragraph", "device_a", "3", Some("a2"), Some("root"))
         );
 
-        // Create children map with blocks in random order
-        let mut children_map = HashMap::new();
-        children_map.insert(
-            "root".to_string(),
-            vec!["a3".to_string(), "a1".to_string(), "a2".to_string()]
-        );
+  
 
         // Sort blocks
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain( &blocks);
 
         // Verify: blocks should follow prev_id chain (a1, a2, a3)
         let sorted_root = &sorted["root"];
@@ -172,7 +167,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain( &blocks);
         let sorted_root = &sorted["root"];
 
         // Verify:
@@ -246,7 +241,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // Verify all blocks are present
@@ -284,7 +279,7 @@ mod tests {
         );
 
         // Sort blocks
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // Verify:
@@ -345,7 +340,7 @@ mod tests {
         );
 
         // Sort blocks using the new chain-based algorithm
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // Verify:
@@ -546,14 +541,14 @@ mod tests {
             vec!["child1".to_string(), "child2".to_string(), "child3".to_string()]
         );
 
-        // Sort blocks using the chain-based algorithm
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        // Sort blocks usingpp the chain-based algorithm
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
 
         // Verify root level sorting
         let sorted_root = &sorted["root"];
 
         // Test that all blocks are present
-        assert_eq!(sorted_root.len(), 20, "All blocks should be present in the result");
+        assert_eq!(sorted_root.len(), 21, "All blocks should be present in the result");
 
         // Test specific chain relationships
         let a1_pos = sorted_root
@@ -664,7 +659,7 @@ mod tests {
         let mut children_map = HashMap::new();
         children_map.insert("root".to_string(), vec!["a1".to_string(), "b1".to_string()]);
 
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // b1 should be treated as root since its prev_id is invalid
@@ -688,7 +683,7 @@ mod tests {
         let mut children_map = HashMap::new();
         children_map.insert("root".to_string(), vec!["a1".to_string(), "b1".to_string()]);
 
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // Even though b1 points to a1, devices should be grouped
@@ -719,7 +714,7 @@ mod tests {
             vec!["a1".to_string(), "a2".to_string(), "a3".to_string()]
         );
 
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // Should have a1->a2 chain first, then a3 as root
@@ -749,7 +744,7 @@ mod tests {
             vec!["a1".to_string(), "a2".to_string(), "a3".to_string()]
         );
 
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // Roots sorted by timestamp: a1 (1), a2 (2)
@@ -793,7 +788,7 @@ mod tests {
             vec!["a1".to_string(), "a2".to_string(), "b1".to_string(), "b2".to_string(), "c1".to_string()]
         );
 
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
         let sorted_root = &sorted["root"];
 
         // Expected order:
@@ -830,7 +825,7 @@ mod tests {
         children_map.insert("parent1".to_string(), vec!["p1a".to_string(), "p1b".to_string()]);
         children_map.insert("parent2".to_string(), vec!["p2a".to_string()]);
 
-        let sorted = ChainSorting::sort_blocks_by_chain(&children_map, &blocks);
+        let sorted = ChainSorting::sort_blocks_by_chain(&blocks);
 
         // In parent2, p2a's prev_id (p1b) doesn't exist -> should be root
         assert_eq!(sorted["parent2"], vec!["p2a"]);

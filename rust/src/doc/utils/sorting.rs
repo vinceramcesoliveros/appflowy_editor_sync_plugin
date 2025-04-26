@@ -6,15 +6,30 @@ pub struct ChainSorting;
 
 impl ChainSorting {
     pub fn sort_blocks_by_chain(
-        children_map: &HashMap<String, Vec<String>>,
         blocks: &HashMap<String, BlockDoc>
     ) -> HashMap<String, Vec<String>> {
         log_info!("====== STARTING BLOCK SORTING ======");
-        log_info!("Input children_map has {} parent nodes", children_map.len());
+        
+        // First, group blocks by parent ID
+        let mut blocks_by_parent: HashMap<String, Vec<String>> = HashMap::new();
+        
+        // Add each block to its parent's group
+        for (block_id, block) in blocks {
+            let parent_id = block.parent_id.clone().unwrap_or_else(|| "root".to_string());
+            blocks_by_parent.entry(parent_id.clone()).or_default().push(block_id.clone());
+            log_info!("Block {} assigned to parent {}", block_id, parent_id);
+        }
+
+        //Print blocks by parent map
+        for (parent_id, child_ids) in &blocks_by_parent {
+            log_info!("Parent {} has {} children: {:?}", parent_id, child_ids.len(), child_ids);
+        }
+        
+        log_info!("Grouped {} blocks by parent", blocks.len());
         
         let mut sorted_children = HashMap::new();
 
-        for (parent_id, child_ids) in children_map {
+        for (parent_id, child_ids) in blocks_by_parent {
             log_info!("\n----- Sorting children of parent: {} -----", parent_id);
             log_info!("Parent has {} children to sort", child_ids.len());
             
@@ -205,7 +220,7 @@ impl ChainSorting {
                 log_info!("Adding {} globally remaining blocks: {:?}", remaining.len(), remaining);
                 
                 for block_id in child_ids {
-                    if !visited.contains(block_id) {
+                    if !visited.contains(&block_id) {
                         log_info!("  Adding remaining block {} to sorted list", block_id);
                         sorted_ids.push(block_id.clone());
                         visited.insert(block_id.clone());

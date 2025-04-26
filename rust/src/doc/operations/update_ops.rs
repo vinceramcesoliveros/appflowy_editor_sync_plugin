@@ -7,7 +7,7 @@ use crate::doc::error::DocError;
 use crate::doc::utils::sorting::ChainSorting;
 // In other files
 use crate::{log_info, log_error};
-use crate::doc::constants::{ATTRIBUTES, BLOCKS, CHILDREN_MAP, ID, NEXT_ID, PARENT_ID, PREV_ID, ROOT_ID, TEXT, TYPE};
+use crate::doc::constants::{ATTRIBUTES, BLOCKS, ID, NEXT_ID, PARENT_ID, PREV_ID, ROOT_ID, TEXT, TYPE};
 use crate::doc::utils::util::TextExt;
 
 pub struct UpdateOperations;
@@ -53,13 +53,13 @@ impl UpdateOperations {
         doc_id: &str
     ) -> Result<DocumentState, CustomRustError> {
         log_info!("extract_document_state: Starting for doc_id: {}", doc_id);
-
+    
         // Extract blocks
         let blocks_map = match root.get(txn, BLOCKS) {
             Some(yrs::Out::YMap(map)) => map,
             _ => return Err(DocError::StateError("Blocks map not found in document".into()).into()),
         };
-
+    
         let mut blocks = HashMap::new();
         let block_keys: Vec<String> = blocks_map.keys(txn).map(|k| k.to_string()).collect();
         
@@ -70,36 +70,10 @@ impl UpdateOperations {
                 blocks.insert(id, block);
             }
         }
-
-        // Extract children map
-        let children_map = match root.get(txn, CHILDREN_MAP) {
-            Some(yrs::Out::YMap(map)) => map,
-            _ => return Err(DocError::StateError("Children map not found in document".into()).into()),
-        };
-
-        let mut children_relationships = HashMap::new();
-        for parent_id in children_map.keys(txn) {
-            let parent_id_str = parent_id.to_string();
-            
-            if let Some(yrs::Out::YArray(array)) = children_map.get(txn, &parent_id) {
-                let child_ids: Vec<String> = array.iter(txn)
-                    .map(|item| {
-                        if let yrs::Out::Any(yrs::Any::String(s)) = item {
-                            s.to_string()
-                        } else {
-                            String::new() // Skip invalid entries
-                        }
-                    })
-                    .filter(|s| !s.is_empty())
-                    .collect();
-                
-                children_relationships.insert(parent_id_str, child_ids);
-            }
-        }
-
-        // Sort blocks by chain if needed
-        let sorted_children = ChainSorting::sort_blocks_by_chain(&children_relationships, &blocks);
-
+    
+        // Sort blocks by chain to create children_map
+        let sorted_children = ChainSorting::sort_blocks_by_chain(&blocks);
+    
         log_info!("extract_document_state: Extracted {} blocks and {} parent-child relationships", 
                 blocks.len(), sorted_children.len());
     
@@ -115,7 +89,6 @@ impl UpdateOperations {
             children_map: sorted_children,
             doc_id: doc_id.to_string(),
             root_id,
-
         })
     }
 

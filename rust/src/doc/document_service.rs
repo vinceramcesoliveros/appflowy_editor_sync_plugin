@@ -5,7 +5,7 @@ use yrs::{merge_updates_v2, Doc, Map, ReadTxn, Transact};
 use super::error::DocError;
 use super::operations::{block_ops::BlockOperations, delta_ops::DeltaOperations, update_ops::UpdateOperations};
 
-use crate::doc::constants::{BLOCKS, CHILDREN_MAP, DEFAULT_PARENT, ROOT_ID};
+use crate::doc::constants::{BLOCKS, DEFAULT_PARENT, ROOT_ID};
 use crate::doc::document_types::{BlockActionDoc, BlockActionTypeDoc, CustomRustError, DocumentState, FailedToDecodeUpdates};
 use crate::doc::utils::util::MapExt;
 use crate::{log_info, log_error};
@@ -40,8 +40,7 @@ impl DocumentService {
         // Initialize the document structure
         log_info!("init_empty_doc: Initializing blocks for doc_id: {}", self.doc_id);
         root.get_or_init_map(&mut txn, BLOCKS);
-        log_info!("init_empty_doc: Initializing childrenMap for doc_id: {}", self.doc_id);
-        root.get_or_init_map(&mut txn, CHILDREN_MAP);
+        
         
         // Create the empty state update
         log_info!("init_empty_doc: Encoding state for doc_id: {}", self.doc_id);
@@ -53,61 +52,61 @@ impl DocumentService {
     }
 
     #[no_mangle]
-    #[inline(never)]
-    #[frb]
-    pub fn apply_action(
-        &mut self,
-        actions: Vec<BlockActionDoc>,
-        diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
-    ) -> Result<Vec<u8>, CustomRustError> {
-        log_info!("apply_action: Starting with {} actions for doc_id: {}", 
-                 actions.len(), self.doc_id);
+#[inline(never)]
+#[frb]
+pub fn apply_action(
+    &mut self,
+    actions: Vec<BlockActionDoc>,
+    diff_deltas: &impl Fn(String, String) -> DartFnFuture<String>
+) -> Result<Vec<u8>, CustomRustError> {
+    log_info!("apply_action: Starting with {} actions for doc_id: {}", 
+             actions.len(), self.doc_id);
+    
+    // Get document handle and start transaction
+    let doc = &self.doc;
+    let root = doc.get_or_insert_map(ROOT_ID);
+    let mut txn = doc.transact_mut();
+    
+    // Process each action
+    for action in actions {
+        let blocks_map = root.get_or_init_map(&mut txn, BLOCKS);
         
-        // Get document handle and start transaction
-        let doc = &self.doc;
-        let root = doc.get_or_insert_map(ROOT_ID);
-        let mut txn = doc.transact_mut();
-        
-        // Process each action
-        for action in actions {
-            let children_map = root.get_or_init_map(&mut txn, CHILDREN_MAP);
-            let blocks_map = root.get_or_init_map(&mut txn, BLOCKS);
-            
-            // Delegate to specialized operation handlers
-            match action.action {
-                BlockActionTypeDoc::Insert => {
-                    BlockOperations::insert_node(&mut txn, blocks_map, action, children_map, diff_deltas)?;
-                },
-                BlockActionTypeDoc::Update => {
-                    BlockOperations::update_node(&mut txn, blocks_map, action, diff_deltas)?;
-                },
-                BlockActionTypeDoc::Delete => {
-                    let parent_id = action.block.parent_id
-                        .unwrap_or_else(|| DEFAULT_PARENT.to_owned());
-                    BlockOperations::delete_node(&mut txn, blocks_map, children_map, &action.block.id, &parent_id)?;
-                },
-                BlockActionTypeDoc::Move => {
-                    if let (Some(old_path), Some(parent_id), Some(old_parent_id)) = 
-                        (action.old_path.as_ref(), action.block.parent_id.as_ref(), action.block.old_parent_id.as_ref()) {
-                        BlockOperations::move_block(
-                            &mut txn, children_map, blocks_map,
-                            old_path, &action.path, parent_id, old_parent_id,
-                            &action.block.id, action.block.prev_id, action.block.next_id
-                        )?;
-                    } else {
-                        return Err(DocError::InvalidOperation("Missing required fields for move operation".into()).into());
-                    }
+        // Delegate to specialized operation handlers
+        match action.action {
+            BlockActionTypeDoc::Insert => {
+                BlockOperations::insert_node(&mut txn, blocks_map, action, diff_deltas)?;
+            },
+            BlockActionTypeDoc::Update => {
+                BlockOperations::update_node(&mut txn, blocks_map, action, diff_deltas)?;
+            },
+            BlockActionTypeDoc::Delete => {
+                let parent_id = action.block.parent_id
+                    .unwrap_or_else(|| DEFAULT_PARENT.to_owned());
+                
+                BlockOperations::delete_node(&mut txn, blocks_map, &action.block.id, &parent_id)?;
+            },
+            BlockActionTypeDoc::Move => {
+                if let (Some(old_path), Some(parent_id), Some(old_parent_id)) = 
+                    (action.old_path.as_ref(), action.block.parent_id.as_ref(), action.block.old_parent_id.as_ref()) {
+                    BlockOperations::move_block(
+                        &mut txn, blocks_map,
+                        old_path, &action.path, parent_id, old_parent_id,
+                        &action.block.id, action.block.prev_id, action.block.next_id
+                    )?;
+                } else {
+                    return Err(DocError::InvalidOperation("Missing required fields for move operation".into()).into());
                 }
             }
         }
-        
-        // Generate update from the transaction
-        log_info!("apply_action: Encoding state for doc_id: {}", self.doc_id);
-        let before_state = txn.before_state();
-        let update = txn.encode_diff_v2(before_state);
-        
-        Ok(update)
     }
+    
+    // Generate update from the transaction
+    log_info!("apply_action: Encoding state for doc_id: {}", self.doc_id);
+    let before_state = txn.before_state();
+    let update = txn.encode_diff_v2(before_state);
+    
+    Ok(update)
+}
 
     #[no_mangle]
     #[inline(never)]
