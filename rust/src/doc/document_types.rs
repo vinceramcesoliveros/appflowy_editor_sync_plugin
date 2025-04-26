@@ -19,9 +19,13 @@ pub struct BlockDoc {
     pub ty: String,
     pub attributes: HashMap<String, String>,
     pub delta: Option<String>,
+    #[serde(rename = "parentId")]
     pub parent_id: Option<String>,
+    #[serde(rename = "prevId")]
     pub prev_id: Option<String>,
+    #[serde(rename = "nextId")]
     pub next_id: Option<String>,
+    #[serde(rename = "oldParentId")]
     pub old_parent_id: Option<String>, //For Move action
 }
 
@@ -31,8 +35,8 @@ pub struct BlockActionDoc {
     pub action: BlockActionTypeDoc,
     pub block: BlockDoc,
     pub path: Vec<u32>,
+    #[serde(rename = "oldPath")]
     pub old_path: Option<Vec<u32>>, //For Move action
-
 }
 
 #[frb(unignore, dart_metadata=("freezed"), json_serializable)]
