@@ -49,7 +49,7 @@ Pass the resulting EditorState to the AppFlowy text editor. See the example for 
 
 ## Initialization
 
-When creating a document, initialize it using one of the following methods from AppflowyEditorSyncUtilityFunctions:
+When creating a document, initialize it using one of the following methods from `AppflowyEditorSyncUtilityFunctions`:
 
 `initDocument`
 `initDocumentFromExistingDocument`
