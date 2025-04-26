@@ -1,0 +1,9 @@
+{
+  "name": "appflowy_editor_sync_plugin",
+  "version": "0.1.0",
+  "files": [
+    "appflowy_editor_sync_plugin_bg.wasm",
+    "appflowy_editor_sync_plugin.js"
+  ],
+  "browser": "appflowy_editor_sync_plugin.js"
+}
