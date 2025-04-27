@@ -6,6 +6,7 @@ import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:appflowy_editor_sync_plugin/convertors/transaction_adapter_helpers.dart';
 import 'package:appflowy_editor_sync_plugin/core/update_clock.dart';
 import 'package:appflowy_editor_sync_plugin/document_initializer.dart';
+import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_rules.dart';
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_service_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/document_sync_db.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
@@ -25,6 +26,7 @@ class EditorStateSyncWrapper {
   late final DocumentSyncDB syncDB;
   late final DocumentInitializer initializer;
   late final EditorStateWrapper editorStateWrapper;
+  late final DocumentRules documentRules;
   final mapEquality = const DeepCollectionEquality();
   bool isSyncing = false;
 
@@ -45,6 +47,8 @@ class EditorStateSyncWrapper {
     // Logic to synchronize document with database
     _listenOnDBUpdates();
     _listenOnEditorUpdates();
+
+    documentRules = DocumentRules(editorState: editorStateWrapper.editorState);
 
     return editorStateWrapper.editorState;
   }
@@ -178,6 +182,10 @@ class EditorStateSyncWrapper {
         return;
       }
 
+      if (transaction.operations.isEmpty) {
+        return;
+      }
+
       final actions = TransactionAdapterHelpers.operationsToBlockActions(
         transaction.operations,
         editorStateWrapper,
@@ -189,6 +197,9 @@ class EditorStateSyncWrapper {
       await update.match(() async {}, (update) {
         syncDB.addUpdates([LocalUpdate(update: update, id: newClock)]);
       });
+
+      // Check for document rules
+      await documentRules.applyRules(value: data);
     });
   }
 }

@@ -140,81 +140,33 @@ class TransactionAdapterHelpers {
         return [];
       }
 
-      // Start with an initial document copy
+      var prevId = '';
+
       final documentCopy = DocumentExtensions.fromJsonWithIds(
         jsonDecode(
           jsonEncode(editorStateWrapper.editorState.document.toJsonWithIds()),
         ),
       );
-
-      // Save the old parent before any modifications
-      final oldParent = parentFromPath(documentCopy, oldPath);
-
-      // Remove the node from its original position
       documentCopy.delete(DeleteOperation.fromJson(op.toJson()).path);
 
-      // Check if target parent is a heading
-      Node? targetParent = documentCopy.nodeAtPath(newPath.parent);
-      bool parentIsHeading =
-          targetParent != null && targetParent.type.startsWith('heading');
+      final oldParent = parentFromPath(documentCopy, deleteNode.path);
 
-      // Determine actual insertion path and parent
-      Path actualInsertPath = newPath;
-      String finalParentId = "x";
+      // if the node is the first child of the parent, then its prevId should be empty.
+      final isFirstChild = newPath.previous.equals(newPath);
 
-      if (parentIsHeading) {
-        // If parent is heading, find sibling position instead of child position
-        Path ancestorPath = newPath.parent;
-        Path insertAfterParent;
-
-        // Find the closest non-heading ancestor
-        while (ancestorPath.isNotEmpty) {
-          Path parentOfAncestor = ancestorPath.parent;
-          final ancestor = documentCopy.nodeAtPath(ancestorPath);
-          final parentOfAncestorNode =
-              parentOfAncestor.isEmpty
-                  ? documentCopy.root
-                  : documentCopy.nodeAtPath(parentOfAncestor);
-
-          // We found a valid insertion point after the heading
-          if (ancestor != null && ancestor.type.startsWith('heading')) {
-            insertAfterParent = parentOfAncestor;
-            // Create new path that inserts after the heading
-            actualInsertPath = [...insertAfterParent, ancestorPath.last + 1];
-            finalParentId = parentOfAncestorNode?.id ?? documentCopy.root.id;
-            break;
-          }
-
-          if (ancestorPath.isEmpty) {
-            // Fallback to root
-            finalParentId = documentCopy.root.id;
-            actualInsertPath = [0]; // First child of root
-            break;
-          }
-
-          ancestorPath = ancestorPath.parent;
-        }
-      } else {
-        // Parent is not heading, use original path and parent
-        finalParentId = targetParent?.id ?? documentCopy.root.id;
-      }
-
-      // Calculate prevId at the new position
-      var prevId = '';
-      final isFirstChild = actualInsertPath.previous.equals(actualInsertPath);
       if (!isFirstChild) {
-        prevId = documentCopy.nodeAtPath(actualInsertPath.previous)?.id ?? '';
+        prevId = documentCopy.nodeAtPath(newPath.previous)?.id ?? '';
       }
 
-      // Insert node at the new position
-      final insertCopy = InsertOperation(actualInsertPath, [insertNode]);
+      var nextId = '';
+
+      final insertCopy = InsertOperation.fromJson(nextOp.toJson());
       documentCopy.insert(insertCopy.path, insertCopy.nodes);
 
-      // Calculate nextId at the new position
-      var nextId = '';
-      final isLastChild = actualInsertPath.next.equals(actualInsertPath);
+      //If the node is the last child of the parent, then its nextId should be empty.
+      final isLastChild = newPath.next.equals(newPath);
       if (!isLastChild) {
-        nextId = documentCopy.nodeAtPath(actualInsertPath.next)?.id ?? '';
+        nextId = documentCopy.nodeAtPath(newPath.next)?.id ?? '';
       }
 
       return [
@@ -224,13 +176,13 @@ class TransactionAdapterHelpers {
             id: deleteNode.id,
             ty: deleteNode.type,
             attributes: {},
-            parentId: finalParentId,
+            parentId: parentFromPath(documentCopy, newPath).id,
             oldParentId: oldParent.id,
-            prevId: prevId == '' ? null : prevId,
-            nextId: nextId == '' ? null : nextId,
-          ),
-          path: Uint32List.fromList(actualInsertPath.toList()),
-          oldPath: Uint32List.fromList(op.path.toList()),
+            prevId: prevId == '' ? null : prevId, // Previous ID
+            nextId: nextId == '' ? null : nextId, // Next ID
+          ), // No block data needed; move uses paths
+          path: Uint32List.fromList(nextOp.path.toList()), // New path
+          oldPath: Uint32List.fromList(op.path.toList()), // Old path
         ),
       ];
     } else if (e.type == OperationWrapperType.Insert) {
@@ -262,80 +214,3 @@ class TransactionAdapterHelpers {
     return doc.nodeAtPath(withoutLast) ?? doc.root;
   }
 }
-
-
-/// Note: Because the Node type of heading cannot have children the function
-///  [operationWrapperToBlockActions] was changed to account for it. The original code is here:
-/// ```dart
-/// static List<BlockActionDoc> operationWrapperToBlockActions(
-///   OperationWrapper e,
-///   EditorStateWrapper editorStateWrapper,
-/// ) {
-///   if (e.type == OperationWrapperType.Move) {
-///     final op = e.firstOperation as DeleteOperation;
-////     final nextOp = e.optionalSecondOperation.toNullable()! as InsertOperation;
-///     final deleteNode = op.nodes.first;
-///     final insertNode = nextOp.nodes.first;
-
-///     final newPath = nextOp.path;
-///     final oldPath = op.path;
-
-//     //If the path is the same, return an empty list
-///     if (newPath.equals(oldPath)) {
-///       return [];
-///     }
-
-///     var prevId = '';
-
-///     final documentCopy = DocumentExtensions.fromJsonWithIds(
-///       jsonDecode(
-///         jsonEncode(editorStateWrapper.editorState.document.toJsonWithIds()),
-///       ),
-///     );
-///     documentCopy.delete(DeleteOperation.fromJson(op.toJson()).path);
-///
-///     final oldParent = parentFromPath(documentCopy, deleteNode.path);
-
-///     // if the node is the first child of the parent, then its prevId should be empty.
-///     final isFirstChild = newPath.previous.equals(newPath);
-///
-///     if (!isFirstChild) {
-///       prevId = documentCopy.nodeAtPath(newPath.previous)?.id ?? '';
-///     }
-///
-///     var nextId = '';
-///
-///     final insertCopy = InsertOperation.fromJson(nextOp.toJson());
-///     documentCopy.insert(insertCopy.path, insertCopy.nodes);
-///
-///     //If the node is the last child of the parent, then its nextId should be empty.
-///     final isLastChild = newPath.next.equals(newPath);
-///     if (!isLastChild) {
-///       nextId = documentCopy.nodeAtPath(newPath.next)?.id ?? '';
-///     }
-///
-///     return [
-///       BlockActionDoc(
-///         action: BlockActionTypeDoc.move,
-///         block: BlockDoc(
-///           id: deleteNode.id,
-///           ty: deleteNode.type,
-///           attributes: {},
-///           parentId: parentFromPath(documentCopy, newPath).id,
-///           prevId: prevId == '' ? null : prevId, // Previous ID
-///           nextId: nextId == '' ? null : nextId, // Next ID
-///         ), // No block data needed; move uses paths
-///         path: Uint32List.fromList(nextOp.path.toList()), // New path
-///         oldPath: Uint32List.fromList(op.path.toList()), // Old path
-///       ),
-///     ];
-///   } else if (e.type == OperationWrapperType.Insert) {
-///     return e.firstOperation.toBlockAction(editorStateWrapper);
-///   } else if (e.type == OperationWrapperType.Update) {
-///     return e.firstOperation.toBlockAction(editorStateWrapper);
-///   } else if (e.type == OperationWrapperType.Delete) {
-///     return e.firstOperation.toBlockAction(editorStateWrapper);
-///   }
-///   throw UnimplementedError();
-/// }
-/// ```
