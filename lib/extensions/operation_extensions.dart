@@ -53,7 +53,6 @@ extension on InsertOperation {
             previousNode?.id ??
             editorStateWrapper.getNodeAtPath(currentPath.previous)?.id ??
             '';
-        assert(prevId.isNotEmpty && prevId != node.id);
       }
 
       var nextId = '';

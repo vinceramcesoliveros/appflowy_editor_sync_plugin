@@ -20,6 +20,12 @@ List<Operation> diffNodesCustom2(Node oldNode, Node newNode) {
   return _adjustOperationPaths(rawOperations);
 }
 
+List<Operation> adjustOperations(List<Operation> operations) {
+  // Sort operations to ensure correct order of application
+  // Updates first, then deletes from last to first, then inserts from first to last
+  return _adjustOperationPaths(operations);
+}
+
 List<Operation> _gatherRawOperations(Node oldNode, Node newNode) {
   final operations = <Operation>[];
 

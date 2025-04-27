@@ -1,4 +1,5 @@
 import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:appflowy_editor_sync_plugin/convertors/custom_diff.dart';
 
 /// Apply rules to the document
 ///
@@ -75,6 +76,10 @@ class DocumentRules {
     if (transaction.operations.isEmpty) {
       return;
     }
+
+    final adjustedOperations = adjustOperations(transaction.operations);
+    transaction.operations.clear();
+    transaction.operations.addAll(adjustedOperations);
 
     await editorState.apply(transaction);
   }
