@@ -78,6 +78,11 @@ extension on InsertOperation {
         encodedDelta = jsonEncode(node.delta!.toJson());
       }
 
+      if (prevId == nextId && currentPath[0] == -1) {
+        prevId = '';
+        nextId = '';
+      }
+
       final blockAction = BlockActionDoc(
         action: BlockActionTypeDoc.insert,
         block: BlockDoc(
