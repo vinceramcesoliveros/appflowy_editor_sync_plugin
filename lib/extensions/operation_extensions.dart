@@ -78,7 +78,7 @@ extension on InsertOperation {
         encodedDelta = jsonEncode(node.delta!.toJson());
       }
 
-      if (prevId == nextId && currentPath[0] == -1) {
+      if (prevId == nextId && currentPath.elementAtOrNull(0) == -1) {
         prevId = '';
         nextId = '';
       }
