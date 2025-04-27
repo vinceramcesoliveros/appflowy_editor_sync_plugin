@@ -194,12 +194,12 @@ class EditorStateSyncWrapper {
       final newClock = updateClock.incrementClock();
 
       final update = await docService.applyAction(actions: actions);
-      await update.match(() async {}, (update) {
+      await update.match(() async {}, (update) async {
+        await documentRules.applyRules(value: data);
         syncDB.addUpdates([LocalUpdate(update: update, id: newClock)]);
       });
 
       // Check for document rules
-      await documentRules.applyRules(value: data);
     });
   }
 }
