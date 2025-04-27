@@ -67,16 +67,8 @@ class DocumentRules {
       for (final child in children) {
         // Insert the child after the heading + offset
         final targetPath = [...parentPath, insertPosition + offset];
-        transaction.insertNode(targetPath, child);
+        transaction.moveNode(targetPath, child);
         offset++;
-      }
-
-      // Remove all children from the heading node
-      if (headingNode.children.isNotEmpty) {
-        transaction.deleteNodesAtPath([
-          ...headingPath,
-          0,
-        ], headingNode.children.length);
       }
     }
 
