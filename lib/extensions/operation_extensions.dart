@@ -60,7 +60,13 @@ extension on InsertOperation {
       //If the node is the last child of the parent, then its nextId should be empty.
       final isLastChild = currentPath.next.equals(currentPath);
       if (!isLastChild) {
-        nextId = editorStateWrapper.getNodeAtPath(currentPath.next)?.id ?? '';
+        // Special case for insertion at position [0]
+        if (currentPath.length == 1 && currentPath[0] == 0) {
+          // Directly get the first child of the document
+          nextId = editorStateWrapper.getNodeAtPath([0])?.id ?? "";
+        } else {
+          nextId = editorStateWrapper.getNodeAtPath(currentPath.next)?.id ?? '';
+        }
       }
 
       //If I have a parent from insert, don't share nextid
