@@ -19,7 +19,7 @@ class DocumentInitializer {
     final applyingInitialOperationsUpdates = await documentService.applyAction(
       actions: TransactionAdapterHelpers.operationsToBlockActions(
         initialOperations,
-        editorStateWrapper,
+        editorStateWrapper.currentDocumentCopy(),
       ),
     );
 

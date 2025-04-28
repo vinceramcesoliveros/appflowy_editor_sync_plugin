@@ -388,10 +388,10 @@ impl BlockOperations {
             }
 
             log_info!("  Finished prev_id strategy");
-            return Ok(());
         }
 
-        // If there is no prev_id, use next_id
+        // If there is next_id, use it as well. It will be usefull in cases when there is multiple nodes
+        // insertted at the same time
         if let Some(next_id) = &next_id {
             log_info!("  Using next_id strategy (next_id={})", next_id);
             let next_block: MapRef = blocks_map.get_or_init_map(txn, Arc::from(next_id.as_str()));

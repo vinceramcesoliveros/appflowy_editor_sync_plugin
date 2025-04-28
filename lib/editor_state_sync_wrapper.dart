@@ -11,6 +11,7 @@ import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_se
 import 'package:appflowy_editor_sync_plugin/document_sync_db.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/list_of_updates_extensions.dart';
+import 'package:appflowy_editor_sync_plugin/extensions/list_op_operations.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
@@ -134,8 +135,6 @@ class EditorStateSyncWrapper {
 
     final result = await docService.getDocumentJson();
 
-    _prettyfyAndPrintInChunksDocumentState(result);
-
     //Check if I have latest update
     if (!updates.$1.syncCanBeDone(updateClock)) {
       return;
@@ -157,6 +156,7 @@ class EditorStateSyncWrapper {
     if (diffOperations.isNotEmpty) {
       // Apply the operations to the editor state
       editorStateWrapper.applyRemoteChanges(diffOperations);
+      _prettyfyAndPrintInChunksDocumentState(result);
 
       debugPrint(
         "Applied ${diffOperations.length} operations to the editor state",
@@ -186,9 +186,11 @@ class EditorStateSyncWrapper {
         return;
       }
 
+      final currentDocumentCopy = editorStateWrapper.currentDocumentCopy();
+      final operationsCopy = transaction.operations.deepCopy();
       final actions = TransactionAdapterHelpers.operationsToBlockActions(
-        transaction.operations,
-        editorStateWrapper,
+        operationsCopy,
+        currentDocumentCopy,
       );
 
       final newClock = updateClock.incrementClock();

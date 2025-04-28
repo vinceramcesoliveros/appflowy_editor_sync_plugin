@@ -1,11 +1,15 @@
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:appflowy_editor_sync_plugin/convertors/custom_diff.dart';
+import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_with_metadata.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/document_state_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:uuid/uuid.dart';
 
 class EditorStateWrapper {
   EditorStateWrapper({required this.editorState});
+
+  ModifiableDocumentWithMetadata currentDocumentCopy() =>
+      ModifiableDocumentWithMetadata.fromEditorStateWrapper(this);
 
   //Add a factory method withDocument
   factory EditorStateWrapper.factoryWithDocument(Document document) {

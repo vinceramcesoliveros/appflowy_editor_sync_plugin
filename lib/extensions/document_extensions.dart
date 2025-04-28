@@ -38,23 +38,24 @@ extension DocumentExtensions on Document {
     assert(json['document'] is Map, 'document field must be a Map');
 
     final document = Map<String, dynamic>.from(json['document'] as Map);
-    final root = NodeExtensions.fromJsonWithIds(document);
+    final root = NodeExtensionsCustom.fromJsonWithIds(document);
     return Document(root: root);
   }
 }
 
-extension NodeExtensions on Node {
+extension NodeExtensionsCustom on Node {
   /// Creates a Node from JSON with ID preservation.
   /// Based on the original Node.fromJson implementation with ID support added.
   static Node fromJsonWithIds(Map<String, dynamic> json) {
     final node = Node(
-      id: json['id'] as String? ??
+      id:
+          json['id'] as String? ??
           const Uuid().v4(), // Use existing ID or generate new one
       type: json['type'] as String,
       attributes: Attributes.from(json['data'] as Map? ?? {}),
       children: (json['children'] as List? ?? [])
           .map((e) => Map<String, Object>.from(e as Map<dynamic, dynamic>))
-          .map(NodeExtensions.fromJsonWithIds),
+          .map(NodeExtensionsCustom.fromJsonWithIds),
     );
 
     for (final child in node.children) {
@@ -79,8 +80,6 @@ extension NodeExtensions on Node {
 extension DocumentToJsonExtension on Document {
   /// Converts a Document to JSON, preserving all node IDs
   Map<String, Object> toJsonWithIds() {
-    return {
-      'document': root.toJsonWithIds(),
-    };
+    return {'document': root.toJsonWithIds()};
   }
 }

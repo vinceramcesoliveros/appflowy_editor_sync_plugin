@@ -52,7 +52,7 @@ class AppflowyEditorSyncUtilityFunctions {
     final diff = diffDocumentsCustom2(currentDocument, document);
     final operations = TransactionAdapterHelpers.operationsToBlockActions(
       diff,
-      editorStateWrapper,
+      editorStateWrapper.currentDocumentCopy(),
     );
     final newUpdate = await docService.applyAction(actions: operations);
     final allUpdates = newUpdate.match(() => updates, (d) => [...updates, d]);

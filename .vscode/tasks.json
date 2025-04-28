@@ -7,6 +7,12 @@
             "label": "build rust bridge",
             "type": "shell",
             "command": "flutter_rust_bridge_codegen generate"
+        },
+        {   
+            //Install this: https://cjycode.com/flutter_rust_bridge/manual/integrate/template/setup/web
+            "label": "build rust bridge web",
+            "type": "shell",
+            "command": "flutter_rust_bridge_codegen build-web"
         }
     ]
 }
