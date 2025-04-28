@@ -57,6 +57,20 @@ When creating a document, initialize it using one of the following methods from 
 
 These methods set up the default document structure for future updates.
 
+## Web
+
+To use the plugin on the web you need to do copy the code from the package `web/pkg` into you project `web/pkg` folder. And provide html headers:
+
+- `Cross-Origin-Opener-Policy=same-origin`
+- `web-header=Cross-Origin-Embedder-Policy=require-corp`
+
+Usefull resources:
+
+- https://cjycode.com/flutter_rust_bridge/quickstart#3-run-it
+- https://cjycode.com/flutter_rust_bridge/manual/integrate/template/setup/web
+
+This is neccessary as the package relies on
+
 ## Demos
 
 Run the example app to see the plugin in action.

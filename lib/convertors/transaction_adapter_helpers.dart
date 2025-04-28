@@ -208,22 +208,22 @@ class TransactionAdapterHelpers {
       var prevId = '';
 
       debugPrint('🔄 Creating document copy for move simulation');
-      final documentCopy = DocumentExtensions.fromJsonWithIds(
-        jsonDecode(jsonEncode(currentDocument.document.toJsonWithIds())),
-      );
+      // final documentCopy = DocumentExtensions.fromJsonWithIds(
+      //   jsonDecode(jsonEncode(currentDocument.document.toJsonWithIds())),
+      // );
+      final oldParent = parentFromPath(currentDocument.document, op.path);
+      debugPrint('👆 Old parent ID: ${oldParent.id}');
 
       debugPrint('🗑️ Simulating delete at path: ${op.path}');
-      documentCopy.delete(DeleteOperation.fromJson(op.toJson()).path);
-
-      final oldParent = parentFromPath(documentCopy, deleteNode.path);
-      debugPrint('👆 Old parent ID: ${oldParent.id}');
+      currentDocument.document.delete(op.path, op.nodes.length);
 
       // if the node is the first child of the parent, then its prevId should be empty.
       final isFirstChild = newPath.previous.equals(newPath);
       debugPrint('🔍 Is first child at new position: $isFirstChild');
 
       if (!isFirstChild) {
-        prevId = documentCopy.nodeAtPath(newPath.previous)?.id ?? '';
+        prevId =
+            currentDocument.document.nodeAtPath(newPath.previous)?.id ?? '';
         debugPrint('👈 Previous node ID: $prevId');
       } else {
         debugPrint('👈 No previous node (first child)');
@@ -231,26 +231,25 @@ class TransactionAdapterHelpers {
 
       var nextId = '';
 
-      debugPrint('📥 Simulating insert at path: ${nextOp.path}');
-      final insertCopy = InsertOperation.fromJson(nextOp.toJson());
-      documentCopy.insert(insertCopy.path, insertCopy.nodes);
-
       //If the node is the last child of the parent, then its nextId should be empty.
       final isLastChild = newPath.next.equals(newPath);
       debugPrint('🔍 Is last child at new position: $isLastChild');
 
       if (!isLastChild) {
-        nextId = documentCopy.nodeAtPath(newPath.next)?.id ?? '';
+        nextId = currentDocument.document.nodeAtPath(newPath)?.id ?? '';
         debugPrint('👉 Next node ID: $nextId');
       } else {
         debugPrint('👉 No next node (last child)');
       }
 
-      final newParent = parentFromPath(documentCopy, newPath);
+      final newParent = parentFromPath(currentDocument.document, newPath);
       debugPrint('👆 New parent ID: ${newParent.id}');
 
+      debugPrint('📥 Simulating insert at path: ${nextOp.path}');
+      currentDocument.document.insert(nextOp.path, nextOp.nodes);
+
       debugPrint(
-        '📄 Document structure after simulation: ${jsonEncode(documentCopy.toJsonWithIds()).substring(0, 100)}...',
+        '📄 Document structure after simulation: ${jsonEncode(currentDocument.document.toJsonWithIds())}',
       );
 
       final blockAction = BlockActionDoc(
@@ -275,14 +274,6 @@ class TransactionAdapterHelpers {
       );
       debugPrint(
         '  - prevId: ${blockAction.block.prevId}, nextId: ${blockAction.block.nextId}',
-      );
-
-      // Apply the operations to the current document
-      debugPrint('🔄 Applying move to current document');
-      currentDocument.document.delete(op.path);
-      currentDocument.document.insert(nextOp.path, nextOp.nodes);
-      debugPrint(
-        '📄 Document after move: ${currentDocument.prettyPrint()} root children',
       );
 
       return [blockAction];
