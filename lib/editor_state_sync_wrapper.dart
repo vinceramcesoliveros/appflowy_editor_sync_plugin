@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // editor_state_sync_wrapper.dart
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
@@ -15,13 +16,18 @@ import 'package:appflowy_editor_sync_plugin/extensions/list_op_operations.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 class EditorStateSyncWrapper {
-  EditorStateSyncWrapper({required this.syncAttributes});
+  EditorStateSyncWrapper({
+    required this.syncAttributes,
+    this.syncDebounceDelay = _syncDebounceDelay,
+  });
 
   final SyncAttributes syncAttributes;
+  final Duration syncDebounceDelay;
 
   late final DocumentServiceWrapper docService;
   late final DocumentSyncDB syncDB;
@@ -30,6 +36,9 @@ class EditorStateSyncWrapper {
   late final DocumentRules documentRules;
   final mapEquality = const DeepCollectionEquality();
   bool isSyncing = false;
+
+  static const String _syncProcessingTag = 'sync_processing';
+  static const Duration _syncDebounceDelay = Duration(milliseconds: 1500);
 
   (List<LocalUpdate>, List<DbUpdate>)? pendingSyncUpdates;
 
@@ -55,6 +64,7 @@ class EditorStateSyncWrapper {
   }
 
   void dispose() {
+    EasyDebounce.cancel(_syncProcessingTag);
     syncDB.dispose();
   }
 
@@ -107,11 +117,33 @@ class EditorStateSyncWrapper {
     }
   }
 
+  // Modify _processSyncOperation to use EasyDebounce
+  Future<void> _processSyncOperation(
+    (List<LocalUpdate>, List<DbUpdate>) updates,
+  ) async {
+    // Create a completer to make this method awaitable
+    final completer = Completer<void>();
+
+    // Use EasyDebounce to delay the actual processing
+    EasyDebounce.debounce(_syncProcessingTag, _syncDebounceDelay, () async {
+      // Perform the actual processing
+      try {
+        await _actualProcessSync(updates);
+        completer.complete();
+      } catch (e) {
+        completer.completeError(e);
+      }
+    });
+
+    // Wait for the debounced operation to complete
+    return completer.future;
+  }
+
   // What I need to guraentee:
   // If the sync is executed, I have all local updates + db updates available, including updates
   // for the latest state of the document.
 
-  Future<void> _processSyncOperation(
+  Future<void> _actualProcessSync(
     (List<LocalUpdate>, List<DbUpdate>) updates,
   ) async {
     //Check if I have latest update // Or if it is not in
@@ -156,7 +188,7 @@ class EditorStateSyncWrapper {
     if (diffOperations.isNotEmpty) {
       // Apply the operations to the editor state
       editorStateWrapper.applyRemoteChanges(diffOperations);
-      _prettyfyAndPrintInChunksDocumentState(result);
+      // _prettyfyAndPrintInChunksDocumentState(result);
 
       debugPrint(
         "Applied ${diffOperations.length} operations to the editor state",
@@ -197,7 +229,7 @@ class EditorStateSyncWrapper {
 
       final update = await docService.applyAction(actions: actions);
       await update.match(() async {}, (update) async {
-        await documentRules.applyRules(value: data);
+        unawaited(documentRules.applyRules(value: data));
         syncDB.addUpdates([LocalUpdate(update: update, id: newClock)]);
       });
 

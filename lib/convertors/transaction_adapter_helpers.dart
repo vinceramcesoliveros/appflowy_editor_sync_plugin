@@ -1,10 +1,8 @@
 // transaction_adapter_helpers.dart
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_with_metadata.dart';
-import 'package:appflowy_editor_sync_plugin/extensions/document_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/operation_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/types/operation_wrapper.dart';
@@ -89,9 +87,9 @@ class TransactionAdapterHelpers {
     ModifiableDocumentWithMetadata currentDocument,
   ) {
     debugPrint('🔄 Converting ${operations.length} operations to wrappers');
-    debugPrint(
-      '📄 Document state: ${currentDocument.prettyPrint()} root children',
-    );
+    // debugPrint(
+    //   '📄 Document state: ${currentDocument.prettyPrint()} root children',
+    // );
 
     final wrappers = <OperationWrapper>[];
 
@@ -161,9 +159,9 @@ class TransactionAdapterHelpers {
     debugPrint(
       '🔄 Converting ${wrapped.length} operation wrappers to block actions',
     );
-    debugPrint(
-      '📄 Document state before conversion: ${currentDocument.prettyPrint()} root children',
-    );
+    // debugPrint(
+    //   '📄 Document state before conversion: ${currentDocument.prettyPrint()} root children',
+    // );
 
     final converted = wrapped.map((e) {
       debugPrint('🔍 Converting wrapper of type ${e.type}');
@@ -201,9 +199,9 @@ class TransactionAdapterHelpers {
         return [];
       }
 
-      debugPrint(
-        '📄 Current document state: ${jsonEncode(currentDocument.document.toJsonWithIds()).substring(0, 100)}...',
-      );
+      // debugPrint(
+      //   '📄 Current document state: ${jsonEncode(currentDocument.document.toJsonWithIds()).substring(0, 100)}...',
+      // );
 
       var prevId = '';
 
@@ -248,9 +246,9 @@ class TransactionAdapterHelpers {
       debugPrint('📥 Simulating insert at path: ${nextOp.path}');
       currentDocument.document.insert(nextOp.path, nextOp.nodes);
 
-      debugPrint(
-        '📄 Document structure after simulation: ${jsonEncode(currentDocument.document.toJsonWithIds())}',
-      );
+      // debugPrint(
+      //   '📄 Document structure after simulation: ${jsonEncode(currentDocument.document.toJsonWithIds())}',
+      // );
 
       final blockAction = BlockActionDoc(
         action: BlockActionTypeDoc.move,

@@ -44,6 +44,8 @@ extension Attributes2Extension on Map<String, String> {
         result[key] = true;
       } else if (value == 'false') {
         result[key] = false;
+      } else if (value == 'null') {
+        result[key] = null;
       } else {
         final number = num.tryParse(value);
         if (number != null) {

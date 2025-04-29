@@ -296,9 +296,9 @@ extension on DeleteOperation {
     ModifiableDocumentWithMetadata currentDocument,
   ) {
     debugPrint('🗑️ Processing DeleteOperation at path: $path');
-    debugPrint(
-      '📄 Document state: ${currentDocument.prettyPrint()} root children',
-    );
+    // debugPrint(
+    //   '📄 Document state: ${currentDocument.prettyPrint()} root children',
+    // );
     debugPrint('🔍 Deleting ${nodes.length} node(s)');
 
     final actions = <BlockActionDoc>[];
@@ -339,9 +339,9 @@ extension on DeleteOperation {
     // Apply the operation to the current document
     debugPrint('🔄 Applying delete to current document');
     currentDocument.document.delete(path, nodes.length);
-    debugPrint(
-      '📄 Document after delete: ${currentDocument.prettyPrint()} root children',
-    );
+    // debugPrint(
+    //   '📄 Document after delete: ${currentDocument.prettyPrint()} root children',
+    // );
 
     return actions;
   }
