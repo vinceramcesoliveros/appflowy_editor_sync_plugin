@@ -23,6 +23,10 @@ abstract class BatcherInterface<T> {
   /// Return unprocessed values
   Stream<List<T>> getUprocessedValues();
 
+  /// When the batcher will be disposed, It is important to save all
+  /// unsaved updates to DB. Here I need to get them.
+  List<T> getAllUnprocessedItems();
+
   /// Last modification id
   /// Everytime a new element it added to the batch, it gets a new id
   String getLastModificationId();
@@ -46,6 +50,11 @@ class Batcher<T> implements BatcherInterface<T> {
   final Mutex modifyUpdatesMutex = Mutex();
   Future<bool> Function(List<T>)? _processCallback;
   late final BehaviorSubject<List<T>> _streamController;
+
+  @override
+  List<T> getAllUnprocessedItems() {
+    return updatesBatch.map((e) => e.$2).toList();
+  }
 
   final uuid = const Uuid();
 

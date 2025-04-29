@@ -84,13 +84,14 @@ Document doc(Ref ref, {required int docId}) {
   return ref.read(isarProvider).documents.get(docId)!;
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 class EditorStateWrapper extends _$EditorStateWrapper {
   Isar get _isar => ref.read(isarProvider);
 
   @override
   FutureOr<EditorState> build(String docId) {
     final wrapper = EditorStateSyncWrapper(
+      updatesBatcherDebounceDuration: Duration(milliseconds: 2000),
       syncAttributes: SyncAttributes(
         getInitialUpdates: () async {
           final data =
@@ -123,6 +124,8 @@ class EditorStateWrapper extends _$EditorStateWrapper {
         },
       ),
     );
+
+    ref.onDispose(wrapper.dispose);
 
     return wrapper.initAndHandleChanges();
   }

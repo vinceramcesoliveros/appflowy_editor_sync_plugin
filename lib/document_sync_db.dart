@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // document_sync_db.dart
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:appflowy_editor_sync_plugin/core/delay_remove_batcher.dart';
@@ -10,11 +11,17 @@ import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 class DocumentSyncDB {
-  DocumentSyncDB({required this.docService, required this.syncAttributes}) {
+  DocumentSyncDB({
+    required this.docService,
+    required this.syncAttributes,
+
+    this.updatesBatcherDebounceDuration = const Duration(milliseconds: 500),
+  }) {
     _initBatcher();
   }
   final DocumentServiceWrapper docService;
   final SyncAttributes syncAttributes;
+  final Duration updatesBatcherDebounceDuration;
 
   late final syncId = Uuid().v4();
 
@@ -22,7 +29,7 @@ class DocumentSyncDB {
   //Each update is identified by id
 
   late final updatesBatcher = DelayedRemoveBatcher<LocalUpdate>(
-    debounceDuration: const Duration(milliseconds: 500),
+    debounceDuration: updatesBatcherDebounceDuration,
     removalDelay: const Duration(seconds: 5),
   );
 
@@ -30,9 +37,31 @@ class DocumentSyncDB {
   late final BehaviorSubject<(List<LocalUpdate>, List<DbUpdate>)>
   _updatesSubject;
 
-  void dispose() {
-    updatesBatcher.dispose();
-    _updatesSubject.close();
+  // Add this field to track the subscription
+  StreamSubscription<(List<LocalUpdate>, List<DbUpdate>)>? _updatesSubscription;
+
+  Future<void> dispose() async {
+    try {
+      // Cancel the subscription if it exists
+      await _updatesSubscription?.cancel();
+
+      // Save all unsaved updates to DB
+      final allItems = updatesBatcher.getAllUnprocessedItems();
+      if (allItems.isNotEmpty) {
+        print('Saving ${allItems.length} pending updates during disposal');
+        final mergedUpdate = await docService.mergeUpdates(
+          allItems.map((u) => u.update).toList(),
+        );
+        await _addUpdateToDB(mergedUpdate);
+        print('Successfully saved all pending updates');
+      }
+    } catch (e) {
+      print('Error saving updates during disposal: $e');
+      // Consider additional error handling or recovery here
+    } finally {
+      updatesBatcher.dispose();
+      _updatesSubject.close();
+    }
   }
 
   // Initialize the batcher with callback in constructor
@@ -53,8 +82,8 @@ class DocumentSyncDB {
     // Initialize the BehaviorSubject
     _updatesSubject = BehaviorSubject<(List<LocalUpdate>, List<DbUpdate>)>();
 
-    // Connect the stream to the subject
-    _getAllUpdatesStream().listen(_updatesSubject.add);
+    // Connect the stream to the subject and store the subscription
+    _updatesSubscription = _getAllUpdatesStream().listen(_updatesSubject.add);
   }
 
   //Get updates stream - that will combine updates from the DB with updates from the batcher

@@ -1734,10 +1734,10 @@ final documentsProvider = NotifierProvider<Documents, List<Document>>.internal(
 
 typedef _$Documents = Notifier<List<Document>>;
 String _$editorStateWrapperHash() =>
-    r'1e4dfcdac596cbac921dec4336e0ffdc2b1e4e07';
+    r'e7093cc56e77c512677f0b482a9cb201bade5a55';
 
 abstract class _$EditorStateWrapper
-    extends BuildlessAsyncNotifier<EditorState> {
+    extends BuildlessAutoDisposeAsyncNotifier<EditorState> {
   late final String docId;
 
   FutureOr<EditorState> build(
@@ -1788,8 +1788,8 @@ class EditorStateWrapperFamily extends Family<AsyncValue<EditorState>> {
 }
 
 /// See also [EditorStateWrapper].
-class EditorStateWrapperProvider
-    extends AsyncNotifierProviderImpl<EditorStateWrapper, EditorState> {
+class EditorStateWrapperProvider extends AutoDisposeAsyncNotifierProviderImpl<
+    EditorStateWrapper, EditorState> {
   /// See also [EditorStateWrapper].
   EditorStateWrapperProvider(
     String docId,
@@ -1845,7 +1845,7 @@ class EditorStateWrapperProvider
   }
 
   @override
-  AsyncNotifierProviderElement<EditorStateWrapper, EditorState>
+  AutoDisposeAsyncNotifierProviderElement<EditorStateWrapper, EditorState>
       createElement() {
     return _EditorStateWrapperProviderElement(this);
   }
@@ -1866,14 +1866,15 @@ class EditorStateWrapperProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin EditorStateWrapperRef on AsyncNotifierProviderRef<EditorState> {
+mixin EditorStateWrapperRef
+    on AutoDisposeAsyncNotifierProviderRef<EditorState> {
   /// The parameter `docId` of this provider.
   String get docId;
 }
 
 class _EditorStateWrapperProviderElement
-    extends AsyncNotifierProviderElement<EditorStateWrapper, EditorState>
-    with EditorStateWrapperRef {
+    extends AutoDisposeAsyncNotifierProviderElement<EditorStateWrapper,
+        EditorState> with EditorStateWrapperRef {
   _EditorStateWrapperProviderElement(super.provider);
 
   @override

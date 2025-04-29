@@ -23,11 +23,24 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 class EditorStateSyncWrapper {
   EditorStateSyncWrapper({
     required this.syncAttributes,
-    this.syncDebounceDelay = _syncDebounceDelay,
+    this.syncDebounceDelay = const Duration(milliseconds: 1500),
+    this.updatesBatcherDebounceDuration = const Duration(milliseconds: 500),
   });
 
+  /// Definition of DB operations that the editor works with.
   final SyncAttributes syncAttributes;
+
+  /// Determines how frequently remote changes are applied to the editor.
+  /// This duration controls the delay between detecting remote updates and
+  /// merging them with the local document. After merging, the current editor state
+  /// is compared to the updated document, and only the necessary changes are applied.
   final Duration syncDebounceDelay;
+
+  /// Controls how frequently local changes are committed to the database.
+  /// Local updates are collected in batches to optimize storage and reduce
+  /// database operations. This duration defines how long updates accumulate
+  /// before they are consolidated and saved as a single database transaction.
+  final Duration updatesBatcherDebounceDuration;
 
   late final DocumentServiceWrapper docService;
   late final DocumentSyncDB syncDB;
@@ -38,7 +51,6 @@ class EditorStateSyncWrapper {
   bool isSyncing = false;
 
   static const String _syncProcessingTag = 'sync_processing';
-  static const Duration _syncDebounceDelay = Duration(milliseconds: 1500);
 
   (List<LocalUpdate>, List<DbUpdate>)? pendingSyncUpdates;
 
@@ -50,6 +62,7 @@ class EditorStateSyncWrapper {
     syncDB = DocumentSyncDB(
       docService: docService,
       syncAttributes: syncAttributes,
+      updatesBatcherDebounceDuration: updatesBatcherDebounceDuration,
     );
 
     editorStateWrapper = await _init();
@@ -63,9 +76,9 @@ class EditorStateSyncWrapper {
     return editorStateWrapper.editorState;
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     EasyDebounce.cancel(_syncProcessingTag);
-    syncDB.dispose();
+    await syncDB.dispose();
   }
 
   Future<EditorStateWrapper> _init() async {
@@ -125,7 +138,7 @@ class EditorStateSyncWrapper {
     final completer = Completer<void>();
 
     // Use EasyDebounce to delay the actual processing
-    EasyDebounce.debounce(_syncProcessingTag, _syncDebounceDelay, () async {
+    EasyDebounce.debounce(_syncProcessingTag, syncDebounceDelay, () async {
       // Perform the actual processing
       try {
         await _actualProcessSync(updates);
