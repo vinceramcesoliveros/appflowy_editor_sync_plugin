@@ -7,14 +7,14 @@ import 'package:appflowy_editor_sync_plugin/document_service_helpers/diff_deltas
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_with_metadata.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/node_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
-import 'package:flutter/foundation.dart';
+import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 extension BlockActionAdapter on Operation {
   List<BlockActionDoc> toBlockAction(
     ModifiableDocumentWithMetadata currentDocumentCopy,
   ) {
-    debugPrint('🔄 Converting $runtimeType to block action');
+    debugPrintCustom('🔄 Converting $runtimeType to block action');
     final op = this;
     if (op is InsertOperation) {
       return op.toBlockAction(currentDocumentCopy);
@@ -23,7 +23,7 @@ extension BlockActionAdapter on Operation {
     } else if (op is DeleteOperation) {
       return op.toBlockAction(currentDocumentCopy);
     }
-    debugPrint('❌ Unsupported operation type: ${op.runtimeType}');
+    debugPrintCustom('❌ Unsupported operation type: ${op.runtimeType}');
     throw UnimplementedError('Unsupported operation type: ${op.runtimeType}');
   }
 }
@@ -35,17 +35,18 @@ extension on InsertOperation {
     Node? nextNode,
     Node? parentNode,
   }) {
-    debugPrint('📥 Processing InsertOperation');
-    debugPrint(
+    debugPrintCustom('📥 Processing InsertOperation');
+    debugPrintCustom(
       '🔄 InsertOperation: ${JsonEncoder.withIndent(' ').convert(toJson())}',
     );
-    debugPrint('🔍 Insert path: $path');
+    debugPrintCustom('🔍 Insert path: $path');
     if (previousNode != null)
-      debugPrint('👈 Previous node: ${previousNode.id}');
-    if (nextNode != null) debugPrint('👉 Next node: ${nextNode.id}');
-    if (parentNode != null) debugPrint('👆 Parent node: ${parentNode.id}');
+      debugPrintCustom('👈 Previous node: ${previousNode.id}');
+    if (nextNode != null) debugPrintCustom('👉 Next node: ${nextNode.id}');
+    if (parentNode != null)
+      debugPrintCustom('👆 Parent node: ${parentNode.id}');
 
-    debugPrint(
+    debugPrintCustom(
       '📄 Document state: ${currentDocumentCopy.prettyPrint()} root children',
     );
 
@@ -57,12 +58,12 @@ extension on InsertOperation {
 
     // For multiple nodes, we need to handle the connections between them
     final nodesList = nodes.toList();
-    debugPrint('🔍 Inserting ${nodesList.length} node(s)');
+    debugPrintCustom('🔍 Inserting ${nodesList.length} node(s)');
 
     for (int i = 0; i < nodesList.length; i++) {
       final node = nodesList[i];
       final isLastNodeInBatch = i == nodesList.length - 1;
-      debugPrint(
+      debugPrintCustom(
         '🔍 Processing node ${i + 1}/${nodesList.length}: ID ${node.id}, type ${node.type}',
       );
 
@@ -73,22 +74,22 @@ extension on InsertOperation {
             currentPath,
           );
       final parentId = parent.id;
-      debugPrint('👆 Parent ID: $parentId');
+      debugPrintCustom('👆 Parent ID: $parentId');
       assert(parentId.isNotEmpty);
 
       var prevId = '';
       // if the node is the first child of the parent, then its prevId should be empty.
       final isFirstChild = currentPath.previous.equals(currentPath);
-      debugPrint('🔍 Is first child: $isFirstChild');
+      debugPrintCustom('🔍 Is first child: $isFirstChild');
 
       if (!isFirstChild) {
         prevId =
             currentPreviousNode?.id ??
             currentDocumentCopy.document.nodeAtPath(insertPath.previous)?.id ??
             '';
-        debugPrint('👈 Previous node ID: $prevId');
+        debugPrintCustom('👈 Previous node ID: $prevId');
       } else {
-        debugPrint('👈 No previous node (first child)');
+        debugPrintCustom('👈 No previous node (first child)');
       }
 
       //THE NEXT ID IS ONLY USED WHN PREVID = NULL
@@ -97,20 +98,22 @@ extension on InsertOperation {
       // If this isn't the last node in our batch, the next ID should be the next node in our batch
       if (!isLastNodeInBatch) {
         nextId = nodesList[i + 1].id;
-        debugPrint('👉 Next node is another node in batch: $nextId');
+        debugPrintCustom('👉 Next node is another node in batch: $nextId');
       } else {
         if (insertPath.isNotEmpty) {
           nextId =
               nextNode?.id ??
               currentDocumentCopy.document.nodeAtPath(insertPath)?.id ??
               "";
-          debugPrint('👉 Next node ID: $nextId');
+          debugPrintCustom('👉 Next node ID: $nextId');
         }
       }
 
       //If I have a parent from insert, don't share nextid
       if (parentNode != null && isLastNodeInBatch) {
-        debugPrint('👉 Clearing nextId because this is a child node insert');
+        debugPrintCustom(
+          '👉 Clearing nextId because this is a child node insert',
+        );
         nextId = '';
       }
 
@@ -119,11 +122,11 @@ extension on InsertOperation {
       String? encodedDelta;
       if (delta != null) {
         encodedDelta = jsonEncode(node.delta!.toJson());
-        debugPrint('📝 Node contains delta text');
+        debugPrintCustom('📝 Node contains delta text');
       }
 
       if (prevId == nextId && currentPath.elementAtOrNull(0) == -1) {
-        debugPrint('⚠️ prevId equals nextId, clearing both');
+        debugPrintCustom('⚠️ prevId equals nextId, clearing both');
         prevId = '';
         nextId = '';
       }
@@ -146,26 +149,26 @@ extension on InsertOperation {
         path: Uint32List.fromList(currentPath.toList()),
       );
 
-      debugPrint('✅ Created insert BlockActionDoc:');
-      debugPrint(
+      debugPrintCustom('✅ Created insert BlockActionDoc:');
+      debugPrintCustom(
         '  - Block ID: ${blockAction.block.id}, type: ${blockAction.block.ty}',
       );
-      debugPrint('  - parentId: ${blockAction.block.parentId}');
-      debugPrint(
+      debugPrintCustom('  - parentId: ${blockAction.block.parentId}');
+      debugPrintCustom(
         '  - prevId: ${blockAction.block.prevId}, nextId: ${blockAction.block.nextId}',
       );
 
       actions.add(blockAction);
 
       if (node.children.isNotEmpty) {
-        debugPrint(
+        debugPrintCustom(
           '👶 Processing ${node.children.length} children of node ${node.id}',
         );
         Node? prevChild;
         for (int i = 0; i < node.children.length; i++) {
           final child = node.children[i];
           final isLast = i == node.children.length - 1;
-          debugPrint(
+          debugPrintCustom(
             '🔍 Processing child ${i + 1}/${node.children.length}: ${child.id}',
           );
 
@@ -178,7 +181,7 @@ extension on InsertOperation {
             nextNode: isLast ? null : node.children[i + 1],
           );
 
-          debugPrint(
+          debugPrintCustom(
             '✅ Added ${childActions.length} actions for child ${child.id}',
           );
           actions.addAll(childActions);
@@ -192,11 +195,11 @@ extension on InsertOperation {
     }
     if (parentNode == null) {
       //Apply the operation to the current document
-      debugPrint(
+      debugPrintCustom(
         '🔄 Applying insert operation to document at path $insertPath',
       );
       currentDocumentCopy.document.insert(path, nodes);
-      debugPrint(
+      debugPrintCustom(
         '📄 Document after insert: ${currentDocumentCopy.prettyPrint()} root children',
       );
     }
@@ -209,8 +212,8 @@ extension on UpdateOperation {
   List<BlockActionDoc> toBlockAction(
     ModifiableDocumentWithMetadata currentDocumentCopy,
   ) {
-    debugPrint('🔄 Processing UpdateOperation at path: $path');
-    debugPrint(
+    debugPrintCustom('🔄 Processing UpdateOperation at path: $path');
+    debugPrintCustom(
       '📄 Document state: ${currentDocumentCopy.prettyPrint()} root children',
     );
 
@@ -218,25 +221,25 @@ extension on UpdateOperation {
 
     // if the attributes are both empty, we don't need to update
     if (const DeepCollectionEquality().equals(attributes, oldAttributes)) {
-      debugPrint('⚠️ Update skipped: attributes are identical');
+      debugPrintCustom('⚠️ Update skipped: attributes are identical');
       return actions;
     }
 
     final node = currentDocumentCopy.document.nodeAtPath(path);
     if (node == null) {
-      debugPrint('❌ Node not found at path: $path');
+      debugPrintCustom('❌ Node not found at path: $path');
       assert(false, 'node not found at path: $path');
       return actions;
     }
 
-    debugPrint('🔍 Updating node: ${node.id}, type: ${node.type}');
+    debugPrintCustom('🔍 Updating node: ${node.id}, type: ${node.type}');
 
     final parentId =
         TransactionAdapterHelpers.parentFromPath(
           currentDocumentCopy.document,
           node.path,
         ).id;
-    debugPrint('👆 Parent ID: $parentId');
+    debugPrintCustom('👆 Parent ID: $parentId');
     assert(parentId.isNotEmpty);
 
     // create the external text if the node contains the delta in its data.
@@ -245,7 +248,7 @@ extension on UpdateOperation {
 
     String? diff;
     if (prevDelta != null && delta != null) {
-      debugPrint('📝 Computing delta diff');
+      debugPrintCustom('📝 Computing delta diff');
       diff = diffDeltas(
         jsonEncode(Delta.fromJson(prevDelta)),
         jsonEncode(Delta.fromJson(delta)),
@@ -256,7 +259,7 @@ extension on UpdateOperation {
     final composedDelta = composedAttributes?[blockComponentDelta];
     composedAttributes?.remove(blockComponentDelta);
 
-    debugPrint(
+    debugPrintCustom(
       '🔍 Composed attributes: ${composedAttributes?.keys.join(", ")}',
     );
 
@@ -272,18 +275,18 @@ extension on UpdateOperation {
       path: Uint32List.fromList(path.toList()),
     );
 
-    debugPrint('✅ Created update BlockActionDoc:');
-    debugPrint(
+    debugPrintCustom('✅ Created update BlockActionDoc:');
+    debugPrintCustom(
       '  - Block ID: ${blockAction.block.id}, type: ${blockAction.block.ty}',
     );
-    debugPrint('  - Has delta diff: ${diff != null}');
+    debugPrintCustom('  - Has delta diff: ${diff != null}');
 
     actions.add(blockAction);
 
     // Apply the operation to the current document
-    debugPrint('🔄 Applying update to current document');
+    debugPrintCustom('🔄 Applying update to current document');
     currentDocumentCopy.document.update(path, attributes);
-    debugPrint(
+    debugPrintCustom(
       '📄 Document after update: ${currentDocumentCopy.prettyPrint()} root children',
     );
 
@@ -295,16 +298,16 @@ extension on DeleteOperation {
   List<BlockActionDoc> toBlockAction(
     ModifiableDocumentWithMetadata currentDocument,
   ) {
-    debugPrint('🗑️ Processing DeleteOperation at path: $path');
-    // debugPrint(
+    debugPrintCustom('🗑️ Processing DeleteOperation at path: $path');
+    // debugPrintCustom(
     //   '📄 Document state: ${currentDocument.prettyPrint()} root children',
     // );
-    debugPrint('🔍 Deleting ${nodes.length} node(s)');
+    debugPrintCustom('🔍 Deleting ${nodes.length} node(s)');
 
     final actions = <BlockActionDoc>[];
 
     for (final node in nodes) {
-      debugPrint(
+      debugPrintCustom(
         '🔍 Processing node for deletion: ${node.id}, type: ${node.type}',
       );
 
@@ -313,7 +316,7 @@ extension on DeleteOperation {
             currentDocument.document,
             node.path,
           ).id;
-      debugPrint('👆 Parent ID: $parentId');
+      debugPrintCustom('👆 Parent ID: $parentId');
       assert(parentId.isNotEmpty);
 
       final blockAction = BlockActionDoc(
@@ -327,19 +330,19 @@ extension on DeleteOperation {
         path: Uint32List.fromList(path.toList()),
       );
 
-      debugPrint('✅ Created delete BlockActionDoc:');
-      debugPrint(
+      debugPrintCustom('✅ Created delete BlockActionDoc:');
+      debugPrintCustom(
         '  - Block ID: ${blockAction.block.id}, type: ${blockAction.block.ty}',
       );
-      debugPrint('  - parentId: ${blockAction.block.parentId}');
+      debugPrintCustom('  - parentId: ${blockAction.block.parentId}');
 
       actions.add(blockAction);
     }
 
     // Apply the operation to the current document
-    debugPrint('🔄 Applying delete to current document');
+    debugPrintCustom('🔄 Applying delete to current document');
     currentDocument.document.delete(path, nodes.length);
-    // debugPrint(
+    // debugPrintCustom(
     //   '📄 Document after delete: ${currentDocument.prettyPrint()} root children',
     // );
 

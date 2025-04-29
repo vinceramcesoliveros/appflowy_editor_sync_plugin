@@ -1,4 +1,5 @@
 import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -168,7 +169,7 @@ class _DragToReorderActionState extends State<DragToReorderAction> {
         data: node,
         feedback: _buildFeedback(),
         onDragStarted: () {
-          debugPrint('onDragStarted');
+          debugPrintCustom('onDragStarted');
           editorState.selectionService.removeDropTarget();
         },
         onDragUpdate: (details) {
@@ -199,7 +200,7 @@ class _DragToReorderActionState extends State<DragToReorderAction> {
 
           final acceptedPath = data?.dropPath;
 
-          debugPrint('onDragEnd, acceptedPath($acceptedPath)');
+          debugPrintCustom('onDragEnd, acceptedPath($acceptedPath)');
 
           _moveNodeToNewPosition(
             widget.blockComponentContext.node,
@@ -222,16 +223,16 @@ class _DragToReorderActionState extends State<DragToReorderAction> {
   void _onTap() {
     final path = widget.blockComponentContext.node.path;
 
-    debugPrint('onTap, path($path), beforeSelection($beforeSelection)');
+    debugPrintCustom('onTap, path($path), beforeSelection($beforeSelection)');
 
     if (beforeSelection != null && path.inSelection(beforeSelection)) {
-      debugPrint('onTap(1), set selection to block');
+      debugPrintCustom('onTap(1), set selection to block');
       editorState.updateSelectionWithReason(
         beforeSelection,
         customSelectionType: SelectionType.block,
       );
     } else {
-      debugPrint('onTap(2), set selection to block');
+      debugPrintCustom('onTap(2), set selection to block');
       final selection = Selection.collapsed(Position(path: path));
       editorState.updateSelectionWithReason(
         selection,
@@ -273,7 +274,9 @@ class _DragToReorderActionState extends State<DragToReorderAction> {
     Path newPath = targetNode.path;
 
     final realNode = widget.blockComponentContext.node;
-    debugPrint('Moving node($realNode, ${realNode.path}) to path($newPath)');
+    debugPrintCustom(
+      'Moving node($realNode, ${realNode.path}) to path($newPath)',
+    );
 
     // if the horizontal position is right, we need to create a column block
     if (horizontalPosition == HorizontalPosition.right) {
@@ -302,7 +305,7 @@ class _DragToReorderActionState extends State<DragToReorderAction> {
 
       // Check if the drop should be ignored
       if (_shouldIgnoreDrop(node, newPath)) {
-        debugPrint(
+        debugPrintCustom(
           'Drop ignored: node($node, ${node.path}), path($acceptedPath)',
         );
         return;
@@ -431,13 +434,13 @@ Widget _buildDropArea(
   final isInside = globalBlockRect.contains(dragOffset);
 
   if (!isInside) {
-    debugPrint(
+    debugPrintCustom(
       'the drag offset is not inside the block, dragOffset($dragOffset), globalBlockRect($globalBlockRect)',
     );
     return null;
   }
 
-  debugPrint(
+  debugPrintCustom(
     'the drag offset is inside the block, dragOffset($dragOffset), globalBlockRect($globalBlockRect)',
   );
 
