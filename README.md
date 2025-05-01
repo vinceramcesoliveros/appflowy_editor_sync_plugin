@@ -79,7 +79,7 @@ Usefull resources:
 - https://cjycode.com/flutter_rust_bridge/quickstart#3-run-it
 - https://cjycode.com/flutter_rust_bridge/manual/integrate/template/setup/web
 
-This is neccessary as the package relies on
+This is neccessary as the package relies on flutter_rust_bridge.
 
 ## Demos
 
