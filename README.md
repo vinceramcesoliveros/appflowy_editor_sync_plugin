@@ -2,6 +2,16 @@
 
 This library enables seamless content sharing for the AppFlowy text editor across devices and users. It leverages the CRDT (Conflict-free Replicated Data Type) structures from the yrs library to merge changes from multiple devices consistently, ensuring identical results regardless of the order or frequency of updates.
 
+## Demo 
+
+More details about the demo here: https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync
+
+
+
+https://github.com/user-attachments/assets/96112d49-d693-4887-b17c-4fa0f6e54f05
+
+The demo is slightly longer because it is a live demonstration that requires turning the Wi-Fi on and off. This demo functions well across all other Flutter platforms and Wear OS when properly configured.
+
 ## How It Works
 
 Init the plugin inside main:
