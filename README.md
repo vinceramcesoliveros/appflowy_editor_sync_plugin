@@ -4,7 +4,7 @@ This library enables seamless content sharing for the AppFlowy text editor acros
 
 ## Demo 
 
-More details about the demo here: https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync
+More details about the demo here with custom synchronization: https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync
 
 
 
@@ -80,18 +80,6 @@ Usefull resources:
 - https://cjycode.com/flutter_rust_bridge/manual/integrate/template/setup/web
 
 This is neccessary as the package relies on flutter_rust_bridge.
-
-## Demos
-
-Run the example app to see the plugin in action.
-PowerSync + Supabase + Drift
-
-Link: [Insert Link]
-
-Custom Synchronization + Supabase + Drift
-
-Live Demo: [Insert Live Demo Link]
-Link: [Insert Link]
 
 ## Behind the Scenes
 
