@@ -2,6 +2,8 @@
 
 This library enables seamless content sharing for the AppFlowy text editor across devices and users. It leverages the CRDT (Conflict-free Replicated Data Type) structures from the yrs library to merge changes from multiple devices consistently, ensuring identical results regardless of the order or frequency of updates.
 
+**Full offline support**
+
 ## Demo 
 
 More details about the demo here with custom synchronization: https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync
