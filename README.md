@@ -8,6 +8,7 @@ This library enables seamless content sharing for the AppFlowy text editor acros
 
 More details about the demo here with custom synchronization: https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync
 
+Link: https://habitmaster-e52e9.web.app/
 
 
 https://github.com/user-attachments/assets/96112d49-d693-4887-b17c-4fa0f6e54f05
