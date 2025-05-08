@@ -40,11 +40,13 @@ extension on InsertOperation {
       '🔄 InsertOperation: ${JsonEncoder.withIndent(' ').convert(toJson())}',
     );
     debugPrintCustom('🔍 Insert path: $path');
-    if (previousNode != null)
+    if (previousNode != null) {
       debugPrintCustom('👈 Previous node: ${previousNode.id}');
+    }
     if (nextNode != null) debugPrintCustom('👉 Next node: ${nextNode.id}');
-    if (parentNode != null)
+    if (parentNode != null) {
       debugPrintCustom('👆 Parent node: ${parentNode.id}');
+    }
 
     debugPrintCustom(
       '📄 Document state: ${currentDocumentCopy.prettyPrint()} root children',

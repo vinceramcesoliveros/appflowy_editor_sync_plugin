@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_service.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
+import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mutex/mutex.dart'; // Import the mutex library
 
@@ -26,7 +27,6 @@ class DocumentServiceWrapper {
     return _mutex.isLocked;
   }
 
-  @override
   Future<Option<Uint8List>> applyAction({
     required List<BlockActionDoc> actions,
   }) async {
@@ -38,7 +38,7 @@ class DocumentServiceWrapper {
     } catch (e) {
       // Handle any errors from Rust, including ConcurrentAccessError
 
-      print('Failed to apply action: $e');
+      debugPrintCustom('Failed to apply action: $e');
       return const None();
     } finally {
       // Release the mutex lock
@@ -56,7 +56,7 @@ class DocumentServiceWrapper {
     } catch (e) {
       // Handle any errors from Rust, including ConcurrentAccessError
 
-      print('Failed to set root id: $e');
+      debugPrintCustom('Failed to set root id: $e');
       return const None();
     } finally {
       // Release the mutex lock
@@ -64,7 +64,6 @@ class DocumentServiceWrapper {
     }
   }
 
-  @override
   Future<Either<Error, Unit>> applyUpdates({
     required List<Uint8List> update,
   }) async {
@@ -73,14 +72,13 @@ class DocumentServiceWrapper {
       await _rustService.applyUpdates(updates: update);
       return Either.right(unit);
     } catch (e) {
-      print('Failed to apply updates: $e');
+      debugPrintCustom('Failed to apply updates: $e');
       return Either.left(Error());
     } finally {
       _mutex.release();
     }
   }
 
-  @override
   Future<DocumentState> getDocumentJson() async {
     try {
       await _mutex.acquire();
@@ -92,7 +90,6 @@ class DocumentServiceWrapper {
     }
   }
 
-  @override
   Future<Uint8List> initEmptyDoc() async {
     try {
       await _mutex.acquire();

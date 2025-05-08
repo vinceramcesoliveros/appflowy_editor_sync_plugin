@@ -7,6 +7,7 @@ import 'package:appflowy_editor_sync_plugin/core/delay_remove_batcher.dart';
 import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_service_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
+import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
@@ -48,15 +49,17 @@ class DocumentSyncDB {
       // Save all unsaved updates to DB
       final allItems = updatesBatcher.getAllUnprocessedItems();
       if (allItems.isNotEmpty) {
-        print('Saving ${allItems.length} pending updates during disposal');
+        debugPrintCustom(
+          'Saving ${allItems.length} pending updates during disposal',
+        );
         final mergedUpdate = await docService.mergeUpdates(
           allItems.map((u) => u.update).toList(),
         );
         await _addUpdateToDB(mergedUpdate);
-        print('Successfully saved all pending updates');
+        debugPrintCustom('Successfully saved all pending updates');
       }
     } catch (e) {
-      print('Error saving updates during disposal: $e');
+      debugPrintCustom('Error saving updates during disposal: $e');
       // Consider additional error handling or recovery here
     } finally {
       updatesBatcher.dispose();
@@ -74,7 +77,7 @@ class DocumentSyncDB {
         await _addUpdateToDB(mergedUpdate);
         return true;
       } catch (e) {
-        print('Error processing update batch: $e');
+        debugPrintCustom('Error processing update batch: $e');
         return false;
       }
     });

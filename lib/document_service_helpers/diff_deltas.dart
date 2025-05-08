@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:dart_quill_delta/dart_quill_delta.dart';
 
 String diffDeltas(String oldDelta, String newDelta) {
@@ -17,7 +18,7 @@ String diffDeltas(String oldDelta, String newDelta) {
 
     return jsonEncode(adjustedDiff.toJson());
   } catch (e) {
-    print('Error in diffDeltas: $e');
+    debugPrintCustom('Error in diffDeltas: $e');
     return '[]'; // Fallback to empty delta
   }
 }
