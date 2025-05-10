@@ -19,7 +19,6 @@ import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:uuid/uuid.dart';
 
 class EditorStateSyncWrapper {
   EditorStateSyncWrapper({
@@ -51,7 +50,7 @@ class EditorStateSyncWrapper {
   final mapEquality = const DeepCollectionEquality();
   bool isSyncing = false;
 
-  final String _syncProcessingTag = 'sync_processing_${Uuid().v4()}';
+  static const String _syncProcessingTag = 'sync_processing';
 
   final Set<String> _processedServerUpdatesIds = {};
   final Set<String> _processedLocalUpdatesIds = {};
