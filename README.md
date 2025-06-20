@@ -1,23 +1,25 @@
 # AppFlowy Editor Sync Plugin
 
-This library enables seamless content sharing for the AppFlowy text editor across devices and users. It leverages the CRDT (Conflict-free Replicated Data Type) structures from the yrs library to merge changes from multiple devices consistently, ensuring identical results regardless of the order or frequency of updates.
+This plugin enables seamless content synchronization for the AppFlowy text editor across devices and users. It leverages CRDT (Conflict-free Replicated Data Type) structures from the `yrs` library to ensure consistent merging of changes, regardless of the order or frequency of updates.
 
-**Full offline support**
+## Key Features
 
-## Demo 
-
-More details about the demo here with custom synchronization: https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync
-
-Link: https://habitmaster-e52e9.web.app/
-
-
-https://github.com/user-attachments/assets/96112d49-d693-4887-b17c-4fa0f6e54f05
-
-The demo is slightly longer because it is a live demonstration that requires turning the Wi-Fi on and off. This demo functions well across all other Flutter platforms and Wear OS when properly configured.
+- **Full Offline Support**: Synchronize changes even when devices are offline.
+- **Customizable Synchronization**: Override methods to handle document updates and storage.
+- **Cross-Platform Compatibility**: Works across all Flutter platforms, including Wear OS.
 
 ## How It Works
 
-Init the plugin inside main:
+```mermaid
+graph TD
+    A[Initialize Plugin] --> B[Override Methods for Document Updates]
+    B --> C[Pass EditorState to AppFlowy Editor]
+    C --> D[Sync Changes Across Devices]
+```
+
+### Initialization
+
+To initialize the plugin, add the following code to your `main` function:
 
 ```dart
 void main() async {
@@ -28,112 +30,145 @@ void main() async {
 }
 ```
 
-Override three methods to handle document update storage and retrieval:
+### Overriding Methods
+
+Override the following methods to handle document update storage and retrieval:
 
 ```dart
 @Riverpod(keepAlive: true)
 class EditorStateWrapper extends _$EditorStateWrapper {
-...
-@override
-FutureOr<EditorState> build(String docId) {
+  @override
+  FutureOr<EditorState> build(String docId) {
     final wrapper = EditorStateSyncWrapper(
       syncAttributes: SyncAttributes(
-      /// Provide all editor updates or initialize the editor, save the updates
-      /// and return them.
-      /// See: [AppflowyEditorSyncUtilityFunctions]
-      getInitialUpdates: () async {
-      ...
-      },
-      getUpdatesStream: ...,
-
-      saveUpdate: (Uint8List update) async {
-        ...
+        getInitialUpdates: () async {
+          // Provide initial updates or initialize the editor.
+        },
+        getUpdatesStream: ...,
+        saveUpdate: (Uint8List update) async {
+          // Save updates.
         },
       ),
     );
 
     return wrapper.initAndHandleChanges();
-
-}
+  }
 }
 ```
 
-Pass the resulting EditorState to the AppFlowy text editor. See the example for details.
+Pass the resulting `EditorState` to the AppFlowy text editor. Refer to the example for more details.
 
-## Initialization
+## Document Initialization
 
-When creating a document, initialize it using one of the following methods from `AppflowyEditorSyncUtilityFunctions`:
+When creating a document, use one of the following methods from `AppflowyEditorSyncUtilityFunctions`:
 
-`initDocument`
-`initDocumentFromExistingDocument`
-`initDocumentFromExistingMarkdownDocument`
+- `initDocument`
+- `initDocumentFromExistingDocument`
+- `initDocumentFromExistingMarkdownDocument`
 
 These methods set up the default document structure for future updates.
 
-## Web
+## Web Integration
 
-To use the plugin on the web you need to do copy the code from the package `web/pkg` into you project `web/pkg` folder. And provide html headers:
+To use the plugin on the web:
 
-- `Cross-Origin-Opener-Policy=same-origin`
-- `web-header=Cross-Origin-Embedder-Policy=require-corp`
+1. Copy the code from the package `web/pkg` into your project’s `web/pkg` folder.
+2. Add the following HTML headers:
+   - `Cross-Origin-Opener-Policy=same-origin`
+   - `Cross-Origin-Embedder-Policy=require-corp`
 
-Usefull resources:
+Useful resources:
 
-- https://cjycode.com/flutter_rust_bridge/quickstart#3-run-it
-- https://cjycode.com/flutter_rust_bridge/manual/integrate/template/setup/web
-
-This is neccessary as the package relies on flutter_rust_bridge.
+- [Flutter Rust Bridge Quickstart](https://cjycode.com/flutter_rust_bridge/quickstart#3-run-it)
+- [Flutter Rust Bridge Web Setup](https://cjycode.com/flutter_rust_bridge/manual/integrate/template/setup/web)
 
 ## Behind the Scenes
 
-The library builds on AppFlowy’s approach to convert transactions into structures compatible with the Rust-based yrs library, maintaining a synchronized copy of the text editor. Changes are reflected in yrs CRDT structures, ensuring consistent state across devices.
-However, CRDT alone may produce unexpected results when users’ changes interleave. For example:
+The plugin builds on AppFlowy’s approach to convert transactions into structures compatible with the Rust-based `yrs` library. This ensures a synchronized copy of the text editor across devices. However, CRDT alone may produce unexpected results when users’ changes interleave.
 
-### User A (offline):
+### Example of CRDT Merge Issue
 
+#### User A (offline):
 - 111 - User A
 - 222 - User A
 - 333 - User A
 
-### User B (offline):
-
+#### User B (offline):
 - 111 - User B
 - 222 - User B
 - 333 - User B
 
-When both devices sync, a naive CRDT merge might yield:
-
+#### Naive Merge Result:
 - 111 - User A
 - 111 - User B
 - 222 - User A
 - 333 - User A
 
-This is not user-friendly. To address this, each text node (line) includes additional attributes:
+To address this, the plugin uses additional attributes for each text node:
 
-- deviceId
-- timestamp
+- `deviceId`
+- `timestamp`
 
 And pointers:
 
-- prevId (for reflection and sorting)
-- nextId (for CRDT reflection)
+- `prevId` (for reflection and sorting)
+- `nextId` (for CRDT reflection)
 
-Using these, the plugin sorts nodes to produce a user-expected merge, such as:
+### Improved Merge Result
 
-- 111 - User A
-- 222 - User A
-- 333 - User A
-- 111 - User B
-- 222 - User B
-- 333 - User B
-
-Or:
-
-- 111 - User B
-- 222 - User B
-- 333 - User B
-- 111 - User A
-- 222 - User A
-- 333 - User A
+```mermaid
+graph LR
+    A[User A Changes] -->|Sorted by deviceId & timestamp| B[User B Changes]
+    B --> C[Final Merged Document]
+```
 
 For conflicts (e.g., multiple nodes with the same prevId), the sorting algorithm uses timestamp and deviceId to resolve ordering. This logic is implemented in rust/src/doc/utils/sorting.rs.
+
+After updating the CRDT struture, an CRDT binary update is returned that should be then stored. After new binary updates come from a DB, these updates are then combined and form a CRDT document that is then compared with the current one and differences are applied to the current editor.
+
+## Code Structure
+
+Code is written both in Dart and Rust.
+
+### Rust
+
+Main files or folders are listed bellow:
+
+- src/doc:
+
+  - `document_service` - Service used for communicatinio between Rust and Dart part.
+  - `utils`
+    - `sorting.rs` - Sorts the current CRDT state into user expected state
+    - `sorting_test.rs` and sorting_test2.rs - Contains tests generated by AI and reviewed for their validity.
+  - `operations`
+    - `block_ops.rs` - Handles insersts, deletes, updates, and moves.
+    - `delta_ops.rs` - Handle operations releated to text that is stored in Delta Format.
+    - `update_ops.rs` - Handles applying CRDT updates and extraction of current CRDT state into a state that Dart side understands.
+  - `conversions`
+    - `conversion.rs` - Responsible for conversions between JSON and yrs formats.
+
+### Flutter (Dart)
+
+Main files or folders are listed bellow:
+
+- lib:
+
+  - `editor_state_sync_wrapper.dart` - Listenes for updates from editor or DB and puts everything together.
+  - `appflowy_editor_sync_utility_functions.dart` - Contains usefull function for creating new documents and merging updates.
+  - `extensions` - Contains files adding extentions to default Appflowy Editor classes or classes generated from the Rust side
+  - `document_service_helpers`
+    - `document_service_wrapper` - Wrapper around `DocumentService` from Rust that gurateese that CRDT structure on the other side is affected only by one call at a time
+    - `diff_deltas.dart` - Function for computing Deltas (Delta Format) with adjustments to make it work with YText format.
+    - `document_rules` - Validates the new editor state and if neccessary fixes it.
+  - `core` - Helper structures batching and update clock.
+  - `src/rust` - Contains generted code by flutter_rust_bridge.
+
+## Demo
+
+Check out the demo with custom synchronization: [Demo Link](https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync)
+
+Live demo: [HabitMaster](https://habitmaster-e52e9.web.app/)
+
+![Demo Screenshot](https://github.com/user-attachments/assets/96112d49-d693-4887-b17c-4fa0f6e54f05)
+
+The demo showcases live synchronization, including handling offline scenarios by toggling Wi-Fi. It works across all Flutter platforms and Wear OS when properly configured.
