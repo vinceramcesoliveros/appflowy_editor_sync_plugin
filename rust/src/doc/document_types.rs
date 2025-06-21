@@ -34,6 +34,7 @@ pub struct BlockDoc {
 pub struct BlockActionDoc {
     pub action: BlockActionTypeDoc,
     pub block: BlockDoc,
+    #[serde(rename = "path")]
     pub path: Vec<u32>,
     #[serde(rename = "oldPath")]
     pub old_path: Option<Vec<u32>>, //For Move action
@@ -45,8 +46,6 @@ pub struct FailedToDecodeUpdates {
     pub failed_updates_ids: Vec<String>,
 }
 
-
-
 // Define the document structure for Flutter
 #[frb(unignore, dart_metadata=("freezed"), json_serializable)]
 #[derive(Serialize, Deserialize, Debug)]
@@ -56,7 +55,6 @@ pub struct DocumentState {
     pub children_map: HashMap<String, Vec<String>>,
     pub root_id: String,
 }
-
 
 // Custom error for concurrent access issues
 #[frb]

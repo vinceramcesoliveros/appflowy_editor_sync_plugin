@@ -1,16 +1,14 @@
-use flutter_rust_bridge::DartFnFuture;
-use log::info;
 use std::collections::HashMap;
 use std::sync::Arc;
-use yrs::{ Array, ArrayRef, Map, MapPrelim, MapRef, ReadTxn, TextRef, TransactionMut };
+use yrs::{Array, ArrayRef, Map, MapPrelim, MapRef, TransactionMut};
 
-use crate::doc::constants::{ ATTRIBUTES, DEFAULT_PARENT, ID, PARENT_ID, PREV_ID, TEXT, TYPE };
-use crate::doc::document_types::{ BlockActionDoc, CustomRustError };
+use crate::doc::constants::{ATTRIBUTES, DEFAULT_PARENT, ID, PARENT_ID, PREV_ID, TEXT, TYPE};
+use crate::doc::document_types::{BlockActionDoc, CustomRustError};
 use crate::doc::error::DocError;
 use crate::doc::operations::delta_ops::DeltaOperations;
 use crate::doc::utils::util::MapExt;
 
-use crate::{ log_info, log_error };
+use crate::log_info;
 
 pub struct BlockOperations;
 
@@ -23,7 +21,10 @@ impl BlockOperations {
         let block_id = action.block.id.clone();
         log_info!("insert_node: Starting for block_id: {}", block_id);
 
-        let parent_id = action.block.parent_id.unwrap_or_else(|| DEFAULT_PARENT.to_owned());
+        let parent_id = action
+            .block
+            .parent_id
+            .unwrap_or_else(|| DEFAULT_PARENT.to_owned());
 
         // Create the node and set its basic properties
         let node_ref = blocks_map.get_or_init_map(txn, block_id.clone());
@@ -52,7 +53,7 @@ impl BlockOperations {
             txn,
             blocks_map.clone(),
             &block_id,
-            action.block.prev_id.clone()
+            action.block.prev_id.clone(),
         )?;
 
         Self::handle_following_connection(
@@ -60,8 +61,8 @@ impl BlockOperations {
             blocks_map.clone(),
             &block_id,
             action.block.next_id.clone(),
-            action.block.prev_id.clone()
-        );
+            action.block.prev_id.clone(),
+        )?;
 
         // Set the prev_id for this block
         if let Some(prev_id) = action.block.prev_id {
@@ -106,36 +107,44 @@ impl BlockOperations {
         txn: &mut TransactionMut,
         blocks_map: MapRef,
         block_id: &str,
-        parent_id: &str
+        parent_id: &str,
     ) -> Result<(), CustomRustError> {
         log_info!("delete_node: Starting for block_id: {}", block_id);
-    
+
         // Build the parent-child structure
         let blocks_by_parent = Self::build_parent_child_structure(txn, blocks_map.clone());
-        
+
         // Get all descendants
         let descendants = Self::find_descendants(block_id, &blocks_by_parent);
-        log_info!("Block {} has {} descendants to delete", block_id, descendants.len());
-        
+        log_info!(
+            "Block {} has {} descendants to delete",
+            block_id,
+            descendants.len()
+        );
+
         // Update the prev_id chain for the main block
         Self::remove_block_from_prev_id_chain(txn, blocks_map.clone(), block_id)?;
-        
+
         // Delete all descendants from bottom up (children first, then parents)
         for descendant_id in descendants {
             log_info!("Deleting descendant block: {}", descendant_id);
-            
+
             // Update prev_id chain for each descendant
             Self::remove_block_from_prev_id_chain(txn, blocks_map.clone(), &descendant_id)?;
-            
+
             // Remove the descendant block
             blocks_map.remove(txn, &descendant_id);
         }
-        
+
         // Finally remove the main block
-        blocks_map.remove(txn, block_id)
-            .ok_or_else(|| DocError::BlockNotFound(format!("Block {} not found in blocks map", block_id)))?;
-        
-        log_info!("delete_node: Successfully deleted block_id: {} and its descendants", block_id);
+        blocks_map.remove(txn, block_id).ok_or_else(|| {
+            DocError::BlockNotFound(format!("Block {} not found in blocks map", block_id))
+        })?;
+
+        log_info!(
+            "delete_node: Successfully deleted block_id: {} and its descendants",
+            block_id
+        );
         Ok(())
     }
 
@@ -148,7 +157,7 @@ impl BlockOperations {
         old_parent_id: &str,
         block_id: &str,
         prev_id: Option<String>,
-        next_id: Option<String>
+        next_id: Option<String>,
     ) -> Result<(), CustomRustError> {
         log_info!(
             "move_block: Moving block_id: {} from parent: {} to parent: {}",
@@ -156,18 +165,18 @@ impl BlockOperations {
             old_parent_id,
             parent_id
         );
-    
+
         // Update the prev_id chain
         Self::remove_block_from_prev_id_chain(txn, blocks_map.clone(), block_id)?;
-    
+
         Self::handle_following_connection(
             txn,
             blocks_map.clone(),
             &block_id,
             next_id,
-            prev_id.clone()
-        );
-    
+            prev_id.clone(),
+        )?;
+
         // Set the new prev_id or remove it
         let node = blocks_map.get_or_init_map(txn, block_id);
         if let Some(prev_id) = prev_id {
@@ -176,7 +185,7 @@ impl BlockOperations {
         } else {
             node.remove(txn, &Arc::from(PREV_ID));
         }
-    
+
         //Save new parent id
         if parent_id != old_parent_id {
             if parent_id != DEFAULT_PARENT {
@@ -185,7 +194,7 @@ impl BlockOperations {
                 node.remove(txn, &Arc::from(PARENT_ID));
             }
         }
-    
+
         log_info!("move_block: Moved block between parents");
         Ok(())
     }
@@ -201,15 +210,15 @@ impl BlockOperations {
     fn find_block_referencing_prev_id(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
-        prev_id_value: &str
+        prev_id_value: &str,
     ) -> Vec<String> {
-        log_info!("find_block_referencing_prev_id: Searching for blocks with prev_id = {}", prev_id_value);
+        log_info!(
+            "find_block_referencing_prev_id: Searching for blocks with prev_id = {}",
+            prev_id_value
+        );
 
         // Collect all block IDs first
-        let block_ids: Vec<String> = blocks_map
-            .iter(txn)
-            .map(|(id, _)| id.to_string())
-            .collect();
+        let block_ids: Vec<String> = blocks_map.iter(txn).map(|(id, _)| id.to_string()).collect();
 
         log_info!("  Found {} total blocks to check", block_ids.len());
 
@@ -251,18 +260,19 @@ impl BlockOperations {
         txn: &mut TransactionMut,
         blocks_map: MapRef,
         block_id: &str,
-        prev_id: Option<String>
+        prev_id: Option<String>,
     ) -> Result<(), CustomRustError> {
-        log_info!("handle_prev_id_chain: block_id={}, prev_id={:?}", block_id, prev_id);
+        log_info!(
+            "handle_prev_id_chain: block_id={}, prev_id={:?}",
+            block_id,
+            prev_id
+        );
 
         if let Some(prev_id) = prev_id {
             log_info!("  Finding blocks that reference prev_id: {}", prev_id);
             // Find all blocks that have this prev_id
-            let blocks_with_same_prev_id = Self::find_block_referencing_prev_id(
-                txn,
-                blocks_map.clone(),
-                &prev_id
-            );
+            let blocks_with_same_prev_id =
+                Self::find_block_referencing_prev_id(txn, blocks_map.clone(), &prev_id);
 
             log_info!(
                 "  Found {} blocks with prev_id {}: {:?}",
@@ -293,9 +303,12 @@ impl BlockOperations {
     fn remove_block_from_prev_id_chain(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
-        block_id: &str
+        block_id: &str,
     ) -> Result<(), CustomRustError> {
-        log_info!("remove_block_from_prev_id_chain: Removing block {} from chain", block_id);
+        log_info!(
+            "remove_block_from_prev_id_chain: Removing block {} from chain",
+            block_id
+        );
 
         // Get the block's prev_id if it exists
         let block_data = blocks_map.get_or_init_map(txn, block_id);
@@ -310,10 +323,17 @@ impl BlockOperations {
         });
 
         // Find all blocks that reference this block as their prev_id
-        log_info!("  Finding blocks that reference {} as their prev_id", block_id);
+        log_info!(
+            "  Finding blocks that reference {} as their prev_id",
+            block_id
+        );
         let next_blocks = Self::find_block_referencing_prev_id(txn, blocks_map.clone(), block_id);
 
-        log_info!("  Found {} next blocks: {:?}", next_blocks.len(), next_blocks);
+        log_info!(
+            "  Found {} next blocks: {:?}",
+            next_blocks.len(),
+            next_blocks
+        );
 
         // Update each next block to point to this block's prev_id
         for next_id in next_blocks {
@@ -359,7 +379,7 @@ impl BlockOperations {
         blocks_map: MapRef,
         block_id: &str,
         next_id: Option<String>,
-        prev_id: Option<String>
+        prev_id: Option<String>,
     ) -> Result<(), CustomRustError> {
         log_info!(
             "handle_following_connection: block_id={}, next_id={:?}, prev_id={:?}",
@@ -396,7 +416,11 @@ impl BlockOperations {
             log_info!("  Using next_id strategy (next_id={})", next_id);
             let next_block: MapRef = blocks_map.get_or_init_map(txn, Arc::from(next_id.as_str()));
 
-            log_info!("  Setting prev_id of next block {} to {}", next_id, block_id);
+            log_info!(
+                "  Setting prev_id of next block {} to {}",
+                next_id,
+                block_id
+            );
             next_block.insert(txn, Arc::from(PREV_ID), block_id.to_string());
 
             log_info!(
@@ -450,17 +474,14 @@ impl BlockOperations {
     /// Build a mapping of parents to their children by analyzing all blocks in the map
     pub fn build_parent_child_structure(
         txn: &mut TransactionMut, // Changed from 'mut txn: &TransactionMut'
-        blocks_map: MapRef
+        blocks_map: MapRef,
     ) -> HashMap<String, Vec<String>> {
         log_info!("Building parent-child structure");
 
         let mut blocks_by_parent: HashMap<String, Vec<String>> = HashMap::new();
 
         // Collect all block IDs
-        let block_ids: Vec<String> = blocks_map
-            .iter(txn)
-            .map(|(id, _)| id.to_string())
-            .collect();
+        let block_ids: Vec<String> = blocks_map.iter(txn).map(|(id, _)| id.to_string()).collect();
 
         log_info!("Found {} total blocks", block_ids.len());
 
@@ -479,18 +500,24 @@ impl BlockOperations {
                 "root".to_string()
             };
 
-            blocks_by_parent.entry(parent_id.clone()).or_default().push(block_id.clone());
+            blocks_by_parent
+                .entry(parent_id.clone())
+                .or_default()
+                .push(block_id.clone());
             log_info!("Block {} assigned to parent {}", block_id, parent_id);
         }
 
-        log_info!("Built parent-child structure with {} parent entries", blocks_by_parent.len());
+        log_info!(
+            "Built parent-child structure with {} parent entries",
+            blocks_by_parent.len()
+        );
         blocks_by_parent
     }
 
     /// Find all descendants of a block (recursive)
     pub fn find_descendants(
         block_id: &str,
-        blocks_by_parent: &HashMap<String, Vec<String>>
+        blocks_by_parent: &HashMap<String, Vec<String>>,
     ) -> Vec<String> {
         let mut descendants = Vec::new();
 

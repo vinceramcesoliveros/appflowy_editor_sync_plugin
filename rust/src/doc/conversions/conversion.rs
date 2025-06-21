@@ -1,12 +1,10 @@
+use serde_json::{json, Map as JsonMap, Value};
 use std::collections::HashMap;
 use std::sync::Arc;
-use serde_json::{Value, Map as JsonMap, json};
-use yrs::{Any as YrsAny, types::Delta, ReadTxn, Map, Array};
+use yrs::{types::Delta, Any as YrsAny, ReadTxn};
 
-use crate::doc::document_types::{BlockDoc, DocumentState};
-use crate::doc::constants::{ID, TYPE, PARENT_ID, PREV_ID, TEXT, ATTRIBUTES};
-use crate::doc::error::DocError;
 use crate::doc::document_types::CustomRustError;
+use crate::doc::document_types::DocumentState;
 
 /// Utilities for converting between different data representations
 pub struct Conversion;
@@ -22,13 +20,11 @@ impl Conversion {
                 Value::Number(serde_json::Number::from_f64(*n).unwrap_or(0.into()))
             }
             YrsAny::String(s) => Value::String(s.to_string()),
-            YrsAny::Array(arr) => Value::Array(
-                arr.iter().map(Self::yrs_any_to_json).collect()
-            ),
+            YrsAny::Array(arr) => Value::Array(arr.iter().map(Self::yrs_any_to_json).collect()),
             YrsAny::Map(map) => Value::Object(
                 map.iter()
-                   .map(|(k, v)| (k.to_string(), Self::yrs_any_to_json(v)))
-                   .collect()
+                    .map(|(k, v)| (k.to_string(), Self::yrs_any_to_json(v)))
+                    .collect(),
             ),
             YrsAny::BigInt(i) => Value::Number((*i).into()),
             YrsAny::Buffer(_) => Value::String("<buffer>".to_string()),
@@ -50,55 +46,53 @@ impl Conversion {
                 }
             }
             Value::String(s) => YrsAny::String(Arc::from(s.as_str())),
-            Value::Array(arr) => YrsAny::Array(
-                Arc::from(arr.iter().map(Self::json_to_yrs_any).collect::<Vec<_>>())
-            ),
-            Value::Object(obj) => YrsAny::Map(
-                Arc::from(
-                    obj.iter()
-                        .map(|(k, v)| (k.clone(), Self::json_to_yrs_any(v)))
-                        .collect::<HashMap<_, _>>()
-                )
-            ),
+            Value::Array(arr) => YrsAny::Array(Arc::from(
+                arr.iter().map(Self::json_to_yrs_any).collect::<Vec<_>>(),
+            )),
+            Value::Object(obj) => YrsAny::Map(Arc::from(
+                obj.iter()
+                    .map(|(k, v)| (k.clone(), Self::json_to_yrs_any(v)))
+                    .collect::<HashMap<_, _>>(),
+            )),
         }
     }
 
     /// Convert a Yrs delta to JSON
     pub fn delta_to_json<T: ReadTxn>(
         txn: &T,
-        delta: Delta<yrs::Out>
+        delta: Delta<yrs::Out>,
     ) -> Result<Value, CustomRustError> {
         match delta {
             Delta::Inserted(text, attrs) => {
                 let mut map = JsonMap::new();
                 map.insert("insert".to_string(), Value::String(text.to_string(txn)));
-                
+
                 if let Some(attributes) = attrs {
                     let attrs_json: JsonMap<String, Value> = attributes
                         .iter()
                         .map(|(k, v)| (k.to_string(), Self::yrs_any_to_json(v)))
                         .collect();
-                    
+
                     map.insert("attributes".to_string(), Value::Object(attrs_json));
                 }
-                
+
                 Ok(Value::Object(map))
-            },
+            }
             Delta::Retain(len, attrs) => {
                 let mut map = JsonMap::new();
                 map.insert("retain".to_string(), Value::Number(len.into()));
-                
+
                 if let Some(attributes) = attrs {
                     let attrs_json: JsonMap<String, Value> = attributes
                         .iter()
                         .map(|(k, v)| (k.to_string(), Self::yrs_any_to_json(v)))
                         .collect();
-                    
+
                     map.insert("attributes".to_string(), Value::Object(attrs_json));
                 }
-                
+
                 Ok(Value::Object(map))
-            },
+            }
             Delta::Deleted(len) => {
                 let mut map = JsonMap::new();
                 map.insert("delete".to_string(), Value::Number(len.into()));
@@ -110,72 +104,68 @@ impl Conversion {
     /// Convert a sequence of deltas to JSON array
     pub fn deltas_to_json<T: ReadTxn>(
         txn: &T,
-        deltas: Vec<Delta<yrs::Out>>
+        deltas: Vec<Delta<yrs::Out>>,
     ) -> Result<Value, CustomRustError> {
         let json_deltas: Result<Vec<Value>, CustomRustError> = deltas
             .into_iter()
             .map(|delta| Self::delta_to_json(txn, delta))
             .collect();
-            
+
         json_deltas.map(Value::Array)
     }
-
-    
 
     /// Convert a document tree to JSON
     pub fn document_to_json(doc_state: &DocumentState) -> Result<Value, CustomRustError> {
         let mut blocks_json = JsonMap::new();
-        
+
         for (id, block) in &doc_state.blocks {
             let mut block_json = JsonMap::new();
-            
+
             // Add basic properties
             block_json.insert("id".to_string(), json!(block.id));
             block_json.insert("type".to_string(), json!(block.ty));
-            
+
             // Add optional properties
             if let Some(parent_id) = &block.parent_id {
                 block_json.insert("parentId".to_string(), json!(parent_id));
             }
-            
+
             if let Some(prev_id) = &block.prev_id {
                 block_json.insert("prevId".to_string(), json!(prev_id));
             }
-            
+
             // Add attributes
-            let attrs_json: JsonMap<String, Value> = block.attributes
+            let attrs_json: JsonMap<String, Value> = block
+                .attributes
                 .iter()
                 .map(|(k, v)| (k.clone(), json!(v)))
                 .collect();
-            
+
             block_json.insert("attributes".to_string(), Value::Object(attrs_json));
-            
+
             // Add delta if present
             if let Some(delta) = &block.delta {
-                block_json.insert("delta".to_string(), 
-                    serde_json::from_str(delta).unwrap_or(Value::Null));
+                block_json.insert(
+                    "delta".to_string(),
+                    serde_json::from_str(delta).unwrap_or(Value::Null),
+                );
             }
-            
+
             blocks_json.insert(id.clone(), Value::Object(block_json));
         }
-        
+
         // Build children map
         let mut children_json = JsonMap::new();
         for (parent_id, children) in &doc_state.children_map {
             children_json.insert(parent_id.clone(), json!(children));
         }
-        
+
         // Build final document
         let mut doc_json = JsonMap::new();
         doc_json.insert("docId".to_string(), json!(doc_state.doc_id));
         doc_json.insert("blocks".to_string(), Value::Object(blocks_json));
         doc_json.insert("childrenMap".to_string(), Value::Object(children_json));
-        
+
         Ok(Value::Object(doc_json))
     }
-
 }
-
-
-
-

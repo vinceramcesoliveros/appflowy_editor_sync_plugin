@@ -1,6 +1,7 @@
 {
-    "editor.codeActionsOnSave": {
+  "editor.codeActionsOnSave": {
     "source.fixAll": "always",
     "source.organizeImports": "always"
-  }
+  },
+  "dart.flutterSdkPath": ".fvm/versions/3.29.0"
 }

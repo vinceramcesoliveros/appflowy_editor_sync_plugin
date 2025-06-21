@@ -19,7 +19,6 @@ sealed class BlockActionDoc with _$BlockActionDoc {
   const factory BlockActionDoc({
     required BlockActionTypeDoc action,
     required BlockDoc block,
-
     required Uint32List path,
     Uint32List? oldPath,
   }) = _BlockActionDoc;

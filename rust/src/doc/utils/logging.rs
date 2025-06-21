@@ -1,5 +1,3 @@
-use log;
-
 // Define a macro for combined println and info logging
 #[macro_export]
 macro_rules! log_info {
