@@ -33,3 +33,6 @@ migrate_working_dir/
 build/
 
 debug/
+
+# FVM Version Cache
+.fvm/
