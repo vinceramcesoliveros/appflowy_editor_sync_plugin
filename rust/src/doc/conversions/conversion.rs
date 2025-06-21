@@ -1,9 +1,9 @@
 use serde_json::{json, Map as JsonMap, Value};
 use std::collections::HashMap;
 use std::sync::Arc;
-use yrs::{types::Delta, Any as YrsAny, ReadTxn};
+use yrs::{types::Delta, ReadTxn};
 
-use crate::doc::document_types::CustomRustError;
+use crate::doc::document_types::{CustomRustError, DocumentState};
 use crate::log_info;
 
 /// Utilities for converting between different data representations

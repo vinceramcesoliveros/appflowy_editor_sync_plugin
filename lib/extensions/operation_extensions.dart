@@ -258,7 +258,7 @@ extension on UpdateOperation {
     }
 
     final composedAttributes = composeAttributes(oldAttributes, attributes);
-    final composedDelta = composedAttributes?[blockComponentDelta];
+    final _ = composedAttributes?[blockComponentDelta];
     composedAttributes?.remove(blockComponentDelta);
 
     debugPrintCustom(

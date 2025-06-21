@@ -100,7 +100,7 @@ impl DocumentService {
                     )?;
                 }
                 BlockActionTypeDoc::Move => {
-                    if let (Some(old_path), Some(parent_id), Some(old_parent_id)) = (
+                    if let (Some(_), Some(parent_id), Some(old_parent_id)) = (
                         block_action.old_path.as_ref(),
                         block_action.block.parent_id.as_ref(),
                         block_action.block.old_parent_id.as_ref(),
@@ -108,8 +108,6 @@ impl DocumentService {
                         BlockOperations::move_block(
                             &mut txn,
                             blocks_map,
-                            old_path,
-                            &block_action.path,
                             parent_id,
                             old_parent_id,
                             &block_action.block.id,

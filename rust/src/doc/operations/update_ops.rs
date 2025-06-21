@@ -3,7 +3,7 @@ use yrs::updates::decoder::Decode;
 use yrs::{merge_updates_v2, Doc, Map, ReadTxn, Transact, Update};
 
 use crate::doc::conversions::conversion::Conversion;
-use crate::doc::document_types::{BlockDoc, CustomRustError, DocumentState, FailedToDecodeUpdates};
+use crate::doc::document_types::{BlockDoc, CustomRustError, DocumentState};
 use crate::doc::error::DocError;
 use crate::doc::utils::sorting::ChainSorting;
 // In other files
@@ -41,7 +41,7 @@ impl UpdateOperations {
         match Update::decode_v2(&merged_update) {
             Ok(decoded_update) => {
                 log_info!("apply_updates: Applying update for doc_id: {}", doc_id);
-                txn.apply_update(decoded_update);
+                let _ = txn.apply_update(decoded_update);
             }
             Err(e) => {
                 log_error!("Failed to decode update for doc_id: {}: {}", doc_id, e);
@@ -120,8 +120,6 @@ impl UpdateOperations {
         if let Some(yrs::Out::YMap(block_map)) = blocks_map.get(txn, id) {
             // Extract text content if present
             let delta_string = if let Some(yrs::Out::YText(text)) = block_map.get(txn, TEXT) {
-                use crate::doc::operations::delta_ops::DeltaOperations;
-
                 let deltas = text.delta(txn);
                 match Conversion::deltas_to_json(txn, deltas) {
                     Ok(json_deltas) => match serde_json::to_string(&json_deltas) {

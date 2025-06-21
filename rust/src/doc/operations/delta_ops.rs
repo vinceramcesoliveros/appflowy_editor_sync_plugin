@@ -4,11 +4,12 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use yrs::Text;
 
-use yrs::{types::Delta, ReadTxn, TextRef, TransactionMut};
+use yrs::{types::Delta, TextRef, TransactionMut};
 
 use crate::doc::conversions::conversion::Conversion;
 use crate::doc::document_types::CustomRustError;
 use crate::doc::error::DocError;
+use crate::doc::utils::util::TextExt;
 // use crate::doc::utils::util::TextExt;
 use crate::log_info;
 
@@ -28,7 +29,7 @@ impl DeltaOperations {
         new_delta: String,
     ) -> Result<(), CustomRustError> {
         // Get current text delta
-        let current_delta = text.delta(txn);
+        let _ = text.delta(txn);
 
         // Get delta diff from the Dart side
         // Legacy Code

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
-use yrs::{Array, ArrayRef, Map, MapPrelim, MapRef, TransactionMut};
+use yrs::{Map, MapPrelim, MapRef, TransactionMut};
 
 use crate::doc::constants::{ATTRIBUTES, DEFAULT_PARENT, ID, PARENT_ID, PREV_ID, TEXT, TYPE};
 use crate::doc::document_types::{BlockActionDoc, CustomRustError};
@@ -154,8 +154,6 @@ impl BlockOperations {
     pub fn move_block(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
-        old_path: &[u32],
-        new_path: &[u32],
         parent_id: &str,
         old_parent_id: &str,
         block_id: &str,
