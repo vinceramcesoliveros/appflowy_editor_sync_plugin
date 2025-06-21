@@ -1,6 +1,6 @@
 name: appflowy_editor_sync_plugin
 description: "A new Flutter FFI plugin project."
-version: 0.0.1
+version: 0.0.2
 homepage:
 
 environment:
@@ -9,12 +9,13 @@ environment:
 
 dependencies:
   appflowy_editor: ^5.1.0
+  collection: ^1.19.1
   dart_quill_delta: ^10.8.3
   dartx: ^1.2.0
   easy_debounce: ^2.0.3
   flutter:
     sdk: flutter
-  flutter_rust_bridge: 2.9.0
+  flutter_rust_bridge: 2.10.0
   fpdart: ^1.1.1
   freezed_annotation: ^2.4.2
   json_annotation: ^4.9.0
