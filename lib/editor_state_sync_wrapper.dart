@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // editor_state_sync_wrapper.dart
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:appflowy_editor_sync_plugin/convertors/transaction_adapter_helpers.dart';
@@ -13,12 +12,18 @@ import 'package:appflowy_editor_sync_plugin/document_sync_db.dart';
 import 'package:appflowy_editor_sync_plugin/editor_state_helpers/editor_state_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/list_of_updates_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/extensions/list_op_operations.dart';
-import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:uuid/uuid.dart';
+
+/// Wrapper around [EditorState] that handles document synchronization.
+/// [SyncAttributes] defines how to get, and save document updates
+/// Inside it is listening on DB updates and editor updates
+/// a. Editor Updates are reflected in CRDT structure on the Rust side and updates are saved to the DB
+/// b. DB updates are combined into a CRDT structure and then the editor is updated to reflect changes that it misses
 
 class EditorStateSyncWrapper {
   EditorStateSyncWrapper({
@@ -50,7 +55,7 @@ class EditorStateSyncWrapper {
   final mapEquality = const DeepCollectionEquality();
   bool isSyncing = false;
 
-  static const String _syncProcessingTag = 'sync_processing';
+  final String _syncProcessingTag = 'sync_processing_${Uuid().v4()}';
 
   (List<LocalUpdate>, List<DbUpdate>)? pendingSyncUpdates;
 
@@ -209,14 +214,14 @@ class EditorStateSyncWrapper {
     }
   }
 
-  void _prettyfyAndPrintInChunksDocumentState(DocumentState docState) {
-    final json = docState.toJson();
-    final prettyJson = JsonEncoder.withIndent('  ').convert(json);
-    final lines = prettyJson.split('\n');
-    for (var line in lines) {
-      debugPrintCustom(line);
-    }
-  }
+  // void _prettyfyAndPrintInChunksDocumentState(DocumentState docState) {
+  //   final json = docState.toJson();
+  //   final prettyJson = JsonEncoder.withIndent('  ').convert(json);
+  //   final lines = prettyJson.split('\n');
+  //   for (var line in lines) {
+  //     debugPrintCustom(line);
+  //   }
+  // }
 
   void _listenOnEditorUpdates() {
     editorStateWrapper.listenEditorChanges().listen((data) async {
@@ -229,7 +234,8 @@ class EditorStateSyncWrapper {
       if (transaction.operations.isEmpty) {
         return;
       }
-
+      // Convert editor changes into special actions that have neccessary data
+      // to be applied on the Rust side
       final currentDocumentCopy = editorStateWrapper.currentDocumentCopy();
       final operationsCopy = transaction.operations.deepCopy();
       final actions = TransactionAdapterHelpers.operationsToBlockActions(
@@ -237,10 +243,14 @@ class EditorStateSyncWrapper {
         currentDocumentCopy,
       );
 
+      // Increase update clock - used to make sure that all local changes are present
+      // when applying remote changes
       final newClock = updateClock.incrementClock();
 
+      // Apply the changes to the CRDT document
       final update = await docService.applyAction(actions: actions);
       await update.match(() async {}, (update) async {
+        // Validates the document state and applies fixes if needed
         unawaited(documentRules.applyRules(value: data));
         syncDB.addUpdates([LocalUpdate(update: update, id: newClock)]);
       });

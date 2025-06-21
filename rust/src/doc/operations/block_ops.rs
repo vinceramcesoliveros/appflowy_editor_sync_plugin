@@ -13,6 +13,7 @@ use crate::log_info;
 pub struct BlockOperations;
 
 impl BlockOperations {
+    /// Insert a new block node into the document
     pub fn insert_node(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -75,6 +76,7 @@ impl BlockOperations {
         Ok(node_ref)
     }
 
+    /// Update an existing block node in the document
     pub fn update_node(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -102,7 +104,7 @@ impl BlockOperations {
         log_info!("update_node: Updated block_id: {}", block_id);
         Ok(())
     }
-
+    /// Delete a block node and its descendants from the document
     pub fn delete_node(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -148,6 +150,7 @@ impl BlockOperations {
         Ok(())
     }
 
+    /// Move a block node to a new parent in the document
     pub fn move_block(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -199,14 +202,7 @@ impl BlockOperations {
         Ok(())
     }
 
-    // Helper methods
-    fn find_block_index(txn: &TransactionMut, array: ArrayRef, block_id: &str) -> Option<u32> {
-        array
-            .iter(txn)
-            .position(|x| x.to_string(txn) == block_id)
-            .map(|pos| pos as u32)
-    }
-
+    /// Find all blocks that reference a given prev_id
     fn find_block_referencing_prev_id(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -256,6 +252,7 @@ impl BlockOperations {
         results
     }
 
+    /// Handle the prev_id chain for a block
     fn handle_prev_id_chain(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -300,6 +297,7 @@ impl BlockOperations {
         Ok(())
     }
 
+    /// Remove a block from the prev_id chain
     fn remove_block_from_prev_id_chain(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -374,6 +372,7 @@ impl BlockOperations {
         Ok(())
     }
 
+    /// Handle the connection between blocks when inserting a new block or moving an existing one
     fn handle_following_connection(
         txn: &mut TransactionMut,
         blocks_map: MapRef,
@@ -470,7 +469,6 @@ impl BlockOperations {
         Ok(())
     }
 
-    /// Build a mapping of parents to their children by analyzing all blocks in the map
     /// Build a mapping of parents to their children by analyzing all blocks in the map
     pub fn build_parent_child_structure(
         txn: &mut TransactionMut, // Changed from 'mut txn: &TransactionMut'

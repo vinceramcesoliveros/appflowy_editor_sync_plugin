@@ -7,6 +7,15 @@ This plugin enables seamless content synchronization for the AppFlowy text edito
 - **Full Offline Support**: Synchronize changes even when devices are offline.
 - **Customizable Synchronization**: Override methods to handle document updates and storage.
 - **Cross-Platform Compatibility**: Works across all Flutter platforms, including Wear OS.
+## Demo
+
+More details about the demo here with custom synchronization: https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync
+
+Link: https://habitmaster-e52e9.web.app/
+
+https://github.com/user-attachments/assets/96112d49-d693-4887-b17c-4fa0f6e54f05
+
+The demo is slightly longer because it is a live demonstration that requires turning the Wi-Fi on and off. This demo functions well across all other Flutter platforms and Wear OS when properly configured.
 
 ## How It Works
 
@@ -60,7 +69,7 @@ Pass the resulting `EditorState` to the AppFlowy text editor. Refer to the examp
 
 ## Document Initialization
 
-When creating a document, use one of the following methods from `AppflowyEditorSyncUtilityFunctions`:
+When creating a document, initialize it using one of the following methods from `AppflowyEditorSyncUtilityFunctions.*`:
 
 - `initDocument`
 - `initDocumentFromExistingDocument`
@@ -82,9 +91,19 @@ Useful resources:
 - [Flutter Rust Bridge Quickstart](https://cjycode.com/flutter_rust_bridge/quickstart#3-run-it)
 - [Flutter Rust Bridge Web Setup](https://cjycode.com/flutter_rust_bridge/manual/integrate/template/setup/web)
 
+You can build these file using: `flutter_rust_bridge_codegen build-web`
+
 ## Behind the Scenes
 
-The plugin builds on AppFlowy’s approach to convert transactions into structures compatible with the Rust-based `yrs` library. This ensures a synchronized copy of the text editor across devices. However, CRDT alone may produce unexpected results when users’ changes interleave.
+The library builds on AppFlowy’s approach to convert transactions into structures compatible with the Rust-based yrs library, maintaining a synchronized copy of the text editor. Changes are reflected in yrs CRDT structures, ensuring consistent state across devices.
+
+Look at diagrams:
+
+- [How changes propagate from the editor](FromEditor.pdf)
+
+- [How changes propagate to the editor](ToEditor.pdf)
+
+However, CRDT alone may produce unexpected results when users’ changes interleave. For example:
 
 ### Example of CRDT Merge Issue
 
@@ -163,12 +182,8 @@ Main files or folders are listed bellow:
   - `core` - Helper structures batching and update clock.
   - `src/rust` - Contains generted code by flutter_rust_bridge.
 
-## Demo
+## How to run demo
 
-Check out the demo with custom synchronization: [Demo Link](https://github.com/Musta-Pollo/custom_supabase_drift_doc_sync)
-
-Live demo: [HabitMaster](https://habitmaster-e52e9.web.app/)
-
-![Demo Screenshot](https://github.com/user-attachments/assets/96112d49-d693-4887-b17c-4fa0f6e54f05)
-
-The demo showcases live synchronization, including handling offline scenarios by toggling Wi-Fi. It works across all Flutter platforms and Wear OS when properly configured.
+1. Setup Flutter on local system
+2. `cd example`
+3. `flutter run`
