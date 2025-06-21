@@ -12,13 +12,13 @@ enum OperationWrapperType { Insert, Delete, Move, Update }
 // }
 
 class OperationWrapper {
-  final OperationWrapperType type;
   OperationWrapper({
     required this.type,
     required this.firstOperation,
     required this.optionalSecondOperation,
   });
 
+  final OperationWrapperType type;
   final Operation firstOperation;
 
   /// It only applies if [type] is [OperationWrapperType.Move]

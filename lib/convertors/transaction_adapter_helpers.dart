@@ -185,7 +185,6 @@ class TransactionAdapterHelpers {
       final op = e.firstOperation as DeleteOperation;
       final nextOp = e.optionalSecondOperation.toNullable()! as InsertOperation;
       final deleteNode = op.nodes.first;
-      final insertNode = nextOp.nodes.first;
 
       debugPrintCustom(
         '🔍 Move node - ID: ${deleteNode.id}, Type: ${deleteNode.type}',

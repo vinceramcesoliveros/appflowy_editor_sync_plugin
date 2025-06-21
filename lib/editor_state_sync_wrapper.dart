@@ -171,7 +171,7 @@ class EditorStateSyncWrapper {
             updates.$2.map((e) => e.update).toList(),
       );
     } catch (e) {
-      print(e);
+      debugPrintCustom('$e');
     }
     //Check if I have latest update // Or if it is not in
     if (!updates.$1.syncCanBeDone(updateClock)) {
@@ -221,9 +221,8 @@ class EditorStateSyncWrapper {
   void _listenOnEditorUpdates() {
     editorStateWrapper.listenEditorChanges().listen((data) async {
       final (transactionTime, transaction, options) = data;
-
       if (TransactionTime.before != transactionTime) {
-        print("Transaction done");
+        debugPrintCustom("Transaction done");
         return;
       }
 
