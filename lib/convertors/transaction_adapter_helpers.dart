@@ -7,9 +7,9 @@ import 'package:appflowy_editor_sync_plugin/extensions/operation_extensions.dart
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/types/operation_wrapper.dart';
 import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
+import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 class TransactionAdapterHelpers {
   // Check if a Delete and Insert pair represents a Move

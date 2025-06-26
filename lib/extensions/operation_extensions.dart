@@ -8,7 +8,7 @@ import 'package:appflowy_editor_sync_plugin/document_service_helpers/document_wi
 import 'package:appflowy_editor_sync_plugin/extensions/node_extensions.dart';
 import 'package:appflowy_editor_sync_plugin/src/rust/doc/document_types.dart';
 import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:collection/collection.dart';
 
 extension BlockActionAdapter on Operation {
   List<BlockActionDoc> toBlockAction(

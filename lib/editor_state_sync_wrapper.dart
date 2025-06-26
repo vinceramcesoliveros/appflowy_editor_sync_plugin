@@ -15,8 +15,8 @@ import 'package:appflowy_editor_sync_plugin/extensions/list_op_operations.dart';
 import 'package:appflowy_editor_sync_plugin/types/sync_db_attributes.dart';
 import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
+import 'package:collection/collection.dart';
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 /// Wrapper around [EditorState] that handles document synchronization.
