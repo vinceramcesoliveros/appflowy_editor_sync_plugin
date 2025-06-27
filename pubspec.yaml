@@ -1,6 +1,6 @@
 name: appflowy_editor_sync_plugin
 description: "A new Flutter FFI plugin project."
-version: 0.0.2
+version: 0.0.3
 homepage: vinceramcesoliveros.dev
 publish_to: none
 environment:
