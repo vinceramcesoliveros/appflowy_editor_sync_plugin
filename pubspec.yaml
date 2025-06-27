@@ -1,14 +1,16 @@
 name: appflowy_editor_sync_plugin
 description: "A new Flutter FFI plugin project."
 version: 0.0.2
-homepage:
-
+homepage: vinceramcesoliveros.dev
+publish_to: none
 environment:
   sdk: ^3.7.0
   flutter: ">=3.3.0"
 
 dependencies:
-  appflowy_editor: ^5.1.0
+  appflowy_editor:
+    git:
+      url: https://github.com/vinceramcesoliveros/appflowy-editor.git
   collection: ^1.19.1
   dart_quill_delta: ^10.8.3
   dartx: ^1.2.0
