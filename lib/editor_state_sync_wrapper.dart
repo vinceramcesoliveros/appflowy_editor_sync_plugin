@@ -17,6 +17,7 @@ import 'package:appflowy_editor_sync_plugin/types/update_types.dart';
 import 'package:appflowy_editor_sync_plugin/utils/debug_print_custom.dart';
 import 'package:collection/collection.dart';
 import 'package:easy_debounce/easy_debounce.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 /// Wrapper around [EditorState] that handles document synchronization.
@@ -30,7 +31,10 @@ class EditorStateSyncWrapper {
     required this.syncAttributes,
     this.syncDebounceDelay = const Duration(milliseconds: 1500),
     this.updatesBatcherDebounceDuration = const Duration(milliseconds: 500),
-  });
+    bool debugMode = false,
+  }) {
+    _debug = debugMode;
+  }
 
   /// Definition of DB operations that the editor works with.
   final SyncAttributes syncAttributes;
@@ -58,6 +62,10 @@ class EditorStateSyncWrapper {
   final String _syncProcessingTag = 'sync_processing_${Uuid().v4()}';
 
   (List<LocalUpdate>, List<DbUpdate>)? pendingSyncUpdates;
+
+  static bool _debug = false;
+
+  static bool get debug => _debug;
 
   UpdateClock updateClock = UpdateClock();
 
